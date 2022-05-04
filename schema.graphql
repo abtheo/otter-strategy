@@ -254,4 +254,5 @@ type APY @entity {
   timestamp: BigInt!
   rebaseReward: BigDecimal!
   apy: BigDecimal!
+  clamDistributed: BigInt!
 }

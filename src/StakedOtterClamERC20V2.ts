@@ -20,7 +20,10 @@ import { log } from '@graphprotocol/graph-ts'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateProtocolMetrics } from './utils/ProtocolMetrics'
 
+const CLAM_DECIMALS = BigDecimal.fromString('1e9')
 const ONE = BigDecimal.fromString('1')
+//num days to average signal over
+const N = 5
 
 // export function handleApproval(event: ApprovalEvent): void {
 //   let transaction = loadOrCreateTransaction(event.transaction, event.block)
@@ -85,7 +88,6 @@ R= revenue (clam)
 */
 export function calculateApy(timestamp: BigInt): void {
   let day = timestamp.toI32() - (timestamp.toI32() % 86400)
-  log.debug('Calculating APY @ {}', [timestamp.toString()])
   let maxLookback = day - 86400 * 14 //look max 14 days in past
 
   //only track after block 24088468 == 24-01-2022 UTC
@@ -104,29 +106,29 @@ export function calculateApy(timestamp: BigInt): void {
     return
   }
 
-  //fetch last N=3 days of revenue and take average
+  //fetch last N days of revenue and take average
   //does not include today (avoid calculating before all revenue is collected)
   dayCounter = day
   let pastRevenues = [] as BigDecimal[]
-  while (pastRevenues.length < 3 && dayCounter > maxLookback) {
-    dayCounter = dayCounter - 86400 //-1day
+  while (pastRevenues.length < N && dayCounter > maxLookback) {
     let revenue = TreasuryRevenue.load(dayCounter.toString())
     if (revenue != null) {
-      let shit = revenue.totalRevenueClamAmount.divDecimal(BigDecimal.fromString('1e9'))
+      let shit = revenue.totalRevenueClamAmount.divDecimal(CLAM_DECIMALS)
       pastRevenues.push(shit)
     }
+    dayCounter = dayCounter - 86400 //-1day
   }
   if (pastRevenues.length == 0) {
     log.warning('Calculating APY @ {}, no past Treasury Revenues could be found', [timestamp.toString()])
     return
   }
 
-  //in CLAMS
-  let rebase_revenue = pastRevenues
+  //in CLAMS per rebase, averaged over N days
+  let rebaseRevenue = pastRevenues
     .reduce((x, y) => x.plus(y), BigDecimal.fromString('0'))
     .div(
       BigInt.fromI32(pastRevenues.length)
-        .times(BigInt.fromString('3'))
+        .times(BigInt.fromString(N.toString()))
         .toBigDecimal(),
     )
 
@@ -137,35 +139,43 @@ export function calculateApy(timestamp: BigInt): void {
 
   //rr = (d^p * R) / sCLAM
   //p=3 for now
-  let rebase_reward = delta_price
+  let rebaseReward = delta_price
     .times(delta_price)
     .times(delta_price)
-    .times(rebase_revenue)
+    .times(rebaseRevenue)
     .div(lastMetrics.sClamCirculatingSupply)
 
   // ((1+rr)^(3*365) - 1) * 100% = APY%
-  let apy = BigDecimal.fromString(Math.pow(Number.parseFloat(rebase_reward.plus(ONE).toString()), 365 * 3).toString())
+  let apy = BigDecimal.fromString(Math.pow(Number.parseFloat(rebaseReward.plus(ONE).toString()), 365 * 3).toString())
     .minus(ONE)
     .times(BigDecimal.fromString('100'))
     .truncate(3)
 
+  //calculate total amount of CLAM distributed for smart contract
+  let distributedClam = rebaseReward
+    .times(lastMetrics.sClamCirculatingSupply)
+    .times(CLAM_DECIMALS)
+    .truncate(0).digits
+
   log.debug(
-    'Calculating APY @ {}, lastMetrics timestamp: {}, num revenue days: {}, avg rebase revenue CLAMs: {}, clam price: {}, price delta: {}, sCLAM supply: {}, rebase reward: {}, APY: {}%',
+    'Calculating APY @ {}, lastMetrics timestamp: {}, num revenue days: {}, avg rebase revenue CLAMs: {}, clam price: {}, price delta: {}, sCLAM supply: {}, rebase reward: {}, APY: {}%, CLAM distributed: {}',
     [
       timestamp.toString(),
       lastMetrics.timestamp.toString(),
       pastRevenues.length.toString(),
-      rebase_revenue.toString(),
+      rebaseRevenue.toString(),
       lastMetrics.clamPrice.toString(),
       delta_price.toString(),
       lastMetrics.sClamCirculatingSupply.toString(),
-      rebase_reward.toString(),
+      rebaseReward.toString(),
       apy.toString(),
+      distributedClam.toString(),
     ],
   )
   let apyEntity = new APY(timestamp.toString())
   apyEntity.timestamp = timestamp
   apyEntity.apy = apy
-  apyEntity.rebaseReward = rebase_reward
+  apyEntity.rebaseReward = rebaseReward
+  apyEntity.clamDistributed = distributedClam
   apyEntity.save()
 }

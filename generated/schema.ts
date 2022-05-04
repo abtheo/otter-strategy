@@ -2469,6 +2469,7 @@ export class APY extends Entity {
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
     this.set("rebaseReward", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("apy", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("clamDistributed", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -2522,5 +2523,14 @@ export class APY extends Entity {
 
   set apy(value: BigDecimal) {
     this.set("apy", Value.fromBigDecimal(value));
+  }
+
+  get clamDistributed(): BigInt {
+    let value = this.get("clamDistributed");
+    return value!.toBigInt();
+  }
+
+  set clamDistributed(value: BigInt) {
+    this.set("clamDistributed", Value.fromBigInt(value));
   }
 }

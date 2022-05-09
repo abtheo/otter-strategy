@@ -25,17 +25,6 @@ const ONE = BigDecimal.fromString('1')
 //num days to average signal over
 const N = 5
 
-// export function handleApproval(event: ApprovalEvent): void {
-//   let transaction = loadOrCreateTransaction(event.transaction, event.block)
-//   let entity = new Approval(transaction.id)
-//   entity.owner = event.params.owner
-//   entity.spender = event.params.spender
-//   entity.value = event.params.value
-//   entity.timestamp = transaction.timestamp
-//   entity.transaction = transaction.id
-//   entity.save()
-// }
-
 export function handleLogRebase(event: LogRebaseEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
   let entity = new LogRebase(transaction.id)

@@ -132,14 +132,13 @@ export function calculateApy(timestamp: BigInt): void {
         .toBigDecimal(),
     )
 
-  //d = (price / backing) + 1
+  //d = (price / backing)
   let delta_price = lastMetrics.clamPrice.div(lastMetrics.treasuryMarketValue.div(lastMetrics.sClamCirculatingSupply))
   // .plus(ONE)
 
   //rr = (d^p * R) / sCLAM
-  //p=3 for now
+  //p=2 for now
   let rebaseReward = delta_price
-    .times(delta_price)
     .times(delta_price)
     .times(rebaseRevenue)
     .div(lastMetrics.sClamCirculatingSupply)

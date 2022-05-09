@@ -113,8 +113,8 @@ export function calculateApy(timestamp: BigInt): void {
   while (pastRevenues.length < N && dayCounter > maxLookback) {
     let revenue = TreasuryRevenue.load(dayCounter.toString())
     if (revenue != null) {
-      let shit = revenue.totalRevenueClamAmount.divDecimal(CLAM_DECIMALS)
-      pastRevenues.push(shit)
+      let clamRevenue = revenue.totalRevenueClamAmount.divDecimal(CLAM_DECIMALS)
+      pastRevenues.push(clamRevenue)
     }
     dayCounter = dayCounter - 86400 //-1day
   }
@@ -133,9 +133,8 @@ export function calculateApy(timestamp: BigInt): void {
     )
 
   //d = (price / backing) + 1
-  let delta_price = lastMetrics.clamPrice
-    .div(lastMetrics.treasuryMarketValue.div(lastMetrics.sClamCirculatingSupply))
-    .plus(ONE)
+  let delta_price = lastMetrics.clamPrice.div(lastMetrics.treasuryMarketValue.div(lastMetrics.sClamCirculatingSupply))
+  // .plus(ONE)
 
   //rr = (d^p * R) / sCLAM
   //p=3 for now

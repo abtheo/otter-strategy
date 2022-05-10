@@ -209,24 +209,14 @@ type ProtocolMetric @entity {
   treasuryClamMaiPOL: BigDecimal!
   treasuryClamFraxPOL: BigDecimal!
   treasuryClamWmaticPOL: BigDecimal!
+  totalBurnedClam: BigDecimal!
+  totalBurnedClamMarketValue: BigDecimal!
 }
 
-enum PortalStatus {
-  UNOPENED
-  OPENED
-  SUMMONED
-}
-
-type Otto @entity {
+type TotalBurnedClam @entity {
   id: ID!
-  tokenId: BigInt!
-  tokenURI: String!
-  owner: Bytes!
-  portalStatus: PortalStatus!
-  canOpenAt: BigInt!
-  summonAt: BigInt!
-  mintAt: BigInt!
-  updateAt: BigInt!
+  burnedClam: BigDecimal!
+  burnedValueUsd: BigDecimal!
 }
 
 type Harvest @entity {
@@ -247,4 +237,20 @@ type TreasuryRevenue @entity {
   buybackMarketValue: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
   totalRevenueClamAmount: BigInt!
+  cumulativeBuybackClamAmount: BigInt!
+  cumulativeBuybackMarketValue: BigDecimal!
+}
+
+type APY @entity {
+  id: ID!
+  timestamp: BigInt!
+  rebaseReward: BigDecimal!
+  apy: BigDecimal!
+  clamDistributed: BigInt!
+}
+
+type TotalBuybacks @entity {
+  id: ID!
+  boughtClam: BigInt!
+  boughtMarketValue: BigDecimal!
 }

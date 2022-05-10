@@ -237,6 +237,8 @@ type TreasuryRevenue @entity {
   buybackMarketValue: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
   totalRevenueClamAmount: BigInt!
+  cumulativeBuybackClamAmount: BigInt!
+  cumulativeBuybackMarketValue: BigDecimal!
 }
 
 type APY @entity {
@@ -245,4 +247,10 @@ type APY @entity {
   rebaseReward: BigDecimal!
   apy: BigDecimal!
   clamDistributed: BigInt!
+}
+
+type TotalBuybacks @entity {
+  id: ID!
+  boughtClam: BigInt!
+  boughtMarketValue: BigDecimal!
 }

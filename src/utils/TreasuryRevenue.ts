@@ -1,7 +1,7 @@
 import { toDecimal } from './Decimals'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { dayFromTimestamp } from './Dates'
-import { TreasuryRevenue, Transaction, Harvest, Transfer, Buyback } from '../../generated/schema'
+import { TreasuryRevenue, Transaction, Harvest, Transfer, Buyback, TotalBuybacks } from '../../generated/schema'
 import { getQiMarketValue } from './ProtocolMetrics'
 import {
   QI_ERC20_CONTRACT,
@@ -27,6 +27,8 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
     treasuryRevenue.totalRevenueClamAmount = BigInt.fromString('0')
     treasuryRevenue.buybackClamAmount = BigInt.fromString('0')
     treasuryRevenue.buybackMarketValue = BigDecimal.fromString('0')
+    treasuryRevenue.cumulativeBuybackClamAmount = BigInt.fromString('0')
+    treasuryRevenue.cumulativeBuybackMarketValue = BigDecimal.fromString('0')
 
     treasuryRevenue.save()
   }
@@ -55,6 +57,7 @@ export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
 
   treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
   treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
+
   treasuryRevenue.save()
 }
 export function updateTreasuryRevenueTransfer(transfer: Transfer): void {
@@ -88,18 +91,17 @@ export function updateTreasuryRevenueTransfer(transfer: Transfer): void {
 export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
   log.debug('DeprecatedBuybackEvent, txid: {}, token: ', [buyback.id, buyback.token.toHexString()])
   let treasuryRevenue = loadOrCreateTreasuryRevenue(buyback.timestamp)
+  let marketValue = BigDecimal.fromString('0')
 
   treasuryRevenue.buybackClamAmount = treasuryRevenue.buybackClamAmount.plus(buyback.clamAmount)
   if (buyback.token.toHexString().toLowerCase() == QI_ERC20_CONTRACT.toLowerCase()) {
-    treasuryRevenue.buybackMarketValue = treasuryRevenue.buybackMarketValue.plus(
-      getQiMarketValue(toDecimal(buyback.tokenAmount, 18)),
-    )
+    marketValue = getQiMarketValue(toDecimal(buyback.tokenAmount, 18))
+    treasuryRevenue.buybackMarketValue = treasuryRevenue.buybackMarketValue.plus(marketValue)
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
   if (buyback.token.toHexString().toLowerCase() == MATIC_ERC20_CONTRACT.toLowerCase()) {
-    treasuryRevenue.buybackMarketValue = treasuryRevenue.buybackMarketValue.plus(
-      getwMATICMarketValue(toDecimal(buyback.tokenAmount, 18)),
-    )
+    marketValue = getwMATICMarketValue(toDecimal(buyback.tokenAmount, 18))
+    treasuryRevenue.buybackMarketValue = treasuryRevenue.buybackMarketValue.plus(marketValue)
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
   //stablecoins (18 decimals)
@@ -108,9 +110,19 @@ export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
     buyback.token.toHexString().toLowerCase() == FRAX_ERC20_CONTRACT.toLowerCase() ||
     buyback.token.toHexString().toLowerCase() == MAI_ERC20_CONTRACT.toLowerCase()
   ) {
-    treasuryRevenue.buybackMarketValue = treasuryRevenue.buybackMarketValue.plus(toDecimal(buyback.tokenAmount, 18))
+    marketValue = toDecimal(buyback.tokenAmount, 18)
+    treasuryRevenue.buybackMarketValue = treasuryRevenue.buybackMarketValue.plus(marketValue)
     log.debug('BuybackEvent using Stablecoins, txid: {}', [buyback.id])
   }
+
+  //Aggregate all history with singleton pattern
+  let cumulativeBuybacks = loadOrCreateTotalBuybacksSingleton()
+  cumulativeBuybacks.boughtClam = cumulativeBuybacks.boughtClam.plus(buyback.clamAmount)
+  cumulativeBuybacks.boughtMarketValue = cumulativeBuybacks.boughtMarketValue.plus(marketValue)
+  cumulativeBuybacks.save()
+
+  treasuryRevenue.cumulativeBuybackClamAmount = cumulativeBuybacks.boughtClam
+  treasuryRevenue.cumulativeBuybackMarketValue = cumulativeBuybacks.boughtMarketValue
 
   treasuryRevenue.save()
 }
@@ -122,4 +134,14 @@ export function getwMATICMarketValue(balance: BigDecimal): BigDecimal {
   let marketValue = balance.times(usdPerwMATIC)
   log.debug('wMATIC marketValue = {}', [marketValue.toString()])
   return marketValue
+}
+
+export function loadOrCreateTotalBuybacksSingleton(): TotalBuybacks {
+  let total = TotalBuybacks.load('1')
+  if (total == null) {
+    total = new TotalBuybacks('1')
+    total.boughtClam = BigInt.fromString('0')
+    total.boughtMarketValue = BigDecimal.fromString('0')
+  }
+  return total
 }

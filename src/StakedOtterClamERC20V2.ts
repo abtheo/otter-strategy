@@ -96,8 +96,8 @@ export function calculateApy(timestamp: BigInt): void {
   }
 
   //fetch last N days of revenue and take average
-  //does not include today (avoid calculating before all revenue is collected)
-  dayCounter = day
+  //does not include today (avoid calculating days before all revenue is collected)
+  dayCounter = day - 86400
   let pastRevenues = [] as BigDecimal[]
   while (pastRevenues.length < N && dayCounter > maxLookback) {
     let revenue = TreasuryRevenue.load(dayCounter.toString())
@@ -112,23 +112,22 @@ export function calculateApy(timestamp: BigInt): void {
     return
   }
 
-  //in CLAMS per rebase, averaged over N days
+  //in CLAMS per rebase, averaged over N days*3rebases
   let rebaseRevenue = pastRevenues
     .reduce((x, y) => x.plus(y), BigDecimal.fromString('0'))
     .div(
       BigInt.fromI32(pastRevenues.length)
-        .times(BigInt.fromString(N.toString()))
+        .times(BigInt.fromString('3'))
         .toBigDecimal(),
     )
 
-  //d = (price / backing)
-  let delta_price = lastMetrics.clamPrice.div(lastMetrics.treasuryMarketValue.div(lastMetrics.sClamCirculatingSupply))
-  // .plus(ONE)
+  //d = (price / backing) + 1
+  let delta_price = lastMetrics.clamPrice
+    .div(lastMetrics.treasuryMarketValue.div(lastMetrics.sClamCirculatingSupply))
+    .plus(ONE)
 
   //rr = (d^p * R) / sCLAM
-  //p=2 for now
-  let rebaseReward = delta_price
-    .times(delta_price)
+  let rebaseReward = BigDecimal.fromString(Math.pow(Number.parseFloat(delta_price.toString()), 2.75).toString())
     .times(rebaseRevenue)
     .div(lastMetrics.sClamCirculatingSupply)
 

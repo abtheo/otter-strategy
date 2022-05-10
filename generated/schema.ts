@@ -2314,6 +2314,11 @@ export class TreasuryRevenue extends Entity {
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set("totalRevenueClamAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("cumulativeBuybackClamAmount", Value.fromBigInt(BigInt.zero()));
+    this.set(
+      "cumulativeBuybackMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
   }
 
   save(): void {
@@ -2422,6 +2427,24 @@ export class TreasuryRevenue extends Entity {
   set totalRevenueClamAmount(value: BigInt) {
     this.set("totalRevenueClamAmount", Value.fromBigInt(value));
   }
+
+  get cumulativeBuybackClamAmount(): BigInt {
+    let value = this.get("cumulativeBuybackClamAmount");
+    return value!.toBigInt();
+  }
+
+  set cumulativeBuybackClamAmount(value: BigInt) {
+    this.set("cumulativeBuybackClamAmount", Value.fromBigInt(value));
+  }
+
+  get cumulativeBuybackMarketValue(): BigDecimal {
+    let value = this.get("cumulativeBuybackMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set cumulativeBuybackMarketValue(value: BigDecimal) {
+    this.set("cumulativeBuybackMarketValue", Value.fromBigDecimal(value));
+  }
 }
 
 export class APY extends Entity {
@@ -2495,5 +2518,59 @@ export class APY extends Entity {
 
   set clamDistributed(value: BigInt) {
     this.set("clamDistributed", Value.fromBigInt(value));
+  }
+}
+
+export class TotalBuybacks extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("boughtClam", Value.fromBigInt(BigInt.zero()));
+    this.set("boughtMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save TotalBuybacks entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save TotalBuybacks entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("TotalBuybacks", id.toString(), this);
+    }
+  }
+
+  static load(id: string): TotalBuybacks | null {
+    return changetype<TotalBuybacks | null>(store.get("TotalBuybacks", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get boughtClam(): BigInt {
+    let value = this.get("boughtClam");
+    return value!.toBigInt();
+  }
+
+  set boughtClam(value: BigInt) {
+    this.set("boughtClam", Value.fromBigInt(value));
+  }
+
+  get boughtMarketValue(): BigDecimal {
+    let value = this.get("boughtMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set boughtMarketValue(value: BigDecimal) {
+    this.set("boughtMarketValue", Value.fromBigDecimal(value));
   }
 }

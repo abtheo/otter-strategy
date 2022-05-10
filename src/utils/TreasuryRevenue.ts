@@ -30,6 +30,10 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
     treasuryRevenue.cumulativeBuybackClamAmount = BigInt.fromString('0')
     treasuryRevenue.cumulativeBuybackMarketValue = BigDecimal.fromString('0')
 
+    let cumulativeBuybacks = loadOrCreateTotalBuybacksSingleton()
+    treasuryRevenue.cumulativeBuybackClamAmount = cumulativeBuybacks.boughtClam
+    treasuryRevenue.cumulativeBuybackMarketValue = cumulativeBuybacks.boughtMarketValue
+
     treasuryRevenue.save()
   }
   return treasuryRevenue as TreasuryRevenue

@@ -127,7 +127,7 @@ export function calculateApy(timestamp: BigInt): void {
     .plus(ONE)
 
   //rr = (d^p * R) / sCLAM
-  let rebaseReward = BigDecimal.fromString(Math.pow(Number.parseFloat(delta_price.toString()), 2.75).toString())
+  let rebaseReward = BigDecimal.fromString(Math.pow(Number.parseFloat(delta_price.toString()), 2.25).toString())
     .times(rebaseRevenue)
     .div(lastMetrics.sClamCirculatingSupply)
 

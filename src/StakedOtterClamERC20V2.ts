@@ -23,7 +23,9 @@ import { updateProtocolMetrics } from './utils/ProtocolMetrics'
 const CLAM_DECIMALS = BigDecimal.fromString('1e9')
 const ONE = BigDecimal.fromString('1')
 //num days to average signal over
-const N = 5
+const N = 14
+//how far into the past we search to find N days of data
+const maxLookbackDays = 21
 
 export function handleLogRebase(event: LogRebaseEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
@@ -77,7 +79,7 @@ R= revenue (clam)
 */
 export function calculateApy(timestamp: BigInt): void {
   let day = timestamp.toI32() - (timestamp.toI32() % 86400)
-  let maxLookback = day - 86400 * 14 //look max 14 days in past
+  let maxLookback = day - 86400 * maxLookbackDays //look up to max days in past
 
   //only track after block 24088468 == 24-01-2022 UTC
   if (day < 1642978799) {

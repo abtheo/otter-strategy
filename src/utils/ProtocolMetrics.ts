@@ -542,7 +542,7 @@ function getAPY_Rebase(sCLAM: BigDecimal, distributedCLAM: BigDecimal): BigDecim
   let nextEpochRebase = distributedCLAM.div(sCLAM).times(BigDecimal.fromString('100'))
 
   let nextEpochRebase_number = Number.parseFloat(nextEpochRebase.toString())
-  let currentAPY = Math.pow(nextEpochRebase_number / 100 + 1, 1095) * 100
+  let currentAPY = (Math.pow(nextEpochRebase_number / 100 + 1, 1095)-1) * 100
 
   let currentAPYdecimal = BigDecimal.fromString(currentAPY.toString())
 
@@ -615,28 +615,32 @@ function getAPY_PearlChest(nextEpochRebase: BigDecimal): BigDecimal[] {
     safePearlBalance.toString(),
   ])
   let safeHandAPY =
-    Math.pow(1 + (safeBoostPoint / totalBoostPoint) * (totalNextReward / safePearlBalance) + rebaseRate, 1095) * 100
+    (Math.pow(1 + (safeBoostPoint / totalBoostPoint) * (totalNextReward / safePearlBalance) + rebaseRate, 1095) - 1) *
+    100
   log.debug('pearl chest safeHandAPY = {}', [safeHandAPY.toString()])
   log.debug('pearl chest furryBoostPoint = {}, furryPearlBalance = {}', [
     furryBoostPoint.toString(),
     furryPearlBalance.toString(),
   ])
   let furryHandAPY =
-    Math.pow(1 + (furryBoostPoint / totalBoostPoint) * (totalNextReward / furryPearlBalance) + rebaseRate, 1095) * 100
+    (Math.pow(1 + (furryBoostPoint / totalBoostPoint) * (totalNextReward / furryPearlBalance) + rebaseRate, 1095) - 1) *
+    100
   log.debug('pearl chest furryHandAPY = {}', [furryHandAPY.toString()])
   log.debug('pearl chest stoneBoostPoint = {}, stonePearlBalance = {}', [
     stoneBoostPoint.toString(),
     stonePearlBalance.toString(),
   ])
   let stoneHandAPY =
-    Math.pow(1 + (stoneBoostPoint / totalBoostPoint) * (totalNextReward / stonePearlBalance) + rebaseRate, 1095) * 100
+    (Math.pow(1 + (stoneBoostPoint / totalBoostPoint) * (totalNextReward / stonePearlBalance) + rebaseRate, 1095) - 1) *
+    100
   log.debug('pearl chest stoneHandAPY = {}', [stoneHandAPY.toString()])
   log.debug('pearl chest diamonBoostPoint = {}, diamondPearlBalance = {}', [
     diamondBoostPoint.toString(),
     diamondPearlBalance.toString(),
   ])
   let diamondHandAPY =
-    Math.pow(1 + (diamondBoostPoint / totalBoostPoint) * (totalNextReward / diamondPearlBalance) + rebaseRate, 1095) *
+    (Math.pow(1 + (diamondBoostPoint / totalBoostPoint) * (totalNextReward / diamondPearlBalance) + rebaseRate, 1095) -
+      1) *
     100
   log.debug('pearl chest diamondHandAPY = {}', [stoneHandAPY.toString()])
   return [

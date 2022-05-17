@@ -21,13 +21,13 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
     treasuryRevenue.timestamp = timestamp
     treasuryRevenue.qiLockerHarvestAmount = BigInt.fromString('0')
     treasuryRevenue.qiLockerHarvestMarketValue = BigDecimal.fromString('0')
-    treasuryRevenue.qiDaoInvestmentHarvestAmount = BigInt.fromString('0')
+    treasuryRevenue.qiDaoInvestmentHarvestAmount = BigDecimal.fromString('0')
     treasuryRevenue.qiDaoInvestmentHarvestMarketValue = BigDecimal.fromString('0')
     treasuryRevenue.totalRevenueMarketValue = BigDecimal.fromString('0')
-    treasuryRevenue.totalRevenueClamAmount = BigInt.fromString('0')
-    treasuryRevenue.buybackClamAmount = BigInt.fromString('0')
+    treasuryRevenue.totalRevenueClamAmount = BigDecimal.fromString('0')
+    treasuryRevenue.buybackClamAmount = BigDecimal.fromString('0')
     treasuryRevenue.buybackMarketValue = BigDecimal.fromString('0')
-    treasuryRevenue.cumulativeBuybackClamAmount = BigInt.fromString('0')
+    treasuryRevenue.cumulativeBuybackClamAmount = BigDecimal.fromString('0')
     treasuryRevenue.cumulativeBuybackMarketValue = BigDecimal.fromString('0')
 
     let cumulativeBuybacks = loadOrCreateTotalBuybacksSingleton()
@@ -42,13 +42,10 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
 export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(harvest.timestamp)
   let qiMarketValue = getQiMarketValue(toDecimal(harvest.amount, 18))
-  let clamAmount = BigInt.fromString(
-    qiMarketValue
-      .div(getClamUsdRate())
-      .times(BigDecimal.fromString('1e9'))
-      .truncate(0)
-      .toString(),
-  )
+  let clamAmount = qiMarketValue.div(getClamUsdRate())
+  // .times(BigDecimal.fromString('1e9'))
+  // .truncate(0)
+
   log.debug('HarvestEvent, txid: {}, qiMarketValue {}, clamAmount {}', [
     harvest.id,
     qiMarketValue.toString(),
@@ -68,20 +65,17 @@ export function updateTreasuryRevenueTransfer(transfer: Transfer): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
 
   let qiMarketValue = getQiMarketValue(toDecimal(transfer.value, 18))
-  let clamAmount = BigInt.fromString(
-    qiMarketValue
-      .div(getClamUsdRate())
-      .times(BigDecimal.fromString('1e9'))
-      .truncate(0)
-      .toString(),
-  )
+  let clamAmount = qiMarketValue.div(getClamUsdRate())
+
   log.debug('TransferEvent, txid: {}, qiMarketValue {}, clamAmount: {}', [
     transfer.id,
     qiMarketValue.toString(),
     clamAmount.toString(),
   ])
 
-  treasuryRevenue.qiDaoInvestmentHarvestAmount = treasuryRevenue.qiDaoInvestmentHarvestAmount.plus(transfer.value)
+  treasuryRevenue.qiDaoInvestmentHarvestAmount = treasuryRevenue.qiDaoInvestmentHarvestAmount.plus(
+    toDecimal(transfer.value, 18),
+  )
   treasuryRevenue.qiDaoInvestmentHarvestMarketValue = treasuryRevenue.qiDaoInvestmentHarvestMarketValue.plus(
     qiMarketValue,
   )
@@ -93,11 +87,13 @@ export function updateTreasuryRevenueTransfer(transfer: Transfer): void {
 }
 
 export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
-  log.debug('DeprecatedBuybackEvent, txid: {}, token: ', [buyback.id, buyback.token.toHexString()])
+  log.debug('BuybackEvent, txid: {}, token: ', [buyback.id, buyback.token.toHexString()])
   let treasuryRevenue = loadOrCreateTreasuryRevenue(buyback.timestamp)
   let marketValue = BigDecimal.fromString('0')
+  // let clamAmountDec = toDecimal(buyback.clamAmount, 9)
+  let clamAmountDec = buyback.clamAmount.divDecimal(BigDecimal.fromString('1e9'))
 
-  treasuryRevenue.buybackClamAmount = treasuryRevenue.buybackClamAmount.plus(buyback.clamAmount)
+  treasuryRevenue.buybackClamAmount = treasuryRevenue.buybackClamAmount.plus(clamAmountDec)
   if (buyback.token.toHexString().toLowerCase() == QI_ERC20_CONTRACT.toLowerCase()) {
     marketValue = getQiMarketValue(toDecimal(buyback.tokenAmount, 18))
     treasuryRevenue.buybackMarketValue = treasuryRevenue.buybackMarketValue.plus(marketValue)
@@ -121,7 +117,7 @@ export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
 
   //Aggregate all history with singleton pattern
   let cumulativeBuybacks = loadOrCreateTotalBuybacksSingleton()
-  cumulativeBuybacks.boughtClam = cumulativeBuybacks.boughtClam.plus(buyback.clamAmount)
+  cumulativeBuybacks.boughtClam = cumulativeBuybacks.boughtClam.plus(clamAmountDec)
   cumulativeBuybacks.boughtMarketValue = cumulativeBuybacks.boughtMarketValue.plus(marketValue)
   cumulativeBuybacks.save()
 
@@ -144,7 +140,7 @@ export function loadOrCreateTotalBuybacksSingleton(): TotalBuybacks {
   let total = TotalBuybacks.load('1')
   if (total == null) {
     total = new TotalBuybacks('1')
-    total.boughtClam = BigInt.fromString('0')
+    total.boughtClam = BigDecimal.fromString('0')
     total.boughtMarketValue = BigDecimal.fromString('0')
   }
   return total

@@ -2302,19 +2302,25 @@ export class TreasuryRevenue extends Entity {
       "qiLockerHarvestMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
-    this.set("qiDaoInvestmentHarvestAmount", Value.fromBigInt(BigInt.zero()));
+    this.set(
+      "qiDaoInvestmentHarvestAmount",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
     this.set(
       "qiDaoInvestmentHarvestMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
-    this.set("buybackClamAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("buybackClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("buybackMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("totalRevenueClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalRevenueMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
-    this.set("totalRevenueClamAmount", Value.fromBigInt(BigInt.zero()));
-    this.set("cumulativeBuybackClamAmount", Value.fromBigInt(BigInt.zero()));
+    this.set(
+      "cumulativeBuybackClamAmount",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
     this.set(
       "cumulativeBuybackMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
@@ -2374,13 +2380,13 @@ export class TreasuryRevenue extends Entity {
     this.set("qiLockerHarvestMarketValue", Value.fromBigDecimal(value));
   }
 
-  get qiDaoInvestmentHarvestAmount(): BigInt {
+  get qiDaoInvestmentHarvestAmount(): BigDecimal {
     let value = this.get("qiDaoInvestmentHarvestAmount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set qiDaoInvestmentHarvestAmount(value: BigInt) {
-    this.set("qiDaoInvestmentHarvestAmount", Value.fromBigInt(value));
+  set qiDaoInvestmentHarvestAmount(value: BigDecimal) {
+    this.set("qiDaoInvestmentHarvestAmount", Value.fromBigDecimal(value));
   }
 
   get qiDaoInvestmentHarvestMarketValue(): BigDecimal {
@@ -2392,13 +2398,13 @@ export class TreasuryRevenue extends Entity {
     this.set("qiDaoInvestmentHarvestMarketValue", Value.fromBigDecimal(value));
   }
 
-  get buybackClamAmount(): BigInt {
+  get buybackClamAmount(): BigDecimal {
     let value = this.get("buybackClamAmount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set buybackClamAmount(value: BigInt) {
-    this.set("buybackClamAmount", Value.fromBigInt(value));
+  set buybackClamAmount(value: BigDecimal) {
+    this.set("buybackClamAmount", Value.fromBigDecimal(value));
   }
 
   get buybackMarketValue(): BigDecimal {
@@ -2410,6 +2416,15 @@ export class TreasuryRevenue extends Entity {
     this.set("buybackMarketValue", Value.fromBigDecimal(value));
   }
 
+  get totalRevenueClamAmount(): BigDecimal {
+    let value = this.get("totalRevenueClamAmount");
+    return value!.toBigDecimal();
+  }
+
+  set totalRevenueClamAmount(value: BigDecimal) {
+    this.set("totalRevenueClamAmount", Value.fromBigDecimal(value));
+  }
+
   get totalRevenueMarketValue(): BigDecimal {
     let value = this.get("totalRevenueMarketValue");
     return value!.toBigDecimal();
@@ -2419,22 +2434,13 @@ export class TreasuryRevenue extends Entity {
     this.set("totalRevenueMarketValue", Value.fromBigDecimal(value));
   }
 
-  get totalRevenueClamAmount(): BigInt {
-    let value = this.get("totalRevenueClamAmount");
-    return value!.toBigInt();
-  }
-
-  set totalRevenueClamAmount(value: BigInt) {
-    this.set("totalRevenueClamAmount", Value.fromBigInt(value));
-  }
-
-  get cumulativeBuybackClamAmount(): BigInt {
+  get cumulativeBuybackClamAmount(): BigDecimal {
     let value = this.get("cumulativeBuybackClamAmount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set cumulativeBuybackClamAmount(value: BigInt) {
-    this.set("cumulativeBuybackClamAmount", Value.fromBigInt(value));
+  set cumulativeBuybackClamAmount(value: BigDecimal) {
+    this.set("cumulativeBuybackClamAmount", Value.fromBigDecimal(value));
   }
 
   get cumulativeBuybackMarketValue(): BigDecimal {
@@ -2456,6 +2462,7 @@ export class APY extends Entity {
     this.set("rebaseReward", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("apy", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("clamDistributed", Value.fromBigInt(BigInt.zero()));
+    this.set("clamDistributedDecimal", Value.fromBigDecimal(BigDecimal.zero()));
   }
 
   save(): void {
@@ -2519,6 +2526,15 @@ export class APY extends Entity {
   set clamDistributed(value: BigInt) {
     this.set("clamDistributed", Value.fromBigInt(value));
   }
+
+  get clamDistributedDecimal(): BigDecimal {
+    let value = this.get("clamDistributedDecimal");
+    return value!.toBigDecimal();
+  }
+
+  set clamDistributedDecimal(value: BigDecimal) {
+    this.set("clamDistributedDecimal", Value.fromBigDecimal(value));
+  }
 }
 
 export class TotalBuybacks extends Entity {
@@ -2526,7 +2542,7 @@ export class TotalBuybacks extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("boughtClam", Value.fromBigInt(BigInt.zero()));
+    this.set("boughtClam", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("boughtMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
   }
 
@@ -2556,13 +2572,13 @@ export class TotalBuybacks extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get boughtClam(): BigInt {
+  get boughtClam(): BigDecimal {
     let value = this.get("boughtClam");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set boughtClam(value: BigInt) {
-    this.set("boughtClam", Value.fromBigInt(value));
+  set boughtClam(value: BigDecimal) {
+    this.set("boughtClam", Value.fromBigDecimal(value));
   }
 
   get boughtMarketValue(): BigDecimal {

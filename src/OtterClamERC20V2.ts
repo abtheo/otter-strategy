@@ -45,7 +45,7 @@ export function handleTransfer(event: TransferEvent): void {
     revenue.ottopiaClamAmount = revenue.ottopiaClamAmount.plus(recievedClam)
     revenue.ottopiaMarketValue = revenue.ottopiaMarketValue.plus(clamMarketValue)
 
-    //add to total revenue (?)
+    //add to total revenue
     revenue.totalRevenueClamAmount = revenue.totalRevenueClamAmount.plus(recievedClam)
     revenue.totalRevenueMarketValue = revenue.totalRevenueMarketValue.plus(clamMarketValue)
 

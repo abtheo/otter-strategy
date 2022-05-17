@@ -30,6 +30,8 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
     treasuryRevenue.buybackMarketValue = BigDecimal.fromString('0')
     treasuryRevenue.cumulativeBuybackClamAmount = BigDecimal.fromString('0')
     treasuryRevenue.cumulativeBuybackMarketValue = BigDecimal.fromString('0')
+    treasuryRevenue.yieldClamAmount = BigDecimal.fromString('0')
+    treasuryRevenue.yieldMarketValue = BigDecimal.fromString('0')
 
     let cumulativeBuybacks = loadOrCreateTotalBuybacksSingleton()
     treasuryRevenue.cumulativeBuybackClamAmount = cumulativeBuybacks.boughtClam
@@ -55,8 +57,11 @@ export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
   treasuryRevenue.qiLockerHarvestAmount = treasuryRevenue.qiLockerHarvestAmount.plus(qi)
   treasuryRevenue.qiLockerHarvestMarketValue = treasuryRevenue.qiLockerHarvestMarketValue.plus(qiMarketValue)
 
-  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
+  treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
+  treasuryRevenue.yieldMarketValue = treasuryRevenue.yieldMarketValue.plus(qiMarketValue)
+
   treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
+  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
 
   treasuryRevenue.save()
 }
@@ -79,8 +84,11 @@ export function updateTreasuryRevenueTransfer(transfer: Transfer): void {
     qiMarketValue,
   )
 
-  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
+  treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
+  treasuryRevenue.yieldMarketValue = treasuryRevenue.yieldMarketValue.plus(qiMarketValue)
+
   treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
+  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
 
   treasuryRevenue.save()
 }
@@ -132,7 +140,7 @@ export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
 }
 
 export function getwMATICMarketValue(balance: BigDecimal): BigDecimal {
-  let usdPerwMATIC = getwEthUsdRate()
+  let usdPerwMATIC = getwMaticUsdRate()
   log.debug('1 wMATIC = {} USD', [usdPerwMATIC.toString()])
 
   let marketValue = balance.times(usdPerwMATIC)

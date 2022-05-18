@@ -429,9 +429,11 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
   }
   if (transaction.blockNumber.gt(BigInt.fromString(XTETU_QI_START_BLOCK))) {
     tetuQiMarketValue = tetuQiMarketValue.plus(
-      toDecimal(
-        xTetuQiERC20.underlyingBalanceWithInvestmentForHolder(Address.fromString(TREASURY_ADDRESS)),
-        xTetuQiERC20.decimals(),
+      getQiMarketValue(
+        toDecimal(
+          xTetuQiERC20.underlyingBalanceWithInvestmentForHolder(Address.fromString(TREASURY_ADDRESS)),
+          xTetuQiERC20.decimals(),
+        ),
       ),
     )
   }
@@ -542,7 +544,7 @@ function getAPY_Rebase(sCLAM: BigDecimal, distributedCLAM: BigDecimal): BigDecim
   let nextEpochRebase = distributedCLAM.div(sCLAM).times(BigDecimal.fromString('100'))
 
   let nextEpochRebase_number = Number.parseFloat(nextEpochRebase.toString())
-  let currentAPY = (Math.pow(nextEpochRebase_number / 100 + 1, 1095)-1) * 100
+  let currentAPY = (Math.pow(nextEpochRebase_number / 100 + 1, 1095) - 1) * 100
 
   let currentAPYdecimal = BigDecimal.fromString(currentAPY.toString())
 

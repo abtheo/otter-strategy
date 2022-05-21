@@ -4,6 +4,7 @@ import {
   USDC_MATIC_AGGREGATOR,
   UNI_QI_WMATIC_PAIR,
   UNI_QUICK_WMATIC_PAIR,
+  UNI_WETH_USDC_PAIR,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
@@ -48,6 +49,25 @@ export function getQuickUsdRate(): BigDecimal {
     usdPerQuick.toString(),
   ])
   return usdPerQuick
+}
+
+export function getwEthUsdRate(): BigDecimal {
+  let pair = UniswapV2Pair.bind(Address.fromString(UNI_WETH_USDC_PAIR))
+
+  let reserves = pair.getReserves()
+  let weth = reserves.value1.toBigDecimal()
+  let usdc = reserves.value0.toBigDecimal()
+  log.debug('pair reserve0 {}, reserve1 {}', [weth.toString(), usdc.toString()])
+
+  if (weth.equals(BigDecimal.zero())) {
+    log.debug('getwethRate div {}', [weth.toString()])
+    return BigDecimal.zero()
+  }
+
+  let wethRate = usdc.div(BigDecimal.fromString('1e6')).div(weth)
+  log.debug('weth rate {}', [wethRate.toString()])
+
+  return wethRate
 }
 
 export function getClamUsdRate(): BigDecimal {

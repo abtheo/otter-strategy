@@ -23,7 +23,9 @@ import { updateProtocolMetrics } from './utils/ProtocolMetrics'
 const CLAM_DECIMALS = BigDecimal.fromString('1e9')
 const ONE = BigDecimal.fromString('1')
 //num days to average signal over
-const N = 5
+const N = 14
+//how far into the past we search to find N days of data
+const maxLookbackDays = 21
 
 export function handleLogRebase(event: LogRebaseEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
@@ -77,7 +79,7 @@ R= revenue (clam)
 */
 export function calculateApy(timestamp: BigInt): void {
   let day = timestamp.toI32() - (timestamp.toI32() % 86400)
-  let maxLookback = day - 86400 * 14 //look max 14 days in past
+  let maxLookback = day - 86400 * maxLookbackDays //look up to max days in past
 
   //only track after block 24088468 == 24-01-2022 UTC
   if (day < 1642978799) {
@@ -102,7 +104,7 @@ export function calculateApy(timestamp: BigInt): void {
   while (pastRevenues.length < N && dayCounter > maxLookback) {
     let revenue = TreasuryRevenue.load(dayCounter.toString())
     if (revenue != null) {
-      let clamRevenue = revenue.totalRevenueClamAmount.divDecimal(CLAM_DECIMALS)
+      let clamRevenue = revenue.totalRevenueClamAmount
       pastRevenues.push(clamRevenue)
     }
     dayCounter = dayCounter - 86400 //-1day
@@ -112,7 +114,7 @@ export function calculateApy(timestamp: BigInt): void {
     return
   }
 
-  //in CLAMS per rebase, averaged over N days*3rebases
+  //in CLAMS per rebase, averaged over N days*3 rebases
   let rebaseRevenue = pastRevenues
     .reduce((x, y) => x.plus(y), BigDecimal.fromString('0'))
     .div(
@@ -122,14 +124,14 @@ export function calculateApy(timestamp: BigInt): void {
     )
 
   //d = (price / backing) + 1
-  let delta_price = lastMetrics.clamPrice
-    .div(lastMetrics.treasuryMarketValue.div(lastMetrics.sClamCirculatingSupply))
-    .plus(ONE)
+  let delta_price = lastMetrics.clamPrice.div(lastMetrics.treasuryMarketValue.div(lastMetrics.sClamCirculatingSupply))
+  // .plus(ONE)
 
   //rr = (d^p * R) / sCLAM
-  let rebaseReward = BigDecimal.fromString(Math.pow(Number.parseFloat(delta_price.toString()), 2.25).toString())
-    .times(rebaseRevenue)
-    .div(lastMetrics.sClamCirculatingSupply)
+  // let rebaseReward = BigDecimal.fromString(Math.pow(Number.parseFloat(delta_price.toString()), 2.25).toString())
+  // .times(delta_price)
+  // .times(rebaseRevenue)
+  let rebaseReward = rebaseRevenue.div(lastMetrics.sClamCirculatingSupply)
 
   // ((1+rr)^(3*365) - 1) * 100% = APY%
   let apy = BigDecimal.fromString(Math.pow(Number.parseFloat(rebaseReward.plus(ONE).toString()), 365 * 3).toString())

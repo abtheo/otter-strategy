@@ -229,15 +229,19 @@ type Harvest @entity {
 type TreasuryRevenue @entity {
   id: ID!
   timestamp: BigInt!
-  qiLockerHarvestAmount: BigInt!
+  qiLockerHarvestAmount: BigDecimal!
   qiLockerHarvestMarketValue: BigDecimal!
-  qiDaoInvestmentHarvestAmount: BigInt!
+  qiDaoInvestmentHarvestAmount: BigDecimal!
   qiDaoInvestmentHarvestMarketValue: BigDecimal!
-  buybackClamAmount: BigInt!
+  ottopiaClamAmount: BigDecimal!
+  ottopiaMarketValue: BigDecimal!
+  buybackClamAmount: BigDecimal!
   buybackMarketValue: BigDecimal!
+  yieldClamAmount: BigDecimal!
+  yieldMarketValue: BigDecimal!
+  totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
-  totalRevenueClamAmount: BigInt!
-  cumulativeBuybackClamAmount: BigInt!
+  cumulativeBuybackClamAmount: BigDecimal!
   cumulativeBuybackMarketValue: BigDecimal!
 }
 
@@ -247,10 +251,11 @@ type APY @entity {
   rebaseReward: BigDecimal!
   apy: BigDecimal!
   clamDistributed: BigInt!
+  clamDistributedDecimal: BigDecimal!
 }
 
 type TotalBuybacks @entity {
   id: ID!
-  boughtClam: BigInt!
+  boughtClam: BigDecimal!
   boughtMarketValue: BigDecimal!
 }

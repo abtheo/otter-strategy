@@ -5,11 +5,13 @@ import {
   UNI_QI_WMATIC_PAIR,
   UNI_QUICK_WMATIC_PAIR,
   UNI_WETH_USDC_PAIR,
+  DYSTOPIA_PAIR_WMATIC_DYST,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
 import { AggregatorV3InterfaceABI } from '../../generated/OtterTreasury/AggregatorV3InterfaceABI'
 import { toDecimal } from './Decimals'
+import { DystPair } from '../../generated/Dyst/DystPair'
 
 let BIG_DECIMAL_1E9 = BigDecimal.fromString('1e9')
 let BIG_DECIMAL_1E12 = BigDecimal.fromString('1e12')
@@ -29,6 +31,21 @@ export function getQiUsdRate(): BigDecimal {
   log.debug('wmatic = {}, qi = {}, 1 qi = {} wmatic = {} USD', [
     wmatic.toString(),
     qi.toString(),
+    wmaticPerQi.toString(),
+    usdPerQi.toString(),
+  ])
+  return usdPerQi
+}
+
+export function getDystUsdRate(): BigDecimal {
+  let lp = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_WMATIC_DYST))
+  let wmatic = toDecimal(lp.getReserves().value0, 18)
+  let dyst = toDecimal(lp.getReserves().value1, 18)
+  let wmaticPerQi = wmatic.div(dyst)
+  let usdPerQi = wmaticPerQi.times(getwMaticUsdRate())
+  log.debug('wmatic = {}, dyst = {}, 1 dyst = {} wmatic = {} USD', [
+    wmatic.toString(),
+    dyst.toString(),
     wmaticPerQi.toString(),
     usdPerQi.toString(),
   ])
@@ -130,4 +147,31 @@ export function getPairWMATIC(lp_amount: BigInt, pair_adress: string): BigDecima
   let total_lp_usd = clam_value.plus(matic_value)
 
   return ownedLP.times(total_lp_usd)
+}
+
+export function getwMATICMarketValue(balance: BigDecimal): BigDecimal {
+  let usdPerwMATIC = getwMaticUsdRate()
+  log.debug('1 wMATIC = {} USD', [usdPerwMATIC.toString()])
+
+  let marketValue = balance.times(usdPerwMATIC)
+  log.debug('wMATIC marketValue = {}', [marketValue.toString()])
+  return marketValue
+}
+
+export function getwETHMarketValue(balance: BigDecimal): BigDecimal {
+  let usdPerwETH = getwEthUsdRate()
+  log.debug('1 wETH = {} USD', [usdPerwETH.toString()])
+
+  let marketValue = balance.times(usdPerwETH)
+  log.debug('wETH marketValue = {}', [marketValue.toString()])
+  return marketValue
+}
+
+export function getDystMarketValue(balance: BigDecimal): BigDecimal {
+  let usdPerDYST = getDystUsdRate()
+  log.debug('1 DYST = {} USD', [usdPerDYST.toString()])
+
+  let marketValue = balance.times(usdPerDYST)
+  log.debug('DYST marketValue = {}', [marketValue.toString()])
+  return marketValue
 }

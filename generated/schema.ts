@@ -2297,19 +2297,10 @@ export class TreasuryRevenue extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
-    this.set("qiLockerHarvestAmount", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set(
-      "qiLockerHarvestMarketValue",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
-    this.set(
-      "qiDaoInvestmentHarvestAmount",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
-    this.set(
-      "qiDaoInvestmentHarvestMarketValue",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
+    this.set("qiAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("qiMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("dystAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("dystMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("buybackClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
@@ -2366,40 +2357,40 @@ export class TreasuryRevenue extends Entity {
     this.set("timestamp", Value.fromBigInt(value));
   }
 
-  get qiLockerHarvestAmount(): BigDecimal {
-    let value = this.get("qiLockerHarvestAmount");
+  get qiAmount(): BigDecimal {
+    let value = this.get("qiAmount");
     return value!.toBigDecimal();
   }
 
-  set qiLockerHarvestAmount(value: BigDecimal) {
-    this.set("qiLockerHarvestAmount", Value.fromBigDecimal(value));
+  set qiAmount(value: BigDecimal) {
+    this.set("qiAmount", Value.fromBigDecimal(value));
   }
 
-  get qiLockerHarvestMarketValue(): BigDecimal {
-    let value = this.get("qiLockerHarvestMarketValue");
+  get qiMarketValue(): BigDecimal {
+    let value = this.get("qiMarketValue");
     return value!.toBigDecimal();
   }
 
-  set qiLockerHarvestMarketValue(value: BigDecimal) {
-    this.set("qiLockerHarvestMarketValue", Value.fromBigDecimal(value));
+  set qiMarketValue(value: BigDecimal) {
+    this.set("qiMarketValue", Value.fromBigDecimal(value));
   }
 
-  get qiDaoInvestmentHarvestAmount(): BigDecimal {
-    let value = this.get("qiDaoInvestmentHarvestAmount");
+  get dystAmount(): BigDecimal {
+    let value = this.get("dystAmount");
     return value!.toBigDecimal();
   }
 
-  set qiDaoInvestmentHarvestAmount(value: BigDecimal) {
-    this.set("qiDaoInvestmentHarvestAmount", Value.fromBigDecimal(value));
+  set dystAmount(value: BigDecimal) {
+    this.set("dystAmount", Value.fromBigDecimal(value));
   }
 
-  get qiDaoInvestmentHarvestMarketValue(): BigDecimal {
-    let value = this.get("qiDaoInvestmentHarvestMarketValue");
+  get dystMarketValue(): BigDecimal {
+    let value = this.get("dystMarketValue");
     return value!.toBigDecimal();
   }
 
-  set qiDaoInvestmentHarvestMarketValue(value: BigDecimal) {
-    this.set("qiDaoInvestmentHarvestMarketValue", Value.fromBigDecimal(value));
+  set dystMarketValue(value: BigDecimal) {
+    this.set("dystMarketValue", Value.fromBigDecimal(value));
   }
 
   get ottopiaClamAmount(): BigDecimal {

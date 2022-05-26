@@ -11,7 +11,7 @@ import {
   MATIC_ERC20_CONTRACT,
   WETH_CONTRACT,
 } from './Constants'
-import { getwMaticUsdRate, getClamUsdRate, getwEthUsdRate } from './Price'
+import { getwMATICMarketValue, getClamUsdRate, getwETHMarketValue, getDystMarketValue } from './Price'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
   let ts = dayFromTimestamp(timestamp)
@@ -20,10 +20,10 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
   if (treasuryRevenue == null) {
     treasuryRevenue = new TreasuryRevenue(ts)
     treasuryRevenue.timestamp = timestamp
-    treasuryRevenue.qiLockerHarvestAmount = BigDecimal.fromString('0')
-    treasuryRevenue.qiLockerHarvestMarketValue = BigDecimal.fromString('0')
-    treasuryRevenue.qiDaoInvestmentHarvestAmount = BigDecimal.fromString('0')
-    treasuryRevenue.qiDaoInvestmentHarvestMarketValue = BigDecimal.fromString('0')
+    treasuryRevenue.qiAmount = BigDecimal.fromString('0')
+    treasuryRevenue.qiMarketValue = BigDecimal.fromString('0')
+    treasuryRevenue.dystAmount = BigDecimal.fromString('0')
+    treasuryRevenue.dystMarketValue = BigDecimal.fromString('0')
     treasuryRevenue.totalRevenueMarketValue = BigDecimal.fromString('0')
     treasuryRevenue.totalRevenueClamAmount = BigDecimal.fromString('0')
     treasuryRevenue.buybackClamAmount = BigDecimal.fromString('0')
@@ -54,8 +54,8 @@ export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
   ])
 
   //Aggregate over day with +=
-  treasuryRevenue.qiLockerHarvestAmount = treasuryRevenue.qiLockerHarvestAmount.plus(qi)
-  treasuryRevenue.qiLockerHarvestMarketValue = treasuryRevenue.qiLockerHarvestMarketValue.plus(qiMarketValue)
+  treasuryRevenue.qiAmount = treasuryRevenue.qiAmount.plus(qi)
+  treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
 
   treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
   treasuryRevenue.yieldMarketValue = treasuryRevenue.yieldMarketValue.plus(qiMarketValue)
@@ -65,7 +65,7 @@ export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
 
   treasuryRevenue.save()
 }
-export function updateTreasuryRevenueTransfer(transfer: Transfer): void {
+export function updateTreasuryRevenueQiTransfer(transfer: Transfer): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
 
   let qiMarketValue = getQiMarketValue(toDecimal(transfer.value, 18))
@@ -77,18 +77,38 @@ export function updateTreasuryRevenueTransfer(transfer: Transfer): void {
     clamAmount.toString(),
   ])
 
-  treasuryRevenue.qiDaoInvestmentHarvestAmount = treasuryRevenue.qiDaoInvestmentHarvestAmount.plus(
-    toDecimal(transfer.value, 18),
-  )
-  treasuryRevenue.qiDaoInvestmentHarvestMarketValue = treasuryRevenue.qiDaoInvestmentHarvestMarketValue.plus(
-    qiMarketValue,
-  )
+  treasuryRevenue.qiAmount = treasuryRevenue.qiAmount.plus(toDecimal(transfer.value, 18))
+  treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
 
   treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
   treasuryRevenue.yieldMarketValue = treasuryRevenue.yieldMarketValue.plus(qiMarketValue)
 
   treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
   treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
+
+  treasuryRevenue.save()
+}
+
+export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
+
+  let dystMarketValue = getDystMarketValue(toDecimal(transfer.value, 18))
+  let clamAmount = dystMarketValue.div(getClamUsdRate())
+
+  log.debug('TransferEvent, txid: {}, dystMarketValue {}, clamAmount: {}', [
+    transfer.id,
+    dystMarketValue.toString(),
+    clamAmount.toString(),
+  ])
+
+  treasuryRevenue.dystAmount = treasuryRevenue.dystAmount.plus(toDecimal(transfer.value, 18))
+  treasuryRevenue.dystMarketValue = treasuryRevenue.dystMarketValue.plus(dystMarketValue)
+
+  treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
+  treasuryRevenue.yieldMarketValue = treasuryRevenue.yieldMarketValue.plus(dystMarketValue)
+
+  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
+  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(dystMarketValue)
 
   treasuryRevenue.save()
 }
@@ -137,24 +157,6 @@ export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
   treasuryRevenue.cumulativeBuybackMarketValue = cumulativeBuybacks.boughtMarketValue
 
   treasuryRevenue.save()
-}
-
-export function getwMATICMarketValue(balance: BigDecimal): BigDecimal {
-  let usdPerwMATIC = getwMaticUsdRate()
-  log.debug('1 wMATIC = {} USD', [usdPerwMATIC.toString()])
-
-  let marketValue = balance.times(usdPerwMATIC)
-  log.debug('wMATIC marketValue = {}', [marketValue.toString()])
-  return marketValue
-}
-
-export function getwETHMarketValue(balance: BigDecimal): BigDecimal {
-  let usdPerwETH = getwEthUsdRate()
-  log.debug('1 wETH = {} USD', [usdPerwETH.toString()])
-
-  let marketValue = balance.times(usdPerwETH)
-  log.debug('wETH marketValue = {}', [marketValue.toString()])
-  return marketValue
 }
 
 export function loadOrCreateTotalBuybacksSingleton(): TotalBuybacks {

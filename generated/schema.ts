@@ -1640,6 +1640,18 @@ export class ProtocolMetric extends Entity {
       "totalBurnedClamMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
+    this.set(
+      "treasuryDystMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "treasuryDystopiaClamMaiLPMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "treasuryVeDystMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
   }
 
   save(): void {
@@ -2170,6 +2182,36 @@ export class ProtocolMetric extends Entity {
 
   set totalBurnedClamMarketValue(value: BigDecimal) {
     this.set("totalBurnedClamMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get treasuryDystMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryDystMarketValue(value: BigDecimal) {
+    this.set("treasuryDystMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get treasuryDystopiaClamMaiLPMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystopiaClamMaiLPMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryDystopiaClamMaiLPMarketValue(value: BigDecimal) {
+    this.set(
+      "treasuryDystopiaClamMaiLPMarketValue",
+      Value.fromBigDecimal(value)
+    );
+  }
+
+  get treasuryVeDystMarketValue(): BigDecimal {
+    let value = this.get("treasuryVeDystMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryVeDystMarketValue(value: BigDecimal) {
+    this.set("treasuryVeDystMarketValue", Value.fromBigDecimal(value));
   }
 }
 

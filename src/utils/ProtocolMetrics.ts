@@ -11,6 +11,8 @@ import { OtterQuickSwapInvestment } from '../../generated/OtterTreasury/OtterQui
 import { OtterStaking } from '../../generated/OtterTreasury/OtterStaking'
 import { OtterStakingDistributor } from '../../generated/OtterTreasury/OtterStakingDistributor'
 import { QiFarm } from '../../generated/OtterTreasury/QiFarm'
+import { Dyst } from '../../generated/OtterTreasury/Dyst'
+import { veDyst } from '../../generated/OtterTreasury/veDyst'
 import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
 import { CurveMai3poolContract } from '../../generated/OtterTreasury/CurveMai3poolContract'
 import { ProtocolMetric, Transaction } from '../../generated/schema'
@@ -61,6 +63,13 @@ import {
   CURVE_MAI_3POOL_INVESTMENT_PAIR_BLOCK,
   OTTER_QI_LOCKER,
   QI_FARM,
+  DYST_ERC20,
+  DAO_WALLET,
+  DYSTOPIA_PAIR_WMATIC_DYST,
+  DYSTOPIA_PAIR_MAI_CLAM,
+  DYSTOPIA_PAIR_MAI_CLAM_START_BLOCK,
+  DYSTOPIA_veDYST,
+  DYSTOPIA_veDYST_ERC721_ID,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -72,8 +81,11 @@ import {
   getPairWMATIC,
   getQiUsdRate,
   getwMaticUsdRate,
+  getDystUsdRate,
+  getDystPairUSD,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
+import { DystPair } from '../../generated/Dyst/DystPair'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -117,6 +129,9 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.treasuryClamWmaticPOL = BigDecimal.fromString('0')
     protocolMetric.totalBurnedClam = BigDecimal.fromString('0')
     protocolMetric.totalBurnedClamMarketValue = BigDecimal.fromString('0')
+    protocolMetric.treasuryDystMarketValue = BigDecimal.fromString('0')
+    protocolMetric.treasuryVeDystMarketValue = BigDecimal.fromString('0')
+    protocolMetric.treasuryDystopiaClamMaiLPMarketValue = BigDecimal.fromString('0')
 
     protocolMetric.save()
   }
@@ -297,6 +312,18 @@ export function getdQuickMarketValue(): BigDecimal {
   return marketValue
 }
 
+export function getDystMarketValue(): BigDecimal {
+  let usdPerDyst = getDystUsdRate()
+  log.debug('1 Dyst = {} USD', [usdPerDyst.toString()])
+
+  let token = Dyst.bind(Address.fromString(DYST_ERC20))
+  let DystBalance = toDecimal(token.balanceOf(Address.fromString(DAO_WALLET)), 18)
+  log.debug('Dyst balance of treasury = {}', [DystBalance.toString()])
+  let marketValue = DystBalance.times(usdPerDyst)
+  log.debug('Dyst marketValue = {}', [marketValue.toString()])
+  return marketValue
+}
+
 export function getQiMarketValue(balance: BigDecimal): BigDecimal {
   let usdPerQi = getQiUsdRate()
   log.debug('1 Qi = {} USD', [usdPerQi.toString()])
@@ -349,6 +376,13 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     let clamMaiInvestmentBalance = pair.balanceOf(treasury_address)
     clamMaiBalance = clamMaiBalance.plus(clamMaiInvestmentBalance)
     dQuickMarketValue = getdQuickMarketValue()
+  }
+  //Dystopia MAI-CLAM
+  let clamMaiDystValue = BigDecimal.fromString('0')
+  if (transaction.blockNumber.gt(BigInt.fromString(DYSTOPIA_PAIR_MAI_CLAM_START_BLOCK))) {
+    let clamMaiDystopiaPair = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_MAI_CLAM))
+    let clamMaiDystBalance = clamMaiDystopiaPair.balanceOf(Address.fromString(DAO_WALLET))
+    clamMaiDystValue = getDystPairUSD(clamMaiDystBalance, DYSTOPIA_PAIR_MAI_CLAM)
   }
 
   let clamMaiTotalLP = toDecimal(clamMaiPair.totalSupply(), 18)
@@ -457,6 +491,14 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     ocQiMarketValue = getOtterClamQiMarketValue()
   }
 
+  let dystMarketValue = getDystMarketValue()
+
+  let veDystContract = veDyst.bind(Address.fromString(DYSTOPIA_veDYST))
+  let veDystMarketValue = toDecimal(
+    veDystContract.balanceOfNFT(BigInt.fromString(DYSTOPIA_veDYST_ERC721_ID)),
+    18,
+  ).times(getDystUsdRate())
+
   let stableValue = maiBalance.plus(fraxBalance).plus(daiBalance)
   let stableValueDecimal = toDecimal(stableValue, 18)
     .plus(maiUsdcValueDecimal)
@@ -470,6 +512,7 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     .plus(qiWmaticMarketValue)
     .plus(qiWmaticQiInvestmentMarketValue)
     .plus(pearlWmaticMarketValue)
+    .plus(clamMaiDystValue)
   let rfvLpValue = clamMai_rfv.plus(clamFrax_rfv).plus(clamWmatic_rfv)
 
   let mv = stableValueDecimal
@@ -479,6 +522,8 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     .plus(dQuickMarketValue)
     .plus(ocQiMarketValue)
     .plus(tetuQiMarketValue)
+    .plus(dystMarketValue)
+    .plus(veDystMarketValue)
   let rfv = stableValueDecimal.plus(rfvLpValue)
 
   log.debug('Treasury Market Value {}', [mv.toString()])
@@ -498,6 +543,9 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
   log.debug('Treasury ocQi Market value {}', [ocQiMarketValue.toString()])
   log.debug('Treasury tetuQi Market value {}', [tetuQiMarketValue.toString()])
   log.debug('Treasury Qi Investment Qi/WMATIC Market value {}', [qiWmaticQiInvestmentMarketValue.toString()])
+  log.debug('Treasury Dyst Market Value {}', [dystMarketValue.toString()])
+  log.debug('Treasury veDyst Market Value {}', [veDystMarketValue.toString()])
+  log.debug('Treasury Dystopia CLAM-MAI LP Market Value {}', [clamMaiDystValue.toString()])
 
   return [
     mv,
@@ -528,6 +576,10 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     clamMaiPOL,
     clamFraxPOL,
     clamWmaticPOL,
+    //dyst
+    dystMarketValue,
+    veDystMarketValue,
+    clamMaiDystValue,
   ]
 }
 
@@ -755,6 +807,9 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.treasuryClamMaiPOL = mv_rfv[19]
   pm.treasuryClamFraxPOL = mv_rfv[20]
   pm.treasuryClamWmaticPOL = mv_rfv[21]
+  pm.treasuryDystMarketValue = mv_rfv[22]
+  pm.treasuryVeDystMarketValue = mv_rfv[23]
+  pm.treasuryDystopiaClamMaiLPMarketValue = mv_rfv[24]
 
   // Rebase rewards, APY, rebase
   pm.nextDistributedClam = getNextCLAMRebase(transaction)

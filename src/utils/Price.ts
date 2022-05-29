@@ -130,8 +130,20 @@ export function getPairUSD(lp_amount: BigInt, pair_address: string): BigDecimal 
   let lp_token_0 = pair.getReserves().value1
   let lp_token_1 = pair.getReserves().value0
   let ownedLP = toDecimal(lp_amount, 18).div(toDecimal(total_lp, 18))
-  let ohm_value = toDecimal(lp_token_0, 9).times(getClamUsdRate())
-  let total_lp_usd = ohm_value.plus(toDecimal(lp_token_1, 18))
+  let clam_value = toDecimal(lp_token_0, 9).times(getClamUsdRate())
+  let total_lp_usd = clam_value.plus(toDecimal(lp_token_1, 18))
+
+  return ownedLP.times(total_lp_usd)
+}
+
+export function getDystPairUSD(lp_amount: BigInt, pair_address: string): BigDecimal {
+  let pair = DystPair.bind(Address.fromString(pair_address))
+  let total_lp = pair.totalSupply()
+  let lp_token_0 = pair.getReserves().value1
+  let lp_token_1 = pair.getReserves().value0
+  let ownedLP = toDecimal(lp_amount, 18).div(toDecimal(total_lp, 18))
+  let clam_value = toDecimal(lp_token_0, 9).times(getClamUsdRate())
+  let total_lp_usd = clam_value.plus(toDecimal(lp_token_1, 18))
 
   return ownedLP.times(total_lp_usd)
 }

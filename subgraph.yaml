@@ -8,7 +8,7 @@ dataSources:
     source:
       address: '0xAAc144Dc08cE39Ed92182dd85ded60E5000C9e67'
       abi: StakedOtterClamERC20V2
-      startBlock: 28347518 #21593527
+      startBlock: 28777020 #21593527
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -59,7 +59,13 @@ dataSources:
         - name: OtterPearlERC20
           file: ./abis/OtterPearlERC20.json
         - name: CurveMai3poolContract
-          file: ./abis/CurveMai3poolContract.json
+          file: ./abis/CurveMai3poolContract.json        
+        - name: Dyst
+          file: ./abis/Dyst.json      
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: veDyst
+          file: ./abis/veDyst.json
         # --------------------
       eventHandlers:
         - event: LogRebase(indexed uint256,uint256,uint256)
@@ -78,7 +84,7 @@ dataSources:
     source:
       address: '0xc250e9987a032acac293d838726c511e6e1c029d'
       abi: OtterClamERC20V2
-      startBlock: 28347518 #26991825 #First burn transfer
+      startBlock: 28777020 #26991825 #First burn transfer
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -103,7 +109,7 @@ dataSources:
     source:
       address: '0x8ce47D56EAa1299d3e06FF3E04637449fFb01C9C'
       abi: OtterTreasury
-      startBlock: 28347518 #21593527
+      startBlock: 28777020 #21593527
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -162,6 +168,12 @@ dataSources:
           file: ./abis/OtterPearlERC20.json
         - name: CurveMai3poolContract
           file: ./abis/CurveMai3poolContract.json
+        - name: Dyst
+          file: ./abis/Dyst.json      
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: veDyst
+          file: ./abis/veDyst.json
         # --------------------
       eventHandlers:
         - event: ChangeActivated(indexed uint8,address,bool)
@@ -192,7 +204,7 @@ dataSources:
     source:
       address: '0x69f6c4Fa150F9F0b3037612CF8FadDAeDbd46Bb8'
       abi: OtterQiLocker
-      startBlock: 28347518 #25352622
+      startBlock: 28777020 #25352622
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -222,7 +234,7 @@ dataSources:
     source:
       address: '0x580A84C73811E1839F75d86d75d88cCa0c241fF4'
       abi: Qi
-      startBlock: 28347518 #24088468
+      startBlock: 28777020 #24088468
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -247,9 +259,9 @@ dataSources:
     name: Dyst
     network: matic
     source:
-      address: '0x580A84C73811E1839F75d86d75d88cCa0c241fF4'
+      address: '0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb'
       abi: Dyst
-      startBlock: 28347518 #DYST deployment block
+      startBlock: 28777020 # 28347518 #DYST deployment block
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -278,7 +290,7 @@ dataSources:
     source:
       address: '0x017adb26b2ea4dbd9f1372710748e1388fa3082a'
       abi: DeprecatedOtterBuybacker
-      startBlock: 28347518 #24954592
+      startBlock: 28777020 #24954592
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -305,7 +317,7 @@ dataSources:
     source:
       address: '0x155d21b6d7eb5dd1035a9ae57201c20ff1ea90d2'
       abi: OtterBuybacker
-      startBlock: 28347518 #24954592
+      startBlock: 28777020 #24954592
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

@@ -1,6 +1,6 @@
 import { Address, log, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
 import { Transfer, DystopiaLPBalance } from '../generated/schema'
-import { Transfer as TransferEvent } from '../generated/DystClamMaiPair/DystPair'
+import { Transfer as TransferEvent } from '../generated/DystMaiClamPair/DystPair'
 import { loadOrCreateTransaction } from './utils/Transactions'
 
 import { toDecimal } from './utils/Decimals'

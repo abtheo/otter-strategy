@@ -263,26 +263,6 @@ type TotalBuybacks @entity {
   boughtMarketValue: BigDecimal!
 }
 
-type DepositDystVoter @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  lp: Bytes!
-  gauge: Bytes!
-  tokenId: BigInt!
-  amount: BigInt!
-}
-
-type WithdrawDystVoter @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  lp: Bytes!
-  gauge: Bytes!
-  tokenId: BigInt!
-  amount: BigInt!
-}
-
 type DystopiaLPBalance @entity {
   id: ID! #lp tokenId
   balance: BigInt!

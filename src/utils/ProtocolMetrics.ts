@@ -86,7 +86,7 @@ import {
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
 import { DystPair } from '../../generated/OtterTreasury/DystPair'
-import { loadOrCreateDystopiaLPBalance } from '../DystVoter'
+import { loadOrCreateDystopiaLPBalance } from '../DystMaiClamPair'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)

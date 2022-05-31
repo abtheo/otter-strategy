@@ -16,7 +16,7 @@ export function handleTransfer(event: TransferEvent): void {
     log.debug('Burned CLAM {} at block {}, txid {}', [
       burnedClam.toString(),
       event.block.number.toString(),
-      event.transaction.hash.toString(),
+      event.transaction.hash.toHexString(),
     ])
 
     //Cumulative total for burned CLAM
@@ -37,7 +37,7 @@ export function handleTransfer(event: TransferEvent): void {
     log.debug('Ottopia transfered {} CLAM to DAO at block {}, txid {}', [
       recievedClam.toString(),
       event.block.number.toString(),
-      event.transaction.hash.toString(),
+      event.transaction.hash.toHexString(),
     ])
 
     let revenue = loadOrCreateTreasuryRevenue(event.block.timestamp)

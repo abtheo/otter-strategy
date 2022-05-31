@@ -15,7 +15,7 @@ import { Dyst } from '../../generated/OtterTreasury/Dyst'
 import { veDyst } from '../../generated/OtterTreasury/veDyst'
 import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
 import { CurveMai3poolContract } from '../../generated/OtterTreasury/CurveMai3poolContract'
-import { ProtocolMetric, Transaction } from '../../generated/schema'
+import { ProtocolMetric, Transaction, DystopiaLPBalance } from '../../generated/schema'
 import { StakedOtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
 import {
   CIRCULATING_SUPPLY_CONTRACT,
@@ -85,7 +85,8 @@ import {
   getDystPairUSD,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
-import { DystPair } from '../../generated/Dyst/DystPair'
+import { DystPair } from '../../generated/OtterTreasury/DystPair'
+import { loadOrCreateDystopiaLPBalance } from '../DystVoter'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -380,11 +381,14 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
   //Dystopia MAI-CLAM
   let clamMaiDystValue = BigDecimal.fromString('0')
   if (transaction.blockNumber.gt(BigInt.fromString(DYSTOPIA_PAIR_MAI_CLAM_START_BLOCK))) {
+    //first check if the DAO wallet holds tokens directly
     let clamMaiDystopiaPair = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_MAI_CLAM))
     let clamMaiDystBalance = clamMaiDystopiaPair.balanceOf(Address.fromString(DAO_WALLET))
     clamMaiDystValue = getDystPairUSD(clamMaiDystBalance, DYSTOPIA_PAIR_MAI_CLAM)
+    //then add the Gauge staked LP balance
+    let dystGaugeLp = loadOrCreateDystopiaLPBalance(Address.fromString(DYSTOPIA_PAIR_MAI_CLAM))
+    clamMaiDystValue = clamMaiDystValue.plus(getDystPairUSD(dystGaugeLp.balance, DYSTOPIA_PAIR_MAI_CLAM))
   }
-
   let clamMaiTotalLP = toDecimal(clamMaiPair.totalSupply(), 18)
   let clamMaiPOL = toDecimal(clamMaiBalance, 18)
     .div(clamMaiTotalLP)

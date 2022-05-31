@@ -137,6 +137,7 @@ export function getPairUSD(lp_amount: BigInt, pair_address: string): BigDecimal 
 }
 
 export function getDystPairUSD(lp_amount: BigInt, pair_address: string): BigDecimal {
+  if (lp_amount == BigInt.fromString('0')) return BigDecimal.fromString('0')
   let pair = DystPair.bind(Address.fromString(pair_address))
   let total_lp = pair.totalSupply()
   let lp_token_0 = pair.getReserves().value1

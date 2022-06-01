@@ -86,7 +86,7 @@ import {
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
 import { DystPair } from '../../generated/OtterTreasury/DystPair'
-import { loadOrCreateDystopiaLPBalance } from '../DystMaiClamPair'
+import { loadOrCreateDystopiaLPBalance } from '../DystPair'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -378,17 +378,7 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     clamMaiBalance = clamMaiBalance.plus(clamMaiInvestmentBalance)
     dQuickMarketValue = getdQuickMarketValue()
   }
-  //Dystopia MAI-CLAM
-  let clamMaiDystValue = BigDecimal.fromString('0')
-  if (transaction.blockNumber.gt(BigInt.fromString(DYSTOPIA_PAIR_MAI_CLAM_START_BLOCK))) {
-    //first check if the DAO wallet holds tokens directly
-    let clamMaiDystopiaPair = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_MAI_CLAM))
-    let clamMaiDystBalance = clamMaiDystopiaPair.balanceOf(Address.fromString(DAO_WALLET))
-    clamMaiDystValue = getDystPairUSD(clamMaiDystBalance, DYSTOPIA_PAIR_MAI_CLAM)
-    //then add the Gauge staked LP balance
-    let dystGaugeLp = loadOrCreateDystopiaLPBalance(Address.fromString(DYSTOPIA_PAIR_MAI_CLAM))
-    clamMaiDystValue = clamMaiDystValue.plus(getDystPairUSD(dystGaugeLp.balance, DYSTOPIA_PAIR_MAI_CLAM))
-  }
+
   let clamMaiTotalLP = toDecimal(clamMaiPair.totalSupply(), 18)
   let clamMaiPOL = toDecimal(clamMaiBalance, 18)
     .div(clamMaiTotalLP)
@@ -495,13 +485,26 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     ocQiMarketValue = getOtterClamQiMarketValue()
   }
 
-  let dystMarketValue = getDystMarketValue()
+  //DYSTOPIA
+  let clamMaiDystValue = BigDecimal.fromString('0')
+  let dystMarketValue = BigDecimal.fromString('0')
+  let veDystMarketValue = BigDecimal.fromString('0')
+  if (transaction.blockNumber.gt(BigInt.fromString(DYSTOPIA_PAIR_MAI_CLAM_START_BLOCK))) {
+    //first check if the DAO wallet holds tokens directly
+    let clamMaiDystopiaPair = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_MAI_CLAM))
+    let clamMaiDystBalance = clamMaiDystopiaPair.balanceOf(Address.fromString(DAO_WALLET))
+    clamMaiDystValue = getDystPairUSD(clamMaiDystBalance, DYSTOPIA_PAIR_MAI_CLAM)
+    //then add the Gauge staked LP balance
+    let dystGaugeLp = loadOrCreateDystopiaLPBalance(Address.fromString(DYSTOPIA_PAIR_MAI_CLAM))
+    clamMaiDystValue = clamMaiDystValue.plus(getDystPairUSD(dystGaugeLp.balance, DYSTOPIA_PAIR_MAI_CLAM))
 
-  let veDystContract = veDyst.bind(Address.fromString(DYSTOPIA_veDYST))
-  let veDystMarketValue = toDecimal(
-    veDystContract.balanceOfNFT(BigInt.fromString(DYSTOPIA_veDYST_ERC721_ID)),
-    18,
-  ).times(getDystUsdRate())
+    dystMarketValue = getDystMarketValue()
+
+    let veDystContract = veDyst.bind(Address.fromString(DYSTOPIA_veDYST))
+    veDystMarketValue = toDecimal(veDystContract.balanceOfNFT(BigInt.fromString(DYSTOPIA_veDYST_ERC721_ID)), 18).times(
+      getDystUsdRate(),
+    )
+  }
 
   let stableValue = maiBalance.plus(fraxBalance).plus(daiBalance)
   let stableValueDecimal = toDecimal(stableValue, 18)

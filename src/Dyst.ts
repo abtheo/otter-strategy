@@ -4,11 +4,11 @@ import { Transfer } from '../generated/schema'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateTreasuryRevenueDystTransfer } from './utils/TreasuryRevenue'
 
-import { DAO_WALLET, DYSTOPIA_REWARDS } from './utils/Constants'
+import { DAO_WALLET, DYSTOPIA_TRACKED_GAUGES } from './utils/Constants'
 
-export function handleDystopiaTransfer(event: TransferEvent): void {
+export function handleDystTransfer(event: TransferEvent): void {
   if (
-    event.params.from.toHexString().toLowerCase() == DYSTOPIA_REWARDS.toLowerCase() &&
+    DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString().toLowerCase()) &&
     event.params.to.toHexString().toLowerCase() == DAO_WALLET.toLowerCase()
   ) {
     log.debug('Dystopia Harvest {}, from: {}, to: {}', [

@@ -4,7 +4,7 @@ import { Transfer as TransferEvent } from '../generated/DystMaiClamPair/DystPair
 import { loadOrCreateTransaction } from './utils/Transactions'
 
 import { toDecimal } from './utils/Decimals'
-import { DAO_WALLET, DYSTOPIA_GAUGE_MAI_CLAM, DYSTOPIA_TRACKED_GAUGES } from './utils/Constants'
+import { DAO_WALLET, DYSTOPIA_TRACKED_GAUGES } from './utils/Constants'
 import { dataSource } from '@graphprotocol/graph-ts'
 
 /*

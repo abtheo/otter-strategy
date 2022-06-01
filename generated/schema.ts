@@ -1645,7 +1645,23 @@ export class ProtocolMetric extends Entity {
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
-      "treasuryDystopiaClamMaiLPMarketValue",
+      "treasuryDystopiaPairwMaticDystMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "treasuryDystopiaPairMaiClamMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "treasuryDystopiaPairUSDPLUSClamMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "treasuryDystopiaPairMaiUsdcMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "treasuryDystopiaPairFraxUsdcMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
@@ -2193,14 +2209,62 @@ export class ProtocolMetric extends Entity {
     this.set("treasuryDystMarketValue", Value.fromBigDecimal(value));
   }
 
-  get treasuryDystopiaClamMaiLPMarketValue(): BigDecimal {
-    let value = this.get("treasuryDystopiaClamMaiLPMarketValue");
+  get treasuryDystopiaPairwMaticDystMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystopiaPairwMaticDystMarketValue");
     return value!.toBigDecimal();
   }
 
-  set treasuryDystopiaClamMaiLPMarketValue(value: BigDecimal) {
+  set treasuryDystopiaPairwMaticDystMarketValue(value: BigDecimal) {
     this.set(
-      "treasuryDystopiaClamMaiLPMarketValue",
+      "treasuryDystopiaPairwMaticDystMarketValue",
+      Value.fromBigDecimal(value)
+    );
+  }
+
+  get treasuryDystopiaPairMaiClamMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystopiaPairMaiClamMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryDystopiaPairMaiClamMarketValue(value: BigDecimal) {
+    this.set(
+      "treasuryDystopiaPairMaiClamMarketValue",
+      Value.fromBigDecimal(value)
+    );
+  }
+
+  get treasuryDystopiaPairUSDPLUSClamMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystopiaPairUSDPLUSClamMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryDystopiaPairUSDPLUSClamMarketValue(value: BigDecimal) {
+    this.set(
+      "treasuryDystopiaPairUSDPLUSClamMarketValue",
+      Value.fromBigDecimal(value)
+    );
+  }
+
+  get treasuryDystopiaPairMaiUsdcMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystopiaPairMaiUsdcMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryDystopiaPairMaiUsdcMarketValue(value: BigDecimal) {
+    this.set(
+      "treasuryDystopiaPairMaiUsdcMarketValue",
+      Value.fromBigDecimal(value)
+    );
+  }
+
+  get treasuryDystopiaPairFraxUsdcMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystopiaPairFraxUsdcMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryDystopiaPairFraxUsdcMarketValue(value: BigDecimal) {
+    this.set(
+      "treasuryDystopiaPairFraxUsdcMarketValue",
       Value.fromBigDecimal(value)
     );
   }

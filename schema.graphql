@@ -211,8 +211,12 @@ type ProtocolMetric @entity {
   treasuryClamWmaticPOL: BigDecimal!
   totalBurnedClam: BigDecimal!
   totalBurnedClamMarketValue: BigDecimal!
+  treasuryDystopiaPairwMaticDystMarketValue: BigDecimal!
+  treasuryDystopiaPairMaiClamMarketValue: BigDecimal!
+  treasuryDystopiaPairUSDPLUSClamMarketValue: BigDecimal!
+  treasuryDystopiaPairMaiUsdcMarketValue: BigDecimal!
+  treasuryDystopiaPairFraxUsdcMarketValue: BigDecimal!
   treasuryDystMarketValue: BigDecimal!
-  treasuryDystopiaClamMaiLPMarketValue: BigDecimal!
   treasuryVeDystMarketValue: BigDecimal!
 }
 

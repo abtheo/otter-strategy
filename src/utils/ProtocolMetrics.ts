@@ -70,6 +70,10 @@ import {
   DYSTOPIA_PAIR_MAI_CLAM_START_BLOCK,
   DYSTOPIA_veDYST,
   DYSTOPIA_veDYST_ERC721_ID,
+  DYSTOPIA_TRACKED_PAIRS,
+  DYSTOPIA_PAIR_USDPLUS_CLAM,
+  DYSTOPIA_PAIR_MAI_USDC,
+  DYSTOPIA_PAIR_FRAX_USDC,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -130,9 +134,13 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.treasuryClamWmaticPOL = BigDecimal.fromString('0')
     protocolMetric.totalBurnedClam = BigDecimal.fromString('0')
     protocolMetric.totalBurnedClamMarketValue = BigDecimal.fromString('0')
+    protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = BigDecimal.fromString('0')
+    protocolMetric.treasuryDystopiaPairMaiClamMarketValue = BigDecimal.fromString('0')
+    protocolMetric.treasuryDystopiaPairMaiUsdcMarketValue = BigDecimal.fromString('0')
+    protocolMetric.treasuryDystopiaPairFraxUsdcMarketValue = BigDecimal.fromString('0')
+    protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = BigDecimal.fromString('0')
     protocolMetric.treasuryDystMarketValue = BigDecimal.fromString('0')
     protocolMetric.treasuryVeDystMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryDystopiaClamMaiLPMarketValue = BigDecimal.fromString('0')
 
     protocolMetric.save()
   }
@@ -486,20 +494,36 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
   }
 
   //DYSTOPIA
+  let wMaticDystValue = BigDecimal.fromString('0')
   let clamMaiDystValue = BigDecimal.fromString('0')
+  let clamUsdplusDystValue = BigDecimal.fromString('0')
+  let usdcMaiDystValue = BigDecimal.fromString('0')
+  let usdcFraxDystValue = BigDecimal.fromString('0')
   let dystMarketValue = BigDecimal.fromString('0')
   let veDystMarketValue = BigDecimal.fromString('0')
-  if (transaction.blockNumber.gt(BigInt.fromString(DYSTOPIA_PAIR_MAI_CLAM_START_BLOCK))) {
-    //first check if the DAO wallet holds tokens directly
-    let clamMaiDystopiaPair = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_MAI_CLAM))
-    let clamMaiDystBalance = clamMaiDystopiaPair.balanceOf(Address.fromString(DAO_WALLET))
-    clamMaiDystValue = getDystPairUSD(clamMaiDystBalance, DYSTOPIA_PAIR_MAI_CLAM)
-    //then add the Gauge staked LP balance
-    let dystGaugeLp = loadOrCreateDystopiaLPBalance(Address.fromString(DYSTOPIA_PAIR_MAI_CLAM))
-    clamMaiDystValue = clamMaiDystValue.plus(getDystPairUSD(dystGaugeLp.balance, DYSTOPIA_PAIR_MAI_CLAM))
-
+  if (transaction.blockNumber.gt(BigInt.fromString('28773233'))) {
     dystMarketValue = getDystMarketValue()
 
+    for (let i = 0; i < DYSTOPIA_TRACKED_PAIRS.length; i++) {
+      let pair_address = DYSTOPIA_TRACKED_PAIRS[i]
+      //first check if the DAO wallet holds LP tokens directly
+      let dystopiaPair = DystPair.bind(Address.fromString(pair_address))
+      let pairDystBalance = dystopiaPair.try_balanceOf(Address.fromString(DAO_WALLET))
+      if (pairDystBalance.reverted) continue
+      let pairValue = getDystPairUSD(pairDystBalance.value, pair_address)
+      //then add the Gauge staked LP balance
+      let dystGaugeLp = loadOrCreateDystopiaLPBalance(Address.fromString(pair_address))
+      pairValue = pairValue.plus(getDystPairUSD(dystGaugeLp.balance, pair_address))
+
+      //finally, associate with relevant property
+      if (pair_address == DYSTOPIA_PAIR_WMATIC_DYST) wMaticDystValue = pairValue
+      if (pair_address == DYSTOPIA_PAIR_MAI_CLAM) clamMaiDystValue = pairValue
+      if (pair_address == DYSTOPIA_PAIR_USDPLUS_CLAM) clamUsdplusDystValue = pairValue
+      if (pair_address == DYSTOPIA_PAIR_MAI_USDC) usdcMaiDystValue = pairValue
+      if (pair_address == DYSTOPIA_PAIR_FRAX_USDC) usdcFraxDystValue = pairValue
+    }
+
+    //plus the locked veDyst inside NFT
     let veDystContract = veDyst.bind(Address.fromString(DYSTOPIA_veDYST))
     veDystMarketValue = toDecimal(veDystContract.balanceOfNFT(BigInt.fromString(DYSTOPIA_veDYST_ERC721_ID)), 18).times(
       getDystUsdRate(),
@@ -519,7 +543,13 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     .plus(qiWmaticMarketValue)
     .plus(qiWmaticQiInvestmentMarketValue)
     .plus(pearlWmaticMarketValue)
+    //dystopia
+    .plus(wMaticDystValue)
     .plus(clamMaiDystValue)
+    .plus(clamUsdplusDystValue)
+    .plus(usdcMaiDystValue)
+    .plus(usdcFraxDystValue)
+
   let rfvLpValue = clamMai_rfv.plus(clamFrax_rfv).plus(clamWmatic_rfv)
 
   let mv = stableValueDecimal
@@ -552,7 +582,11 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
   log.debug('Treasury Qi Investment Qi/WMATIC Market value {}', [qiWmaticQiInvestmentMarketValue.toString()])
   log.debug('Treasury Dyst Market Value {}', [dystMarketValue.toString()])
   log.debug('Treasury veDyst Market Value {}', [veDystMarketValue.toString()])
+  log.debug('Treasury Dystopia wMATIC-DYST LP Market Value {}', [wMaticDystValue.toString()])
   log.debug('Treasury Dystopia CLAM-MAI LP Market Value {}', [clamMaiDystValue.toString()])
+  log.debug('Treasury Dystopia clamUsdplusDystValue LP Market Value {}', [clamUsdplusDystValue.toString()])
+  log.debug('Treasury Dystopia usdcMaiDystValue LP Market Value {}', [usdcMaiDystValue.toString()])
+  log.debug('Treasury Dystopia usdcFraxDystValue LP Market Value {}', [usdcFraxDystValue.toString()])
 
   return [
     mv,
@@ -584,9 +618,13 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     clamFraxPOL,
     clamWmaticPOL,
     //dyst
+    wMaticDystValue,
+    clamMaiDystValue,
+    clamUsdplusDystValue,
+    usdcMaiDystValue,
+    usdcFraxDystValue,
     dystMarketValue,
     veDystMarketValue,
-    clamMaiDystValue,
   ]
 }
 
@@ -814,9 +852,13 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.treasuryClamMaiPOL = mv_rfv[19]
   pm.treasuryClamFraxPOL = mv_rfv[20]
   pm.treasuryClamWmaticPOL = mv_rfv[21]
-  pm.treasuryDystMarketValue = mv_rfv[22]
-  pm.treasuryVeDystMarketValue = mv_rfv[23]
-  pm.treasuryDystopiaClamMaiLPMarketValue = mv_rfv[24]
+  pm.treasuryDystopiaPairwMaticDystMarketValue = mv_rfv[22]
+  pm.treasuryDystopiaPairMaiClamMarketValue = mv_rfv[23]
+  pm.treasuryDystopiaPairUSDPLUSClamMarketValue = mv_rfv[24]
+  pm.treasuryDystopiaPairMaiUsdcMarketValue = mv_rfv[25]
+  pm.treasuryDystopiaPairFraxUsdcMarketValue = mv_rfv[26]
+  pm.treasuryDystMarketValue = mv_rfv[27]
+  pm.treasuryVeDystMarketValue = mv_rfv[28]
 
   // Rebase rewards, APY, rebase
   pm.nextDistributedClam = getNextCLAMRebase(transaction)

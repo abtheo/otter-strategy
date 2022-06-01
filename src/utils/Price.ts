@@ -6,15 +6,22 @@ import {
   UNI_QUICK_WMATIC_PAIR,
   UNI_WETH_USDC_PAIR,
   DYSTOPIA_PAIR_WMATIC_DYST,
+  MATIC_ERC20_CONTRACT,
+  DYST_ERC20,
+  FRAX_ERC20_CONTRACT,
+  USDPLUS_ERC20_CONTRACT,
+  MAI_ERC20_CONTRACT,
+  USDC_ERC20_CONTRACT,
+  CLAM_ERC20_CONTRACT,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
 import { AggregatorV3InterfaceABI } from '../../generated/OtterTreasury/AggregatorV3InterfaceABI'
 import { toDecimal } from './Decimals'
 import { DystPair } from '../../generated/Dyst/DystPair'
+import { ERC20 } from '../../generated/OtterTreasury/ERC20'
 
 let BIG_DECIMAL_1E9 = BigDecimal.fromString('1e9')
-let BIG_DECIMAL_1E12 = BigDecimal.fromString('1e12')
 
 export function getwMaticUsdRate(): BigDecimal {
   let pair = AggregatorV3InterfaceABI.bind(Address.fromString(USDC_MATIC_AGGREGATOR))
@@ -95,7 +102,7 @@ export function getClamUsdRate(): BigDecimal {
   let mai = reserves.value0.toBigDecimal()
   log.debug('pair reserve0 {}, reserve1 {}', [clam.toString(), mai.toString()])
 
-  if (clam.equals(BigDecimal.zero())) {
+  if (clam.equals(BigDecimal.zero()) || mai.equals(BigDecimal.zero())) {
     log.debug('getCLAMUSDRate div {}', [clam.toString()])
     return BigDecimal.zero()
   }
@@ -139,14 +146,39 @@ export function getPairUSD(lp_amount: BigInt, pair_address: string): BigDecimal 
 export function getDystPairUSD(lp_amount: BigInt, pair_address: string): BigDecimal {
   if (lp_amount == BigInt.fromString('0')) return BigDecimal.fromString('0')
   let pair = DystPair.bind(Address.fromString(pair_address))
+
+  let token0 = ERC20.bind(pair.token0())
+  let token1 = ERC20.bind(pair.token1())
+
+  //get percentage of owned LP
   let total_lp = pair.totalSupply()
-  let lp_token_0 = pair.getReserves().value1
-  let lp_token_1 = pair.getReserves().value0
-  let ownedLP = toDecimal(lp_amount, 18).div(toDecimal(total_lp, 18))
-  let clam_value = toDecimal(lp_token_0, 9).times(getClamUsdRate())
-  let total_lp_usd = clam_value.plus(toDecimal(lp_token_1, 18))
+  let lp_token_0 = pair.getReserves().value0
+  let lp_token_1 = pair.getReserves().value1
+  let ownedLP = toDecimal(lp_amount, 18)
+
+  if (ownedLP.gt(BigDecimal.zero()) && total_lp.gt(BigInt.zero())) ownedLP = ownedLP.div(toDecimal(total_lp, 18))
+
+  //get total pool usd value
+  let usd_value_token0 = toDecimal(lp_token_0, token0.decimals()).times(findPrice(pair.token0()))
+  let usd_value_token1 = toDecimal(lp_token_1, token1.decimals()).times(findPrice(pair.token0()))
+  let total_lp_usd = usd_value_token0.plus(usd_value_token1)
 
   return ownedLP.times(total_lp_usd)
+}
+
+function findPrice(address: Address): BigDecimal {
+  if (address.toHexString().toLowerCase() == CLAM_ERC20_CONTRACT.toLowerCase()) return getClamUsdRate()
+  if (address.toHexString().toLowerCase() == MATIC_ERC20_CONTRACT.toLowerCase()) return getwMaticUsdRate()
+  if (address.toHexString().toLowerCase() == DYST_ERC20.toLowerCase()) return getDystUsdRate()
+  if (
+    address.toHexString().toLowerCase() == FRAX_ERC20_CONTRACT.toLowerCase() ||
+    address.toHexString().toLowerCase() == MAI_ERC20_CONTRACT.toLowerCase() ||
+    address.toHexString().toLowerCase() == USDPLUS_ERC20_CONTRACT.toLowerCase() ||
+    address.toHexString().toLowerCase() == USDC_ERC20_CONTRACT.toLowerCase()
+  )
+    return BigDecimal.fromString('1')
+
+  return BigDecimal.zero()
 }
 
 export function getPairWMATIC(lp_amount: BigInt, pair_adress: string): BigDecimal {

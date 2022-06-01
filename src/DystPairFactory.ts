@@ -20,6 +20,7 @@ Possible LPs:
 export function handlePairCreated(event: PairCreatedEvent): void {
   if (!DYSTOPIA_TRACKED_PAIRS.includes(event.params.pair.toHexString())) return
 
+  log.debug('DYST pair factory created {}', [event.params.pair.toHexString()])
   let context = new DataSourceContext()
   context.setString('pair', event.params.pair.toHexString())
   DystPair.createWithContext(event.params.pair, context)

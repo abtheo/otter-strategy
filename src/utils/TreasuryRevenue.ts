@@ -20,9 +20,9 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
   if (treasuryRevenue == null) {
     treasuryRevenue = new TreasuryRevenue(ts)
     treasuryRevenue.timestamp = timestamp
-    treasuryRevenue.qiAmount = BigDecimal.fromString('0')
+    treasuryRevenue.qiClamAmount = BigDecimal.fromString('0')
     treasuryRevenue.qiMarketValue = BigDecimal.fromString('0')
-    treasuryRevenue.dystAmount = BigDecimal.fromString('0')
+    treasuryRevenue.dystClamAmount = BigDecimal.fromString('0')
     treasuryRevenue.dystMarketValue = BigDecimal.fromString('0')
     treasuryRevenue.totalRevenueMarketValue = BigDecimal.fromString('0')
     treasuryRevenue.totalRevenueClamAmount = BigDecimal.fromString('0')
@@ -54,7 +54,7 @@ export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
   ])
 
   //Aggregate over day with +=
-  treasuryRevenue.qiAmount = treasuryRevenue.qiAmount.plus(qi)
+  treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
   treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
 
   treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
@@ -77,7 +77,7 @@ export function updateTreasuryRevenueQiTransfer(transfer: Transfer): void {
     clamAmount.toString(),
   ])
 
-  treasuryRevenue.qiAmount = treasuryRevenue.qiAmount.plus(toDecimal(transfer.value, 18))
+  treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
   treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
 
   treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
@@ -101,7 +101,7 @@ export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {
     clamAmount.toString(),
   ])
 
-  treasuryRevenue.dystAmount = treasuryRevenue.dystAmount.plus(toDecimal(transfer.value, 18))
+  treasuryRevenue.dystClamAmount = treasuryRevenue.dystClamAmount.plus(clamAmount)
   treasuryRevenue.dystMarketValue = treasuryRevenue.dystMarketValue.plus(dystMarketValue)
 
   treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)

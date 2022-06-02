@@ -236,9 +236,9 @@ type Harvest @entity {
 type TreasuryRevenue @entity {
   id: ID!
   timestamp: BigInt!
-  qiAmount: BigDecimal!
+  qiClamAmount: BigDecimal!
   qiMarketValue: BigDecimal!
-  dystAmount: BigDecimal!
+  dystClamAmount: BigDecimal!
   dystMarketValue: BigDecimal!
   ottopiaClamAmount: BigDecimal!
   ottopiaMarketValue: BigDecimal!

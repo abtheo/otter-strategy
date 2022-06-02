@@ -1641,10 +1641,6 @@ export class ProtocolMetric extends Entity {
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
-      "treasuryDystMarketValue",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
-    this.set(
       "treasuryDystopiaPairwMaticDystMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
@@ -1662,6 +1658,10 @@ export class ProtocolMetric extends Entity {
     );
     this.set(
       "treasuryDystopiaPairFraxUsdcMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "treasuryDystMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
@@ -2200,15 +2200,6 @@ export class ProtocolMetric extends Entity {
     this.set("totalBurnedClamMarketValue", Value.fromBigDecimal(value));
   }
 
-  get treasuryDystMarketValue(): BigDecimal {
-    let value = this.get("treasuryDystMarketValue");
-    return value!.toBigDecimal();
-  }
-
-  set treasuryDystMarketValue(value: BigDecimal) {
-    this.set("treasuryDystMarketValue", Value.fromBigDecimal(value));
-  }
-
   get treasuryDystopiaPairwMaticDystMarketValue(): BigDecimal {
     let value = this.get("treasuryDystopiaPairwMaticDystMarketValue");
     return value!.toBigDecimal();
@@ -2267,6 +2258,15 @@ export class ProtocolMetric extends Entity {
       "treasuryDystopiaPairFraxUsdcMarketValue",
       Value.fromBigDecimal(value)
     );
+  }
+
+  get treasuryDystMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryDystMarketValue(value: BigDecimal) {
+    this.set("treasuryDystMarketValue", Value.fromBigDecimal(value));
   }
 
   get treasuryVeDystMarketValue(): BigDecimal {
@@ -2403,9 +2403,9 @@ export class TreasuryRevenue extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
-    this.set("qiAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("qiClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("qiMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("dystAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("dystClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("dystMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
@@ -2463,13 +2463,13 @@ export class TreasuryRevenue extends Entity {
     this.set("timestamp", Value.fromBigInt(value));
   }
 
-  get qiAmount(): BigDecimal {
-    let value = this.get("qiAmount");
+  get qiClamAmount(): BigDecimal {
+    let value = this.get("qiClamAmount");
     return value!.toBigDecimal();
   }
 
-  set qiAmount(value: BigDecimal) {
-    this.set("qiAmount", Value.fromBigDecimal(value));
+  set qiClamAmount(value: BigDecimal) {
+    this.set("qiClamAmount", Value.fromBigDecimal(value));
   }
 
   get qiMarketValue(): BigDecimal {
@@ -2481,13 +2481,13 @@ export class TreasuryRevenue extends Entity {
     this.set("qiMarketValue", Value.fromBigDecimal(value));
   }
 
-  get dystAmount(): BigDecimal {
-    let value = this.get("dystAmount");
+  get dystClamAmount(): BigDecimal {
+    let value = this.get("dystClamAmount");
     return value!.toBigDecimal();
   }
 
-  set dystAmount(value: BigDecimal) {
-    this.set("dystAmount", Value.fromBigDecimal(value));
+  set dystClamAmount(value: BigDecimal) {
+    this.set("dystClamAmount", Value.fromBigDecimal(value));
   }
 
   get dystMarketValue(): BigDecimal {

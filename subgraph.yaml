@@ -22,6 +22,7 @@ dataSources:
         - Transfer
         - APY
         - TreasuryRevenue
+        - DystopiaLPBalance
       abis:
         - name: StakedOtterClamERC20V2
           file: ./abis/StakedOtterClamERC20V2.json
@@ -59,7 +60,13 @@ dataSources:
         - name: OtterPearlERC20
           file: ./abis/OtterPearlERC20.json
         - name: CurveMai3poolContract
-          file: ./abis/CurveMai3poolContract.json
+          file: ./abis/CurveMai3poolContract.json        
+        - name: Dyst
+          file: ./abis/Dyst.json      
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: veDyst
+          file: ./abis/veDyst.json
         # --------------------
       eventHandlers:
         - event: LogRebase(indexed uint256,uint256,uint256)
@@ -122,6 +129,7 @@ dataSources:
         - RewardsMinted
         - Withdrawal
         - Transfer
+        - DystopiaLPBalance
       abis:
         - name: OtterTreasury
           file: ./abis/OtterTreasury.json
@@ -162,6 +170,12 @@ dataSources:
           file: ./abis/OtterPearlERC20.json
         - name: CurveMai3poolContract
           file: ./abis/CurveMai3poolContract.json
+        - name: Dyst
+          file: ./abis/Dyst.json      
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: veDyst
+          file: ./abis/veDyst.json
         # --------------------
       eventHandlers:
         - event: ChangeActivated(indexed uint8,address,bool)
@@ -244,6 +258,35 @@ dataSources:
       file: ./src/Qi.ts
 
   - kind: ethereum/contract
+    name: Dyst
+    network: matic
+    source:
+      address: '0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb'
+      abi: Dyst
+      startBlock: 28347518 #DYST deployment block
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+      abis:
+        - name: Dyst
+          file: ./abis/Dyst.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleDystTransfer
+      file: ./src/Dyst.ts
+
+  - kind: ethereum/contract
     name: DeprecatedOtterBuybacker
     network: matic
     source:
@@ -296,3 +339,66 @@ dataSources:
         - event: Buyback(indexed address,uint256,uint256)
           handler: handleBuyback
       file: ./src/OtterBuybacker.ts
+
+  - kind: ethereum/contract
+    name: DystPairFactory
+    network: matic
+    source:
+      address: '0x1d21db6cde1b18c7e47b0f7f42f4b3f68b9beec9'
+      abi: DystPairFactory
+      startBlock: 28460034
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - DystopiaLPBalance
+      abis:
+        - name: Dyst
+          file: ./abis/Dyst.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystVoter
+          file: ./abis/DystVoter.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+      eventHandlers:
+        - event: PairCreated(indexed address,indexed address,bool,address,uint256)
+          handler: handlePairCreated
+      file: ./src/DystPairFactory.ts
+
+templates: 
+  - kind: ethereum/contract
+    name: DystPair
+    network: matic
+    source:
+      abi: DystPair
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - DystopiaLPBalance
+      abis:
+        - name: Dyst
+          file: ./abis/Dyst.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystVoter
+          file: ./abis/DystVoter.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/DystPair.ts

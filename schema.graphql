@@ -211,6 +211,13 @@ type ProtocolMetric @entity {
   treasuryClamWmaticPOL: BigDecimal!
   totalBurnedClam: BigDecimal!
   totalBurnedClamMarketValue: BigDecimal!
+  treasuryDystopiaPairwMaticDystMarketValue: BigDecimal!
+  treasuryDystopiaPairMaiClamMarketValue: BigDecimal!
+  treasuryDystopiaPairUSDPLUSClamMarketValue: BigDecimal!
+  treasuryDystopiaPairMaiUsdcMarketValue: BigDecimal!
+  treasuryDystopiaPairFraxUsdcMarketValue: BigDecimal!
+  treasuryDystMarketValue: BigDecimal!
+  treasuryVeDystMarketValue: BigDecimal!
 }
 
 type TotalBurnedClam @entity {
@@ -229,10 +236,10 @@ type Harvest @entity {
 type TreasuryRevenue @entity {
   id: ID!
   timestamp: BigInt!
-  qiLockerHarvestAmount: BigDecimal!
-  qiLockerHarvestMarketValue: BigDecimal!
-  qiDaoInvestmentHarvestAmount: BigDecimal!
-  qiDaoInvestmentHarvestMarketValue: BigDecimal!
+  qiClamAmount: BigDecimal!
+  qiMarketValue: BigDecimal!
+  dystClamAmount: BigDecimal!
+  dystMarketValue: BigDecimal!
   ottopiaClamAmount: BigDecimal!
   ottopiaMarketValue: BigDecimal!
   buybackClamAmount: BigDecimal!
@@ -258,4 +265,9 @@ type TotalBuybacks @entity {
   id: ID!
   boughtClam: BigDecimal!
   boughtMarketValue: BigDecimal!
+}
+
+type DystopiaLPBalance @entity {
+  id: ID! #lp tokenId
+  balance: BigInt!
 }

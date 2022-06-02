@@ -2,17 +2,16 @@ import { Transfer as TransferEvent } from '../generated/Qi/Qi'
 import { Address, log } from '@graphprotocol/graph-ts'
 import { Transfer } from '../generated/schema'
 import { loadOrCreateTransaction } from './utils/Transactions'
-import { updateTreasuryRevenueQiTransfer } from './utils/TreasuryRevenue'
+import { updateTreasuryRevenueDystTransfer } from './utils/TreasuryRevenue'
 
-import { TREASURY_ADDRESS, UNI_MAI_USDC_QI_INVESTMENT_PAIR, UNI_QI_WMATIC_INVESTMENT_PAIR } from './utils/Constants'
+import { DAO_WALLET, DYSTOPIA_TRACKED_GAUGES } from './utils/Constants'
 
-export function handleQiDaoInvestmentHarvestTransfer(event: TransferEvent): void {
+export function handleDystTransfer(event: TransferEvent): void {
   if (
-    (event.params.from.toHexString().toLowerCase() == UNI_MAI_USDC_QI_INVESTMENT_PAIR.toLowerCase() ||
-      event.params.from.toHexString().toLowerCase() == UNI_QI_WMATIC_INVESTMENT_PAIR.toLowerCase()) &&
-    event.params.to.toHexString().toLowerCase() == TREASURY_ADDRESS.toLowerCase()
+    DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString().toLowerCase()) &&
+    event.params.to.toHexString().toLowerCase() == DAO_WALLET.toLowerCase()
   ) {
-    log.debug('QiDaoInvestmentHarvestTransfer {}, from: {}, to: {}', [
+    log.debug('Dystopia Harvest {}, from: {}, to: {}', [
       event.transaction.hash.toHexString(),
       event.params.from.toHexString(),
       event.params.to.toHexString(),
@@ -26,7 +25,7 @@ export function handleQiDaoInvestmentHarvestTransfer(event: TransferEvent): void
     entity.value = event.params.value
 
     //Pass entity to TreasuryRevenue
-    updateTreasuryRevenueQiTransfer(entity)
+    updateTreasuryRevenueDystTransfer(entity)
     entity.save()
   }
 }

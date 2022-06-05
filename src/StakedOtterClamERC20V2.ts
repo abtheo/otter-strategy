@@ -165,5 +165,6 @@ export function calculateApy(timestamp: BigInt): void {
   apyEntity.apy = apy
   apyEntity.rebaseReward = rebaseReward
   apyEntity.clamDistributed = distributedClam
+  apyEntity.clamDistributedDecimal = distributedClam.divDecimal(BigDecimal.fromString('1e9'))
   apyEntity.save()
 }

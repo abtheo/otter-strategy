@@ -13,7 +13,7 @@ import {
 import { toDecimal } from './utils/Decimals'
 import { getQiMarketValue } from './utils/Price'
 
-export function handleQiDaoInvestmentHarvestTransfer(event: TransferEvent): void {
+export function handleQiTransfer(event: TransferEvent): void {
   if (
     (addressEqualsString(event.params.from, UNI_MAI_USDC_QI_INVESTMENT_PAIR) ||
       addressEqualsString(event.params.from, UNI_QI_WMATIC_INVESTMENT_PAIR)) &&

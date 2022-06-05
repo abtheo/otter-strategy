@@ -119,24 +119,24 @@ export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
   let marketValue = BigDecimal.fromString('0')
   let clamAmountDec = buyback.clamAmount.divDecimal(BigDecimal.fromString('1e9'))
 
-  if (buyback.token.toHexString().toLowerCase() == QI_ERC20_CONTRACT.toLowerCase()) {
+  if (buyback.token.toHexString() == QI_ERC20_CONTRACT.toLowerCase()) {
     marketValue = getQiMarketValue(toDecimal(buyback.tokenAmount, 18))
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
-  if (buyback.token.toHexString().toLowerCase() == MATIC_ERC20_CONTRACT.toLowerCase()) {
+  if (buyback.token.toHexString() == MATIC_ERC20_CONTRACT.toLowerCase()) {
     marketValue = getwMATICMarketValue(toDecimal(buyback.tokenAmount, 18))
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
 
-  if (buyback.token.toHexString().toLowerCase() == WETH_CONTRACT.toLowerCase()) {
+  if (buyback.token.toHexString() == WETH_CONTRACT.toLowerCase()) {
     marketValue = getwETHMarketValue(buyback.tokenAmount.toBigDecimal())
     log.debug('BuybackEvent using wETH, txid: {}', [buyback.id])
   }
   //stablecoins (18 decimals)
   if (
-    buyback.token.toHexString().toLowerCase() == DAI_ERC20_CONTRACT.toLowerCase() ||
-    buyback.token.toHexString().toLowerCase() == FRAX_ERC20_CONTRACT.toLowerCase() ||
-    buyback.token.toHexString().toLowerCase() == MAI_ERC20_CONTRACT.toLowerCase()
+    buyback.token.toHexString() == DAI_ERC20_CONTRACT.toLowerCase() ||
+    buyback.token.toHexString() == FRAX_ERC20_CONTRACT.toLowerCase() ||
+    buyback.token.toHexString() == MAI_ERC20_CONTRACT.toLowerCase()
   ) {
     marketValue = toDecimal(buyback.tokenAmount, 18)
     log.debug('BuybackEvent using Stablecoins, txid: {}', [buyback.id])

@@ -23,8 +23,8 @@ Possible LPs:
 export function handleTransfer(event: TransferEvent): void {
   //only track DAO txs
   if (
-    event.params.from.toHexString().toLowerCase() != DAO_WALLET.toLowerCase() &&
-    event.params.to.toHexString().toLowerCase() != DAO_WALLET.toLowerCase()
+    event.params.from.toHexString() != DAO_WALLET.toLowerCase() &&
+    event.params.to.toHexString() != DAO_WALLET.toLowerCase()
   )
     return
 
@@ -43,16 +43,16 @@ export function handleTransfer(event: TransferEvent): void {
   //update LP balance
   let dystLp = loadOrCreateDystopiaLPBalance(Address.fromString(pair))
   if (
-    event.params.from.toHexString().toLowerCase() == DAO_WALLET.toLowerCase() &&
-    DYSTOPIA_TRACKED_GAUGES.includes(event.params.to.toHexString().toLowerCase())
+    event.params.from.toHexString() == DAO_WALLET.toLowerCase() &&
+    DYSTOPIA_TRACKED_GAUGES.includes(event.params.to.toHexString())
   ) {
     //deposit
     dystLp.balance = dystLp.balance.plus(event.params.value)
     dystLp.save()
   }
   if (
-    event.params.to.toHexString().toLowerCase() == DAO_WALLET.toLowerCase() &&
-    DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString().toLowerCase())
+    event.params.to.toHexString() == DAO_WALLET.toLowerCase() &&
+    DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString())
   ) {
     //withdraw
     dystLp.balance = dystLp.balance.minus(event.params.value)
@@ -70,9 +70,9 @@ export function handleTransfer(event: TransferEvent): void {
 }
 
 export function loadOrCreateDystopiaLPBalance(lpAddress: Address): DystopiaLPBalance {
-  let dystLp = DystopiaLPBalance.load(lpAddress.toHexString().toLowerCase())
+  let dystLp = DystopiaLPBalance.load(lpAddress.toHexString())
   if (dystLp == null) {
-    dystLp = new DystopiaLPBalance(lpAddress.toHexString().toLowerCase())
+    dystLp = new DystopiaLPBalance(lpAddress.toHexString())
     dystLp.balance = BigInt.fromString('0')
     dystLp.save()
   }

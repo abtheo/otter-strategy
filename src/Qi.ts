@@ -8,9 +8,9 @@ import { TREASURY_ADDRESS, UNI_MAI_USDC_QI_INVESTMENT_PAIR, UNI_QI_WMATIC_INVEST
 
 export function handleQiDaoInvestmentHarvestTransfer(event: TransferEvent): void {
   if (
-    (event.params.from.toHexString().toLowerCase() == UNI_MAI_USDC_QI_INVESTMENT_PAIR.toLowerCase() ||
-      event.params.from.toHexString().toLowerCase() == UNI_QI_WMATIC_INVESTMENT_PAIR.toLowerCase()) &&
-    event.params.to.toHexString().toLowerCase() == TREASURY_ADDRESS.toLowerCase()
+    (event.params.from.toHexString() == UNI_MAI_USDC_QI_INVESTMENT_PAIR.toLowerCase() ||
+      event.params.from.toHexString() == UNI_QI_WMATIC_INVESTMENT_PAIR.toLowerCase()) &&
+    event.params.to.toHexString() == TREASURY_ADDRESS.toLowerCase()
   ) {
     log.debug('QiDaoInvestmentHarvestTransfer {}, from: {}, to: {}', [
       event.transaction.hash.toHexString(),

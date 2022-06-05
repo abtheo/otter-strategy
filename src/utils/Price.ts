@@ -167,14 +167,14 @@ export function getDystPairUSD(lp_amount: BigInt, pair_address: string): BigDeci
 }
 
 function findPrice(address: Address): BigDecimal {
-  if (address.toHexString().toLowerCase() == CLAM_ERC20_CONTRACT.toLowerCase()) return getClamUsdRate()
-  if (address.toHexString().toLowerCase() == MATIC_ERC20_CONTRACT.toLowerCase()) return getwMaticUsdRate()
-  if (address.toHexString().toLowerCase() == DYST_ERC20.toLowerCase()) return getDystUsdRate()
+  if (address.toHexString() == CLAM_ERC20_CONTRACT.toLowerCase()) return getClamUsdRate()
+  if (address.toHexString() == MATIC_ERC20_CONTRACT.toLowerCase()) return getwMaticUsdRate()
+  if (address.toHexString() == DYST_ERC20.toLowerCase()) return getDystUsdRate()
   if (
-    address.toHexString().toLowerCase() == FRAX_ERC20_CONTRACT.toLowerCase() ||
-    address.toHexString().toLowerCase() == MAI_ERC20_CONTRACT.toLowerCase() ||
-    address.toHexString().toLowerCase() == USDPLUS_ERC20_CONTRACT.toLowerCase() ||
-    address.toHexString().toLowerCase() == USDC_ERC20_CONTRACT.toLowerCase()
+    address.toHexString() == FRAX_ERC20_CONTRACT.toLowerCase() ||
+    address.toHexString() == MAI_ERC20_CONTRACT.toLowerCase() ||
+    address.toHexString() == USDPLUS_ERC20_CONTRACT.toLowerCase() ||
+    address.toHexString() == USDC_ERC20_CONTRACT.toLowerCase()
   )
     return BigDecimal.fromString('1')
 

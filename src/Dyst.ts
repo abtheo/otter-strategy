@@ -8,8 +8,8 @@ import { DAO_WALLET, DYSTOPIA_TRACKED_GAUGES } from './utils/Constants'
 
 export function handleDystTransfer(event: TransferEvent): void {
   if (
-    DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString().toLowerCase()) &&
-    event.params.to.toHexString().toLowerCase() == DAO_WALLET.toLowerCase()
+    DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString()) &&
+    event.params.to.toHexString() == DAO_WALLET.toLowerCase()
   ) {
     log.debug('Dystopia Harvest {}, from: {}, to: {}', [
       event.transaction.hash.toHexString(),

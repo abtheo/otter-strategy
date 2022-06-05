@@ -6,6 +6,7 @@ import { loadOrCreateTransaction } from './utils/Transactions'
 import { toDecimal } from './utils/Decimals'
 import { DAO_WALLET, DYSTOPIA_TRACKED_GAUGES } from './utils/Constants'
 import { dataSource } from '@graphprotocol/graph-ts'
+import { addressEqualsString } from './utils'
 
 /*
 Dystopia LP Staking does not return any vested tokens to the DAO.
@@ -43,7 +44,7 @@ export function handleTransfer(event: TransferEvent): void {
   //update LP balance
   let dystLp = loadOrCreateDystopiaLPBalance(Address.fromString(pair))
   if (
-    event.params.from.toHexString() == DAO_WALLET.toLowerCase() &&
+    addressEqualsString(event.params.from, DAO_WALLET) &&
     DYSTOPIA_TRACKED_GAUGES.includes(event.params.to.toHexString())
   ) {
     //deposit
@@ -51,7 +52,7 @@ export function handleTransfer(event: TransferEvent): void {
     dystLp.save()
   }
   if (
-    event.params.to.toHexString() == DAO_WALLET.toLowerCase() &&
+    addressEqualsString(event.params.to, DAO_WALLET) &&
     DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString())
   ) {
     //withdraw

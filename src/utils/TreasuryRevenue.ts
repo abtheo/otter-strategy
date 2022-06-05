@@ -12,6 +12,7 @@ import {
   WETH_CONTRACT,
 } from './Constants'
 import { getwMATICMarketValue, getClamUsdRate, getwETHMarketValue, getDystMarketValue } from './Price'
+import { addressEqualsString } from './'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
   let ts = dayFromTimestamp(timestamp)
@@ -119,24 +120,24 @@ export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
   let marketValue = BigDecimal.fromString('0')
   let clamAmountDec = buyback.clamAmount.divDecimal(BigDecimal.fromString('1e9'))
 
-  if (buyback.token.toHexString() == QI_ERC20_CONTRACT.toLowerCase()) {
+  if (addressEqualsString(buyback.token, QI_ERC20_CONTRACT)) {
     marketValue = getQiMarketValue(toDecimal(buyback.tokenAmount, 18))
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
-  if (buyback.token.toHexString() == MATIC_ERC20_CONTRACT.toLowerCase()) {
+  if (addressEqualsString(buyback.token, MATIC_ERC20_CONTRACT)) {
     marketValue = getwMATICMarketValue(toDecimal(buyback.tokenAmount, 18))
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
 
-  if (buyback.token.toHexString() == WETH_CONTRACT.toLowerCase()) {
+  if (addressEqualsString(buyback.token, WETH_CONTRACT)) {
     marketValue = getwETHMarketValue(buyback.tokenAmount.toBigDecimal())
     log.debug('BuybackEvent using wETH, txid: {}', [buyback.id])
   }
   //stablecoins (18 decimals)
   if (
-    buyback.token.toHexString() == DAI_ERC20_CONTRACT.toLowerCase() ||
-    buyback.token.toHexString() == FRAX_ERC20_CONTRACT.toLowerCase() ||
-    buyback.token.toHexString() == MAI_ERC20_CONTRACT.toLowerCase()
+    addressEqualsString(buyback.token, DAI_ERC20_CONTRACT) ||
+    addressEqualsString(buyback.token, FRAX_ERC20_CONTRACT) ||
+    addressEqualsString(buyback.token, MAI_ERC20_CONTRACT)
   ) {
     marketValue = toDecimal(buyback.tokenAmount, 18)
     log.debug('BuybackEvent using Stablecoins, txid: {}', [buyback.id])

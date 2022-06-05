@@ -3,14 +3,14 @@ import { Address, log } from '@graphprotocol/graph-ts'
 import { Transfer } from '../generated/schema'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateTreasuryRevenueQiTransfer } from './utils/TreasuryRevenue'
-
+import { addressEqualsString } from './utils'
 import { TREASURY_ADDRESS, UNI_MAI_USDC_QI_INVESTMENT_PAIR, UNI_QI_WMATIC_INVESTMENT_PAIR } from './utils/Constants'
 
 export function handleQiDaoInvestmentHarvestTransfer(event: TransferEvent): void {
   if (
-    (event.params.from.toHexString() == UNI_MAI_USDC_QI_INVESTMENT_PAIR.toLowerCase() ||
-      event.params.from.toHexString() == UNI_QI_WMATIC_INVESTMENT_PAIR.toLowerCase()) &&
-    event.params.to.toHexString() == TREASURY_ADDRESS.toLowerCase()
+    (addressEqualsString(event.params.from, UNI_MAI_USDC_QI_INVESTMENT_PAIR) ||
+      addressEqualsString(event.params.from, UNI_QI_WMATIC_INVESTMENT_PAIR)) &&
+    addressEqualsString(event.params.to, TREASURY_ADDRESS)
   ) {
     log.debug('QiDaoInvestmentHarvestTransfer {}, from: {}, to: {}', [
       event.transaction.hash.toHexString(),

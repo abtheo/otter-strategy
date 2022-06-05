@@ -20,6 +20,7 @@ import { AggregatorV3InterfaceABI } from '../../generated/OtterTreasury/Aggregat
 import { toDecimal } from './Decimals'
 import { DystPair } from '../../generated/Dyst/DystPair'
 import { ERC20 } from '../../generated/OtterTreasury/ERC20'
+import { addressEqualsString } from '../utils/'
 
 let BIG_DECIMAL_1E9 = BigDecimal.fromString('1e9')
 
@@ -167,14 +168,14 @@ export function getDystPairUSD(lp_amount: BigInt, pair_address: string): BigDeci
 }
 
 function findPrice(address: Address): BigDecimal {
-  if (address.toHexString() == CLAM_ERC20_CONTRACT.toLowerCase()) return getClamUsdRate()
-  if (address.toHexString() == MATIC_ERC20_CONTRACT.toLowerCase()) return getwMaticUsdRate()
-  if (address.toHexString() == DYST_ERC20.toLowerCase()) return getDystUsdRate()
+  if (addressEqualsString(address, CLAM_ERC20_CONTRACT)) return getClamUsdRate()
+  if (addressEqualsString(address, MATIC_ERC20_CONTRACT)) return getwMaticUsdRate()
+  if (addressEqualsString(address, DYST_ERC20)) return getDystUsdRate()
   if (
-    address.toHexString() == FRAX_ERC20_CONTRACT.toLowerCase() ||
-    address.toHexString() == MAI_ERC20_CONTRACT.toLowerCase() ||
-    address.toHexString() == USDPLUS_ERC20_CONTRACT.toLowerCase() ||
-    address.toHexString() == USDC_ERC20_CONTRACT.toLowerCase()
+    addressEqualsString(address, FRAX_ERC20_CONTRACT) ||
+    addressEqualsString(address, MAI_ERC20_CONTRACT) ||
+    addressEqualsString(address, USDPLUS_ERC20_CONTRACT) ||
+    addressEqualsString(address, USDC_ERC20_CONTRACT)
   )
     return BigDecimal.fromString('1')
 

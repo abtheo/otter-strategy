@@ -222,14 +222,11 @@ export function getDystMarketValue(balance: BigDecimal): BigDecimal {
   return marketValue
 }
 
-export function getQiMarketValue(balance: BigDecimal | BigInt): BigDecimal {
+export function getQiMarketValue(balance: BigDecimal): BigDecimal {
   let usdPerQi = getQiUsdRate()
   log.debug('1 Qi = {} USD', [usdPerQi.toString()])
 
-  let bal = BigDecimal.zero()
-  if (balance instanceof BigInt) bal = toDecimal(balance, 18)
-
-  let marketValue = bal.times(usdPerQi)
+  let marketValue = balance.times(usdPerQi)
   log.debug('qi marketValue = {}', [marketValue.toString()])
   return marketValue
 }

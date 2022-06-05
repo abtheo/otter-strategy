@@ -145,7 +145,7 @@ export function getPairUSD(lp_amount: BigInt, pair_address: string): BigDecimal 
 }
 
 export function getDystPairUSD(lp_amount: BigInt, pair_address: string): BigDecimal {
-  if (lp_amount == BigInt.fromString('0')) return BigDecimal.fromString('0')
+  if (lp_amount == BigInt.fromString('0')) return BigDecimal.zero()
   let pair = DystPair.bind(Address.fromString(pair_address))
 
   let token0 = ERC20.bind(pair.token0())
@@ -219,5 +219,17 @@ export function getDystMarketValue(balance: BigDecimal): BigDecimal {
 
   let marketValue = balance.times(usdPerDYST)
   log.debug('DYST marketValue = {}', [marketValue.toString()])
+  return marketValue
+}
+
+export function getQiMarketValue(balance: BigDecimal | BigInt): BigDecimal {
+  let usdPerQi = getQiUsdRate()
+  log.debug('1 Qi = {} USD', [usdPerQi.toString()])
+
+  let bal = BigDecimal.zero()
+  if (balance instanceof BigInt) bal = toDecimal(balance, 18)
+
+  let marketValue = bal.times(usdPerQi)
+  log.debug('qi marketValue = {}', [marketValue.toString()])
   return marketValue
 }

@@ -2773,3 +2773,78 @@ export class DystopiaLPBalance extends Entity {
     this.set("balance", Value.fromBigInt(value));
   }
 }
+
+export class TotalBribeRewards extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set(
+      "qiBribeRewardsMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "polygonGrantMaticMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "dystopiaBribeRewardsMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save TotalBribeRewards entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save TotalBribeRewards entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("TotalBribeRewards", id.toString(), this);
+    }
+  }
+
+  static load(id: string): TotalBribeRewards | null {
+    return changetype<TotalBribeRewards | null>(
+      store.get("TotalBribeRewards", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get qiBribeRewardsMarketValue(): BigDecimal {
+    let value = this.get("qiBribeRewardsMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set qiBribeRewardsMarketValue(value: BigDecimal) {
+    this.set("qiBribeRewardsMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get polygonGrantMaticMarketValue(): BigDecimal {
+    let value = this.get("polygonGrantMaticMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set polygonGrantMaticMarketValue(value: BigDecimal) {
+    this.set("polygonGrantMaticMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get dystopiaBribeRewardsMarketValue(): BigDecimal {
+    let value = this.get("dystopiaBribeRewardsMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set dystopiaBribeRewardsMarketValue(value: BigDecimal) {
+    this.set("dystopiaBribeRewardsMarketValue", Value.fromBigDecimal(value));
+  }
+}

@@ -1,8 +1,16 @@
 import { toDecimal } from './Decimals'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { dayFromTimestamp } from './Dates'
-import { TreasuryRevenue, Transaction, Harvest, Transfer, Buyback, TotalBuybacks } from '../../generated/schema'
-import { getQiMarketValue } from './ProtocolMetrics'
+import {
+  TreasuryRevenue,
+  Transaction,
+  Harvest,
+  Transfer,
+  Buyback,
+  TotalBuybacks,
+  TotalBribeRewards,
+} from '../../generated/schema'
+import { getQiMarketValue } from '../utils/Price'
 import {
   QI_ERC20_CONTRACT,
   DAI_ERC20_CONTRACT,
@@ -21,18 +29,18 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
   if (treasuryRevenue == null) {
     treasuryRevenue = new TreasuryRevenue(ts)
     treasuryRevenue.timestamp = timestamp
-    treasuryRevenue.qiClamAmount = BigDecimal.fromString('0')
-    treasuryRevenue.qiMarketValue = BigDecimal.fromString('0')
-    treasuryRevenue.dystClamAmount = BigDecimal.fromString('0')
-    treasuryRevenue.dystMarketValue = BigDecimal.fromString('0')
-    treasuryRevenue.totalRevenueMarketValue = BigDecimal.fromString('0')
-    treasuryRevenue.totalRevenueClamAmount = BigDecimal.fromString('0')
-    treasuryRevenue.buybackClamAmount = BigDecimal.fromString('0')
-    treasuryRevenue.buybackMarketValue = BigDecimal.fromString('0')
-    treasuryRevenue.cumulativeBuybackClamAmount = BigDecimal.fromString('0')
-    treasuryRevenue.cumulativeBuybackMarketValue = BigDecimal.fromString('0')
-    treasuryRevenue.yieldClamAmount = BigDecimal.fromString('0')
-    treasuryRevenue.yieldMarketValue = BigDecimal.fromString('0')
+    treasuryRevenue.qiClamAmount = BigDecimal.zero()
+    treasuryRevenue.qiMarketValue = BigDecimal.zero()
+    treasuryRevenue.dystClamAmount = BigDecimal.zero()
+    treasuryRevenue.dystMarketValue = BigDecimal.zero()
+    treasuryRevenue.totalRevenueMarketValue = BigDecimal.zero()
+    treasuryRevenue.totalRevenueClamAmount = BigDecimal.zero()
+    treasuryRevenue.buybackClamAmount = BigDecimal.zero()
+    treasuryRevenue.buybackMarketValue = BigDecimal.zero()
+    treasuryRevenue.cumulativeBuybackClamAmount = BigDecimal.zero()
+    treasuryRevenue.cumulativeBuybackMarketValue = BigDecimal.zero()
+    treasuryRevenue.yieldClamAmount = BigDecimal.zero()
+    treasuryRevenue.yieldMarketValue = BigDecimal.zero()
 
     let cumulativeBuybacks = loadOrCreateTotalBuybacksSingleton()
     treasuryRevenue.cumulativeBuybackClamAmount = cumulativeBuybacks.boughtClam
@@ -117,7 +125,7 @@ export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {
 export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
   log.debug('BuybackEvent, txid: {}, token: ', [buyback.id, buyback.token.toHexString()])
   let treasuryRevenue = loadOrCreateTreasuryRevenue(buyback.timestamp)
-  let marketValue = BigDecimal.fromString('0')
+  let marketValue = BigDecimal.zero()
   let clamAmountDec = buyback.clamAmount.divDecimal(BigDecimal.fromString('1e9'))
 
   if (addressEqualsString(buyback.token, QI_ERC20_CONTRACT)) {
@@ -143,7 +151,7 @@ export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
     log.debug('BuybackEvent using Stablecoins, txid: {}', [buyback.id])
   }
   //If token is not tracked or buyback has no value, skip
-  if (marketValue == BigDecimal.fromString('0')) return
+  if (marketValue == BigDecimal.zero()) return
 
   treasuryRevenue.buybackMarketValue = treasuryRevenue.buybackMarketValue.plus(marketValue)
   treasuryRevenue.buybackClamAmount = treasuryRevenue.buybackClamAmount.plus(clamAmountDec)
@@ -164,8 +172,18 @@ export function loadOrCreateTotalBuybacksSingleton(): TotalBuybacks {
   let total = TotalBuybacks.load('1')
   if (total == null) {
     total = new TotalBuybacks('1')
-    total.boughtClam = BigDecimal.fromString('0')
-    total.boughtMarketValue = BigDecimal.fromString('0')
+    total.boughtClam = BigDecimal.zero()
+    total.boughtMarketValue = BigDecimal.zero()
+  }
+  return total
+}
+export function loadOrCreateTotalBribeRewardsSingleton(): TotalBribeRewards {
+  let total = TotalBribeRewards.load('1')
+  if (total == null) {
+    total = new TotalBribeRewards('1')
+    total.qiBribeRewardsMarketValue = BigDecimal.zero()
+    total.polygonGrantMaticMarketValue = BigDecimal.zero()
+    total.dystopiaBribeRewardsMarketValue = BigDecimal.zero()
   }
   return total
 }

@@ -87,6 +87,7 @@ import {
   getwMaticUsdRate,
   getDystUsdRate,
   getDystPairUSD,
+  getQiMarketValue,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
 import { DystPair } from '../../generated/OtterTreasury/DystPair'
@@ -99,48 +100,48 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   if (protocolMetric == null) {
     protocolMetric = new ProtocolMetric(dayTimestamp)
     protocolMetric.timestamp = timestamp
-    protocolMetric.clamCirculatingSupply = BigDecimal.fromString('0')
-    protocolMetric.sClamCirculatingSupply = BigDecimal.fromString('0')
-    protocolMetric.totalSupply = BigDecimal.fromString('0')
-    protocolMetric.clamPrice = BigDecimal.fromString('0')
-    protocolMetric.marketCap = BigDecimal.fromString('0')
-    protocolMetric.totalValueLocked = BigDecimal.fromString('0')
-    protocolMetric.treasuryRiskFreeValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryMaiUsdcRiskFreeValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryMaiUsdcQiInvestmentRiskFreeValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryMarketValue = BigDecimal.fromString('0')
-    protocolMetric.nextEpochRebase = BigDecimal.fromString('0')
-    protocolMetric.nextDistributedClam = BigDecimal.fromString('0')
-    protocolMetric.currentAPY = BigDecimal.fromString('0')
-    protocolMetric.safeHandAPY = BigDecimal.fromString('0')
-    protocolMetric.furryHandAPY = BigDecimal.fromString('0')
-    protocolMetric.stoneHandAPY = BigDecimal.fromString('0')
-    protocolMetric.diamondHandAPY = BigDecimal.fromString('0')
-    protocolMetric.treasuryMaiRiskFreeValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryMaiMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryFraxRiskFreeValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryFraxMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryDaiRiskFreeValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryWmaticRiskFreeValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryWmaticMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryQiMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryTetuQiMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryDquickMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryQiWmaticMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryQiWmaticQiInvestmentMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryOtterClamQiMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryClamMaiPOL = BigDecimal.fromString('0')
-    protocolMetric.treasuryClamFraxPOL = BigDecimal.fromString('0')
-    protocolMetric.treasuryClamWmaticPOL = BigDecimal.fromString('0')
-    protocolMetric.totalBurnedClam = BigDecimal.fromString('0')
-    protocolMetric.totalBurnedClamMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryDystopiaPairMaiClamMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryDystopiaPairMaiUsdcMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryDystopiaPairFraxUsdcMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryDystMarketValue = BigDecimal.fromString('0')
-    protocolMetric.treasuryVeDystMarketValue = BigDecimal.fromString('0')
+    protocolMetric.clamCirculatingSupply = BigDecimal.zero()
+    protocolMetric.sClamCirculatingSupply = BigDecimal.zero()
+    protocolMetric.totalSupply = BigDecimal.zero()
+    protocolMetric.clamPrice = BigDecimal.zero()
+    protocolMetric.marketCap = BigDecimal.zero()
+    protocolMetric.totalValueLocked = BigDecimal.zero()
+    protocolMetric.treasuryRiskFreeValue = BigDecimal.zero()
+    protocolMetric.treasuryMaiUsdcRiskFreeValue = BigDecimal.zero()
+    protocolMetric.treasuryMaiUsdcQiInvestmentRiskFreeValue = BigDecimal.zero()
+    protocolMetric.treasuryMarketValue = BigDecimal.zero()
+    protocolMetric.nextEpochRebase = BigDecimal.zero()
+    protocolMetric.nextDistributedClam = BigDecimal.zero()
+    protocolMetric.currentAPY = BigDecimal.zero()
+    protocolMetric.safeHandAPY = BigDecimal.zero()
+    protocolMetric.furryHandAPY = BigDecimal.zero()
+    protocolMetric.stoneHandAPY = BigDecimal.zero()
+    protocolMetric.diamondHandAPY = BigDecimal.zero()
+    protocolMetric.treasuryMaiRiskFreeValue = BigDecimal.zero()
+    protocolMetric.treasuryMaiMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryFraxRiskFreeValue = BigDecimal.zero()
+    protocolMetric.treasuryFraxMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDaiRiskFreeValue = BigDecimal.zero()
+    protocolMetric.treasuryWmaticRiskFreeValue = BigDecimal.zero()
+    protocolMetric.treasuryWmaticMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryQiMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryTetuQiMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDquickMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryQiWmaticMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryQiWmaticQiInvestmentMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryOtterClamQiMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryClamMaiPOL = BigDecimal.zero()
+    protocolMetric.treasuryClamFraxPOL = BigDecimal.zero()
+    protocolMetric.treasuryClamWmaticPOL = BigDecimal.zero()
+    protocolMetric.totalBurnedClam = BigDecimal.zero()
+    protocolMetric.totalBurnedClamMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDystopiaPairMaiClamMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDystopiaPairMaiUsdcMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDystopiaPairFraxUsdcMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDystMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryVeDystMarketValue = BigDecimal.zero()
 
     protocolMetric.save()
   }
@@ -155,7 +156,7 @@ function getTotalSupply(): BigDecimal {
 }
 
 function getCirculatingSupply(transaction: Transaction, total_supply: BigDecimal): BigDecimal {
-  let circ_supply = BigDecimal.fromString('0')
+  let circ_supply = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(CIRCULATING_SUPPLY_CONTRACT_BLOCK))) {
     let circulatingSupply_contract = ClamCirculatingSupply.bind(Address.fromString(CIRCULATING_SUPPLY_CONTRACT))
     circ_supply = toDecimal(circulatingSupply_contract.CLAMCirculatingSupply(), 9)
@@ -167,7 +168,7 @@ function getCirculatingSupply(transaction: Transaction, total_supply: BigDecimal
 }
 
 function getSClamSupply(transaction: Transaction): BigDecimal {
-  let sclam_supply = BigDecimal.fromString('0')
+  let sclam_supply = BigDecimal.zero()
 
   let sclam_contract = StakedOtterClamERC20V2.bind(Address.fromString(SCLAM_ERC20_CONTRACT))
   sclam_supply = toDecimal(sclam_contract.circulatingSupply(), 9)
@@ -333,15 +334,6 @@ export function getDystMarketValue(): BigDecimal {
   return marketValue
 }
 
-export function getQiMarketValue(balance: BigDecimal): BigDecimal {
-  let usdPerQi = getQiUsdRate()
-  log.debug('1 Qi = {} USD', [usdPerQi.toString()])
-
-  let marketValue = balance.times(usdPerQi)
-  log.debug('qi marketValue = {}', [marketValue.toString()])
-  return marketValue
-}
-
 export function getOtterClamQiMarketValue(): BigDecimal {
   let usdPerQi = getQiUsdRate()
   log.debug('1 Qi = {} USD', [usdPerQi.toString()])
@@ -378,7 +370,7 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
 
   //CLAM-MAI & Investment to Quickswap
   let clamMaiBalance = clamMaiPair.balanceOf(treasury_address)
-  let dQuickMarketValue = BigDecimal.fromString('0')
+  let dQuickMarketValue = BigDecimal.zero()
 
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR_BLOCK))) {
     let pair = OtterQuickSwapInvestment.bind(Address.fromString(UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR))
@@ -396,16 +388,16 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
 
   //CLAM-FRAX
   let clamFraxBalance = BigInt.fromI32(0)
-  let clamFrax_value = BigDecimal.fromString('0')
-  let clamFrax_rfv = BigDecimal.fromString('0')
-  let clamFraxTotalLP = BigDecimal.fromString('0')
-  let clamFraxPOL = BigDecimal.fromString('0')
+  let clamFrax_value = BigDecimal.zero()
+  let clamFrax_rfv = BigDecimal.zero()
+  let clamFraxTotalLP = BigDecimal.zero()
+  let clamFraxPOL = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_CLAM_FRAX_PAIR_BLOCK))) {
     clamFraxBalance = clamFraxPair.balanceOf(treasury_address)
     clamFrax_value = getPairUSD(clamFraxBalance, UNI_CLAM_FRAX_PAIR)
     clamFrax_rfv = getDiscountedPairUSD(clamFraxBalance, UNI_CLAM_FRAX_PAIR)
     clamFraxTotalLP = toDecimal(clamFraxPair.totalSupply(), 18)
-    if (clamFraxTotalLP.gt(BigDecimal.fromString('0')) && clamFraxBalance.gt(BigInt.fromI32(0))) {
+    if (clamFraxTotalLP.gt(BigDecimal.zero()) && clamFraxBalance.gt(BigInt.fromI32(0))) {
       clamFraxPOL = toDecimal(clamFraxBalance, 18)
         .div(clamFraxTotalLP)
         .times(BigDecimal.fromString('100'))
@@ -413,10 +405,10 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
   }
 
   let clamWmatic = BigInt.fromI32(0)
-  let clamWmatic_value = BigDecimal.fromString('0')
-  let clamWmatic_rfv = BigDecimal.fromString('0')
-  let clamWmaticTotalLP = BigDecimal.fromString('0')
-  let clamWmaticPOL = BigDecimal.fromString('0')
+  let clamWmatic_value = BigDecimal.zero()
+  let clamWmatic_rfv = BigDecimal.zero()
+  let clamWmaticTotalLP = BigDecimal.zero()
+  let clamWmaticPOL = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_CLAM_WMATIC_PAIR_BLOCK))) {
     clamWmatic = clamWmaticPair.balanceOf(treasury_address)
     log.debug('clamMaticBalance {}', [clamWmatic.toString()])
@@ -426,30 +418,30 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
 
     clamWmatic_rfv = getDiscountedPairUSD(clamWmatic, UNI_CLAM_WMATIC_PAIR)
     clamWmaticTotalLP = toDecimal(clamWmaticPair.totalSupply(), 18)
-    if (clamWmaticTotalLP.gt(BigDecimal.fromString('0')) && clamWmatic.gt(BigInt.fromI32(0))) {
+    if (clamWmaticTotalLP.gt(BigDecimal.zero()) && clamWmatic.gt(BigInt.fromI32(0))) {
       clamWmaticPOL = toDecimal(clamWmatic, 18)
         .div(clamWmaticTotalLP)
         .times(BigDecimal.fromString('100'))
     }
   }
 
-  let mai3poolValueDecimal = BigDecimal.fromString('0')
+  let mai3poolValueDecimal = BigDecimal.zero()
   if (transaction.blockNumber.ge(BigInt.fromString(CURVE_MAI_3POOL_PAIR_BLOCK))) {
     mai3poolValueDecimal = getMai3poolValue()
   }
 
-  let mai3poolInvestmentValueDecimal = BigDecimal.fromString('0')
+  let mai3poolInvestmentValueDecimal = BigDecimal.zero()
   if (transaction.blockNumber.ge(BigInt.fromString(CURVE_MAI_3POOL_INVESTMENT_PAIR_BLOCK))) {
     mai3poolInvestmentValueDecimal = getMai3poolInvestmentValue()
   }
 
-  let maiUsdcValueDecimal = BigDecimal.fromString('0')
+  let maiUsdcValueDecimal = BigDecimal.zero()
   if (transaction.blockNumber.ge(BigInt.fromString(UNI_MAI_USDC_PAIR_BLOCK))) {
     maiUsdcValueDecimal = getMaiUsdcValue()
   }
 
-  let qiMarketValue = BigDecimal.fromString('0')
-  let maiUsdcQiInvestmentValueDecimal = BigDecimal.fromString('0')
+  let qiMarketValue = BigDecimal.zero()
+  let maiUsdcQiInvestmentValueDecimal = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_MAI_USDC_QI_INVESTMENT_PAIR_BLOCK))) {
     maiUsdcQiInvestmentValueDecimal = getMaiUsdcInvestmentValue()
     qiMarketValue = getQiMarketValue(
@@ -457,7 +449,7 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     )
   }
 
-  let tetuQiMarketValue = BigDecimal.fromString('0')
+  let tetuQiMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(TETU_QI_START_BLOCK))) {
     tetuQiMarketValue = tetuQiMarketValue.plus(
       getQiMarketValue(toDecimal(tetuQiERC20.balanceOf(Address.fromString(TREASURY_ADDRESS)), tetuQiERC20.decimals())),
@@ -474,33 +466,33 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     )
   }
 
-  let qiWmaticMarketValue = BigDecimal.fromString('0')
+  let qiWmaticMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_QI_WMATIC_PAIR_BLOCK))) {
     qiWmaticMarketValue = getQiWmaticMarketValue()
   }
-  let qiWmaticQiInvestmentMarketValue = BigDecimal.fromString('0')
+  let qiWmaticQiInvestmentMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_QI_WMATIC_INVESTMENT_PAIR_BLOCK))) {
     qiWmaticQiInvestmentMarketValue = getQiWmaticInvestmentMarketValue()
   }
 
-  let pearlWmaticMarketValue = BigDecimal.fromString('0')
+  let pearlWmaticMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_PEARL_WMATIC_PAIR_BLOCK))) {
     pearlWmaticMarketValue = getPearlWmaticMarketValue()
   }
 
-  let ocQiMarketValue = BigDecimal.fromString('0')
+  let ocQiMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(QCQI_START_BLOCK))) {
     ocQiMarketValue = getOtterClamQiMarketValue()
   }
 
   //DYSTOPIA
-  let wMaticDystValue = BigDecimal.fromString('0')
-  let clamMaiDystValue = BigDecimal.fromString('0')
-  let clamUsdplusDystValue = BigDecimal.fromString('0')
-  let usdcMaiDystValue = BigDecimal.fromString('0')
-  let usdcFraxDystValue = BigDecimal.fromString('0')
-  let dystMarketValue = BigDecimal.fromString('0')
-  let veDystMarketValue = BigDecimal.fromString('0')
+  let wMaticDystValue = BigDecimal.zero()
+  let clamMaiDystValue = BigDecimal.zero()
+  let clamUsdplusDystValue = BigDecimal.zero()
+  let usdcMaiDystValue = BigDecimal.zero()
+  let usdcFraxDystValue = BigDecimal.zero()
+  let dystMarketValue = BigDecimal.zero()
+  let veDystMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString('28773233'))) {
     dystMarketValue = getDystMarketValue()
 
@@ -751,17 +743,17 @@ function getAPY_PearlChest(nextEpochRebase: BigDecimal): BigDecimal[] {
 }
 
 function getRunway(totalSupply: BigDecimal, rfv: BigDecimal): BigDecimal[] {
-  let runway2dot5k = BigDecimal.fromString('0')
-  let runway5k = BigDecimal.fromString('0')
-  let runway7dot5k = BigDecimal.fromString('0')
-  let runway10k = BigDecimal.fromString('0')
-  let runway20k = BigDecimal.fromString('0')
-  let runway50k = BigDecimal.fromString('0')
-  let runway70k = BigDecimal.fromString('0')
-  let runway100k = BigDecimal.fromString('0')
-  let runwayCurrent = BigDecimal.fromString('0')
+  let runway2dot5k = BigDecimal.zero()
+  let runway5k = BigDecimal.zero()
+  let runway7dot5k = BigDecimal.zero()
+  let runway10k = BigDecimal.zero()
+  let runway20k = BigDecimal.zero()
+  let runway50k = BigDecimal.zero()
+  let runway70k = BigDecimal.zero()
+  let runway100k = BigDecimal.zero()
+  let runwayCurrent = BigDecimal.zero()
 
-  let rebaseRate = BigDecimal.fromString('0')
+  let rebaseRate = BigDecimal.zero()
   let distirbutor = OtterStakingDistributor.bind(Address.fromString(STAKING_DISTRIBUTOR_CONTRACT))
 
   for (let i = 0; i < 10; i++) {
@@ -775,11 +767,7 @@ function getRunway(totalSupply: BigDecimal, rfv: BigDecimal): BigDecimal[] {
   }
   log.debug('total distribute rate = {}%', [rebaseRate.toString()])
 
-  if (
-    totalSupply.gt(BigDecimal.fromString('0')) &&
-    rfv.gt(BigDecimal.fromString('0')) &&
-    rebaseRate.gt(BigDecimal.fromString('0'))
-  ) {
+  if (totalSupply.gt(BigDecimal.zero()) && rfv.gt(BigDecimal.zero()) && rebaseRate.gt(BigDecimal.zero())) {
     let treasury_runway = Number.parseFloat(rfv.div(totalSupply).toString())
 
     let runway2dot5k_num = Math.log(treasury_runway) / Math.log(1 + 0.0029438) / 3

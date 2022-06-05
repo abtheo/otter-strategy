@@ -116,7 +116,7 @@ export function calculateApy(timestamp: BigInt): void {
 
   //in CLAMS per rebase, averaged over N days*3 rebases
   let rebaseRevenue = pastRevenues
-    .reduce((x, y) => x.plus(y), BigDecimal.fromString('0'))
+    .reduce((x, y) => x.plus(y), BigDecimal.zero())
     .div(
       BigInt.fromI32(pastRevenues.length)
         .times(BigInt.fromString('3'))

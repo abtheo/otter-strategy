@@ -59,8 +59,8 @@ export function loadOrCreateTotalBurnedClamSingleton(): TotalBurnedClam {
   let total = TotalBurnedClam.load('1')
   if (total == null) {
     total = new TotalBurnedClam('1')
-    total.burnedClam = BigDecimal.fromString('0')
-    total.burnedValueUsd = BigDecimal.fromString('0')
+    total.burnedClam = BigDecimal.zero()
+    total.burnedValueUsd = BigDecimal.zero()
   }
   return total
 }

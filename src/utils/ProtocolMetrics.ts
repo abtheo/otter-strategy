@@ -347,7 +347,8 @@ export function getOtterClamQiMarketValue(): BigDecimal {
   return marketValue
 }
 
-function getMV_RFV(transaction: Transaction): BigDecimal[] {
+/* Mutates the provided ProtocolMetric by setting the relevant properties*/
+function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): BigDecimal[] {
   let maiERC20 = ERC20.bind(Address.fromString(MAI_ERC20))
   let fraxERC20 = ERC20.bind(Address.fromString(FRAX_ERC20))
   let daiERC20 = ERC20.bind(Address.fromString(DAI_ERC20))
@@ -486,17 +487,20 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     ocQiMarketValue = getOtterClamQiMarketValue()
   }
 
-  //DYSTOPIA
+  //DYSTOPIA & PENROSE
   let wMaticDystValue = BigDecimal.zero()
   let clamMaiDystValue = BigDecimal.zero()
   let clamUsdplusDystValue = BigDecimal.zero()
   let usdcMaiDystValue = BigDecimal.zero()
   let usdcFraxDystValue = BigDecimal.zero()
+  let wMaticPenValue = BigDecimal.zero()
   let dystMarketValue = BigDecimal.zero()
   let veDystMarketValue = BigDecimal.zero()
-  let wMaticPenValue = BigDecimal.zero()
+  let penMarketValue = BigDecimal.zero()
+  let vlPenMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString('28773233'))) {
     dystMarketValue = getDystMarketValue()
+    penMarketValue = getPenMarketValue()
 
     for (let i = 0; i < DYSTOPIA_TRACKED_PAIRS.length; i++) {
       let pair_address = DYSTOPIA_TRACKED_PAIRS[i]
@@ -544,6 +548,7 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     .plus(clamUsdplusDystValue)
     .plus(usdcMaiDystValue)
     .plus(usdcFraxDystValue)
+    .plus(wMaticPenValue)
 
   let rfvLpValue = clamMai_rfv.plus(clamFrax_rfv).plus(clamWmatic_rfv)
 
@@ -556,71 +561,44 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
     .plus(tetuQiMarketValue)
     .plus(dystMarketValue)
     .plus(veDystMarketValue)
+    .plus(penMarketValue)
   let rfv = stableValueDecimal.plus(rfvLpValue)
 
-  log.debug('Treasury Market Value {}', [mv.toString()])
-  log.debug('Treasury RFV {}', [rfv.toString()])
-  log.debug('Treasury MAI value {}', [toDecimal(maiBalance, 18).toString()])
-  log.debug('Treasury FRAX value {}', [toDecimal(fraxBalance, 18).toString()])
-  log.debug('Treasury DAI value {}', [toDecimal(daiBalance, 18).toString()])
-  log.debug('Treasury MAI/USDC value {}', [maiUsdcValueDecimal.toString()])
-  log.debug('Treasury Qi Investment MAI/USDC value {}', [maiUsdcQiInvestmentValueDecimal.toString()])
-  log.debug('Treasury WMATIC value {}', [wmatic_value.toString()])
-  log.debug('Treasury CLAM-MAI RFV {}', [clamMai_rfv.toString()])
-  log.debug('Treasury CLAM-FRAX RFV {}', [clamFrax_rfv.toString()])
-  log.debug('Treasury Qi Market value {}', [qiMarketValue.toString()])
-  log.debug('Treasury dQuick Market value {}', [dQuickMarketValue.toString()])
-  log.debug('Treasury Qi/WMATIC Market value {}', [qiWmaticMarketValue.toString()])
-  log.debug('Treasury WMATIC/PEARL Market value {}', [pearlWmaticMarketValue.toString()])
-  log.debug('Treasury ocQi Market value {}', [ocQiMarketValue.toString()])
-  log.debug('Treasury tetuQi Market value {}', [tetuQiMarketValue.toString()])
-  log.debug('Treasury Qi Investment Qi/WMATIC Market value {}', [qiWmaticQiInvestmentMarketValue.toString()])
-  log.debug('Treasury Dyst Market Value {}', [dystMarketValue.toString()])
-  log.debug('Treasury veDyst Market Value {}', [veDystMarketValue.toString()])
-  log.debug('Treasury Dystopia wMATIC-DYST LP Market Value {}', [wMaticDystValue.toString()])
-  log.debug('Treasury Dystopia CLAM-MAI LP Market Value {}', [clamMaiDystValue.toString()])
-  log.debug('Treasury Dystopia clamUsdplusDystValue LP Market Value {}', [clamUsdplusDystValue.toString()])
-  log.debug('Treasury Dystopia usdcMaiDystValue LP Market Value {}', [usdcMaiDystValue.toString()])
-  log.debug('Treasury Dystopia usdcFraxDystValue LP Market Value {}', [usdcFraxDystValue.toString()])
+  //Attach results and return
+  protocolMetric.treasuryMarketValue = mv
+  protocolMetric.treasuryRiskFreeValue = rfv
+  protocolMetric.treasuryMaiUsdcRiskFreeValue = maiUsdcValueDecimal
+  protocolMetric.treasuryMaiUsdcQiInvestmentRiskFreeValue = maiUsdcQiInvestmentValueDecimal
+  protocolMetric.treasuryCurveMai3PoolValue = mai3poolValueDecimal
+  protocolMetric.treasuryCurveMai3PoolInvestmentValue = mai3poolInvestmentValueDecimal
+  protocolMetric.treasuryMaiRiskFreeValue = clamMai_rfv.plus(toDecimal(maiBalance 18))
+  protocolMetric.treasuryMaiMarketValue = clamMai_value.plus(toDecimal(maiBalance 18))
+  protocolMetric.treasuryFraxRiskFreeValue = clamFrax_rfv.plus(toDecimal(fraxBalance 18))
+  protocolMetric.treasuryFraxMarketValue = clamFrax_value.plus(toDecimal(fraxBalance 18))
+  protocolMetric.treasuryDaiRiskFreeValue = toDecimal(daiBalance 18)
+  protocolMetric.treasuryWmaticRiskFreeValue = clamWmatic_rfv.plus(wmatic_value)
+  protocolMetric.treasuryWmaticMarketValue = clamWmatic_value.plus(wmatic_value).plus(pearlWmaticMarketValue)
+  protocolMetric.treasuryQiMarketValue = qiMarketValue
+  protocolMetric.treasuryDquickMarketValue = dQuickMarketValue
+  protocolMetric.treasuryQiWmaticMarketValue = qiWmaticMarketValue
+  protocolMetric.treasuryQiWmaticQiInvestmentMarketValue = qiWmaticQiInvestmentMarketValue
+  protocolMetric.treasuryOtterClamQiMarketValue = ocQiMarketValue
+  protocolMetric.treasuryTetuQiMarketValue = tetuQiMarketValue
+  protocolMetric.treasuryClamMaiPOL = clamMaiPOL
+  protocolMetric.treasuryClamFraxPOL = clamFraxPOL
+  protocolMetric.treasuryClamWmaticPOL = clamWmaticPOL
+  protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = wMaticDystValue
+  protocolMetric.treasuryDystopiaPairMaiClamMarketValue = clamMaiDystValue
+  protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = clamUsdplusDystValue
+  protocolMetric.treasuryDystopiaPairMaiUsdcMarketValue = usdcMaiDystValue
+  protocolMetric.treasuryDystopiaPairFraxUsdcMarketValue = usdcFraxDystValue
+  protocolMetric.treasuryDystopiaPairwMaticPenMarketValue = wMaticPenValue
+  protocolMetric.treasuryDystMarketValue = dystMarketValue
+  protocolMetric.treasuryVeDystMarketValue = veDystMarketValue
+  protocolMetric.treasuryPenMarketValue = penMarketValue
+  protocolMetric.treasuryVlPenMarketValue = vlPenMarketValue
 
-  return [
-    mv,
-    rfv,
-    maiUsdcValueDecimal,
-    maiUsdcQiInvestmentValueDecimal,
-    mai3poolValueDecimal,
-    mai3poolInvestmentValueDecimal,
-    // treasuryMaiRiskFreeValue = MAI RFV * MAI + aMAI
-    clamMai_rfv.plus(toDecimal(maiBalance, 18)),
-    // treasuryMaiMarketValue = MAI LP * MAI + aMAI
-    clamMai_value.plus(toDecimal(maiBalance, 18)),
-    // treasuryFraxRiskFreeValue = FRAX RFV * FRAX
-    clamFrax_rfv.plus(toDecimal(fraxBalance, 18)),
-    // treasuryFraxMarketValue = FRAX LP * FRAX
-    clamFrax_value.plus(toDecimal(fraxBalance, 18)),
-    // treasuryDaiRiskFreeValue
-    toDecimal(daiBalance, 18),
-    clamWmatic_rfv.plus(wmatic_value),
-    clamWmatic_value.plus(wmatic_value).plus(pearlWmaticMarketValue),
-    qiMarketValue,
-    dQuickMarketValue,
-    qiWmaticMarketValue,
-    qiWmaticQiInvestmentMarketValue,
-    ocQiMarketValue,
-    tetuQiMarketValue,
-    // POL
-    clamMaiPOL,
-    clamFraxPOL,
-    clamWmaticPOL,
-    //dyst
-    wMaticDystValue,
-    clamMaiDystValue,
-    clamUsdplusDystValue,
-    usdcMaiDystValue,
-    usdcFraxDystValue,
-    dystMarketValue,
-    veDystMarketValue,
-  ]
+  return protocolMetric
 }
 
 function getNextCLAMRebase(transaction: Transaction): BigDecimal {
@@ -800,7 +778,10 @@ function getRunway(totalSupply: BigDecimal, rfv: BigDecimal): BigDecimal[] {
 
 export function updateProtocolMetrics(transaction: Transaction): void {
   let pm = loadOrCreateProtocolMetric(transaction.timestamp)
-
+  
+  //Treasury RFV and MV
+  pm = getMV_RFV(transaction,pm)
+  
   //Total Supply
   pm.totalSupply = getTotalSupply()
 
@@ -818,38 +799,6 @@ export function updateProtocolMetrics(transaction: Transaction): void {
 
   //Total Value Locked
   pm.totalValueLocked = pm.sClamCirculatingSupply.times(pm.clamPrice)
-
-  //Treasury RFV and MV
-  let mv_rfv = getMV_RFV(transaction)
-  pm.treasuryMarketValue = mv_rfv[0]
-  pm.treasuryRiskFreeValue = mv_rfv[1]
-  pm.treasuryMaiUsdcRiskFreeValue = mv_rfv[2]
-  pm.treasuryMaiUsdcQiInvestmentRiskFreeValue = mv_rfv[3]
-  pm.treasuryCurveMai3PoolValue = mv_rfv[4]
-  pm.treasuryCurveMai3PoolInvestmentValue = mv_rfv[5]
-  pm.treasuryMaiRiskFreeValue = mv_rfv[6]
-  pm.treasuryMaiMarketValue = mv_rfv[7]
-  pm.treasuryFraxRiskFreeValue = mv_rfv[8]
-  pm.treasuryFraxMarketValue = mv_rfv[9]
-  pm.treasuryDaiRiskFreeValue = mv_rfv[10]
-  pm.treasuryWmaticRiskFreeValue = mv_rfv[11]
-  pm.treasuryWmaticMarketValue = mv_rfv[12]
-  pm.treasuryQiMarketValue = mv_rfv[13]
-  pm.treasuryDquickMarketValue = mv_rfv[14]
-  pm.treasuryQiWmaticMarketValue = mv_rfv[15]
-  pm.treasuryQiWmaticQiInvestmentMarketValue = mv_rfv[16]
-  pm.treasuryOtterClamQiMarketValue = mv_rfv[17]
-  pm.treasuryTetuQiMarketValue = mv_rfv[18]
-  pm.treasuryClamMaiPOL = mv_rfv[19]
-  pm.treasuryClamFraxPOL = mv_rfv[20]
-  pm.treasuryClamWmaticPOL = mv_rfv[21]
-  pm.treasuryDystopiaPairwMaticDystMarketValue = mv_rfv[22]
-  pm.treasuryDystopiaPairMaiClamMarketValue = mv_rfv[23]
-  pm.treasuryDystopiaPairUSDPLUSClamMarketValue = mv_rfv[24]
-  pm.treasuryDystopiaPairMaiUsdcMarketValue = mv_rfv[25]
-  pm.treasuryDystopiaPairFraxUsdcMarketValue = mv_rfv[26]
-  pm.treasuryDystMarketValue = mv_rfv[27]
-  pm.treasuryVeDystMarketValue = mv_rfv[28]
 
   // Rebase rewards, APY, rebase
   pm.nextDistributedClam = getNextCLAMRebase(transaction)

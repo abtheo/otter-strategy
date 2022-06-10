@@ -216,8 +216,11 @@ type ProtocolMetric @entity {
   treasuryDystopiaPairUSDPLUSClamMarketValue: BigDecimal!
   treasuryDystopiaPairMaiUsdcMarketValue: BigDecimal!
   treasuryDystopiaPairFraxUsdcMarketValue: BigDecimal!
+  treasuryDystopiaPairwMaticPenMarketValue: BigDecimal!
   treasuryDystMarketValue: BigDecimal!
   treasuryVeDystMarketValue: BigDecimal!
+  treasuryPenMarketValue: BigDecimal!
+  treasuryVlPenMarketValue: BigDecimal!
 }
 
 type TotalBurnedClam @entity {

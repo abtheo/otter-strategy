@@ -15,6 +15,7 @@ import {
   USDC_ERC20,
   CLAM_ERC20,
   PEN_ERC20,
+  WETH_ERC20,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
@@ -189,6 +190,7 @@ export function findPrice(address: Address): BigDecimal {
   if (addressEqualsString(address, MATIC_ERC20)) return getwMaticUsdRate()
   if (addressEqualsString(address, DYST_ERC20)) return getDystUsdRate()
   if (addressEqualsString(address, PEN_ERC20)) return getPenUsdRate()
+  if (addressEqualsString(address, WETH_ERC20)) return getwEthUsdRate()
   if (
     addressEqualsString(address, FRAX_ERC20) ||
     addressEqualsString(address, MAI_ERC20) ||

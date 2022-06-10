@@ -79,7 +79,6 @@ import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
 import {
   getClamUsdRate,
-  getDiscountedPairUSD,
   getPairUSD,
   getPairWMATIC,
   getwMaticUsdRate,
@@ -320,7 +319,7 @@ export function getTreasuryTokenValue(address: Address) {
 }
 
 /* Mutates the provided ProtocolMetric by setting the relevant properties*/
-function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): ProtocolMetric {
+function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: ProtocolMetric): ProtocolMetric {
   let maiERC20 = ERC20.bind(Address.fromString(MAI_ERC20))
   let fraxERC20 = ERC20.bind(Address.fromString(FRAX_ERC20))
   let daiERC20 = ERC20.bind(Address.fromString(DAI_ERC20))
@@ -358,18 +357,15 @@ function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): Pr
     .div(clamMaiTotalLP)
     .times(BigDecimal.fromString('100'))
   let clamMai_value = getPairUSD(clamMaiBalance, UNI_CLAM_MAI_PAIR)
-  let clamMai_rfv = getDiscountedPairUSD(clamMaiBalance, UNI_CLAM_MAI_PAIR)
 
   //CLAM-FRAX
   let clamFraxBalance = BigInt.fromI32(0)
   let clamFrax_value = BigDecimal.zero()
-  let clamFrax_rfv = BigDecimal.zero()
   let clamFraxTotalLP = BigDecimal.zero()
   let clamFraxPOL = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_CLAM_FRAX_PAIR_BLOCK))) {
     clamFraxBalance = clamFraxPair.balanceOf(treasury_address)
     clamFrax_value = getPairUSD(clamFraxBalance, UNI_CLAM_FRAX_PAIR)
-    clamFrax_rfv = getDiscountedPairUSD(clamFraxBalance, UNI_CLAM_FRAX_PAIR)
     clamFraxTotalLP = toDecimal(clamFraxPair.totalSupply(), 18)
     if (clamFraxTotalLP.gt(BigDecimal.zero()) && clamFraxBalance.gt(BigInt.fromI32(0))) {
       clamFraxPOL = toDecimal(clamFraxBalance, 18)
@@ -380,7 +376,6 @@ function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): Pr
 
   let clamWmatic = BigInt.fromI32(0)
   let clamWmatic_value = BigDecimal.zero()
-  let clamWmatic_rfv = BigDecimal.zero()
   let clamWmaticTotalLP = BigDecimal.zero()
   let clamWmaticPOL = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_CLAM_WMATIC_PAIR_BLOCK))) {
@@ -390,7 +385,6 @@ function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): Pr
     clamWmatic_value = getPairWMATIC(clamWmatic, UNI_CLAM_WMATIC_PAIR)
     log.debug('clamWmatic_value {}', [clamWmatic_value.toString()])
 
-    clamWmatic_rfv = getDiscountedPairUSD(clamWmatic, UNI_CLAM_WMATIC_PAIR)
     clamWmaticTotalLP = toDecimal(clamWmaticPair.totalSupply(), 18)
     if (clamWmaticTotalLP.gt(BigDecimal.zero()) && clamWmatic.gt(BigInt.fromI32(0))) {
       clamWmaticPOL = toDecimal(clamWmatic, 18)
@@ -522,8 +516,6 @@ function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): Pr
     .plus(usdcFraxDystValue)
     .plus(wMaticPenValue)
 
-  let rfvLpValue = clamMai_rfv.plus(clamFrax_rfv).plus(clamWmatic_rfv)
-
   let mv = stableValueDecimal
     .plus(lpValue)
     .plus(wmatic_value)
@@ -535,21 +527,16 @@ function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): Pr
     .plus(veDystMarketValue)
     .plus(penMarketValue)
     .plus(vlPenMarketValue)
-  let rfv = stableValueDecimal.plus(rfvLpValue)
 
   //Attach results and return
   protocolMetric.treasuryMarketValue = mv
-  protocolMetric.treasuryRiskFreeValue = rfv
   protocolMetric.treasuryMaiUsdcRiskFreeValue = maiUsdcValueDecimal
   protocolMetric.treasuryMaiUsdcQiInvestmentRiskFreeValue = maiUsdcQiInvestmentValueDecimal
   protocolMetric.treasuryCurveMai3PoolValue = mai3poolValueDecimal
   protocolMetric.treasuryCurveMai3PoolInvestmentValue = mai3poolInvestmentValueDecimal
-  protocolMetric.treasuryMaiRiskFreeValue = clamMai_rfv.plus(toDecimal(maiBalance, 18))
   protocolMetric.treasuryMaiMarketValue = clamMai_value.plus(toDecimal(maiBalance, 18))
-  protocolMetric.treasuryFraxRiskFreeValue = clamFrax_rfv.plus(toDecimal(fraxBalance, 18))
   protocolMetric.treasuryFraxMarketValue = clamFrax_value.plus(toDecimal(fraxBalance, 18))
   protocolMetric.treasuryDaiRiskFreeValue = toDecimal(daiBalance, 18)
-  protocolMetric.treasuryWmaticRiskFreeValue = clamWmatic_rfv.plus(wmatic_value)
   protocolMetric.treasuryWmaticMarketValue = clamWmatic_value.plus(wmatic_value).plus(pearlWmaticMarketValue)
   protocolMetric.treasuryQiMarketValue = qiMarketValue
   protocolMetric.treasuryDquickMarketValue = dQuickMarketValue
@@ -699,8 +686,8 @@ function getAPY_PearlChest(nextEpochRebase: BigDecimal): BigDecimal[] {
 export function updateProtocolMetrics(transaction: Transaction): void {
   let pm = loadOrCreateProtocolMetric(transaction.timestamp)
 
-  //Treasury RFV and MV
-  pm = getMV_RFV(transaction, pm)
+  //Treasury MV
+  pm = setTreasuryAssetMarketValues(transaction, pm)
 
   //Total Supply
   pm.totalSupply = getTotalSupply()

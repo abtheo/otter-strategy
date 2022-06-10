@@ -184,7 +184,7 @@ export function getDystPairUSD(lp_amount: BigInt, pair_address: string): BigDeci
   return ownedLP.times(total_lp_usd)
 }
 
-function findPrice(address: Address): BigDecimal {
+export function findPrice(address: Address): BigDecimal {
   if (addressEqualsString(address, CLAM_ERC20)) return getClamUsdRate()
   if (addressEqualsString(address, MATIC_ERC20)) return getwMaticUsdRate()
   if (addressEqualsString(address, DYST_ERC20)) return getDystUsdRate()
@@ -197,6 +197,7 @@ function findPrice(address: Address): BigDecimal {
   )
     return BigDecimal.fromString('1')
 
+  log.warning('Attempted to find price of unknown token address {}', [address.toHexString()])
   return BigDecimal.zero()
 }
 

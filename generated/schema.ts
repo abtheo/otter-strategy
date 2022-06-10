@@ -1661,11 +1661,20 @@ export class ProtocolMetric extends Entity {
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
+      "treasuryDystopiaPairwMaticPenMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
       "treasuryDystMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
       "treasuryVeDystMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set("treasuryPenMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set(
+      "treasuryVlPenMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
   }
@@ -2260,6 +2269,18 @@ export class ProtocolMetric extends Entity {
     );
   }
 
+  get treasuryDystopiaPairwMaticPenMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystopiaPairwMaticPenMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryDystopiaPairwMaticPenMarketValue(value: BigDecimal) {
+    this.set(
+      "treasuryDystopiaPairwMaticPenMarketValue",
+      Value.fromBigDecimal(value)
+    );
+  }
+
   get treasuryDystMarketValue(): BigDecimal {
     let value = this.get("treasuryDystMarketValue");
     return value!.toBigDecimal();
@@ -2276,6 +2297,24 @@ export class ProtocolMetric extends Entity {
 
   set treasuryVeDystMarketValue(value: BigDecimal) {
     this.set("treasuryVeDystMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get treasuryPenMarketValue(): BigDecimal {
+    let value = this.get("treasuryPenMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryPenMarketValue(value: BigDecimal) {
+    this.set("treasuryPenMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get treasuryVlPenMarketValue(): BigDecimal {
+    let value = this.get("treasuryVlPenMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryVlPenMarketValue(value: BigDecimal) {
+    this.set("treasuryVlPenMarketValue", Value.fromBigDecimal(value));
   }
 }
 

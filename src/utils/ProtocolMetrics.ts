@@ -1,6 +1,5 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { ClamCirculatingSupply } from '../../generated/OtterTreasury/ClamCirculatingSupply'
-import { dQuick } from '../../generated/OtterTreasury/dQuick'
 import { xTetuQi } from '../../generated/OtterTreasury/xTetuQi'
 import { ERC20 } from '../../generated/OtterTreasury/ERC20'
 import { OtterClamERC20V2 } from '../../generated/OtterTreasury/OtterClamERC20V2'
@@ -11,7 +10,6 @@ import { OtterQuickSwapInvestment } from '../../generated/OtterTreasury/OtterQui
 import { OtterStaking } from '../../generated/OtterTreasury/OtterStaking'
 import { OtterStakingDistributor } from '../../generated/OtterTreasury/OtterStakingDistributor'
 import { QiFarm } from '../../generated/OtterTreasury/QiFarm'
-import { Dyst } from '../../generated/OtterTreasury/Dyst'
 import { veDyst } from '../../generated/OtterTreasury/veDyst'
 import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
 import { CurveMai3poolContract } from '../../generated/OtterTreasury/CurveMai3poolContract'
@@ -75,20 +73,20 @@ import {
   DYSTOPIA_PAIR_MAI_USDC,
   DYSTOPIA_PAIR_FRAX_USDC,
   DYSTOPIA_PAIR_WMATIC_PEN,
+  PEN_ERC20,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
 import {
   getClamUsdRate,
   getDiscountedPairUSD,
-  getQuickUsdRate,
   getPairUSD,
   getPairWMATIC,
-  getQiUsdRate,
   getwMaticUsdRate,
   getDystUsdRate,
   getDystPairUSD,
   getQiMarketValue,
+  findPrice,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
 import { DystPair } from '../../generated/OtterTreasury/DystPair'
@@ -311,44 +309,18 @@ function getPearlWmaticMarketValue(): BigDecimal {
   return value
 }
 
-export function getdQuickMarketValue(): BigDecimal {
-  let usdPerQuick = getQuickUsdRate()
-  log.debug('1 Quick = {} USD', [usdPerQuick.toString()])
-
-  let token = dQuick.bind(Address.fromString(DQUICK_ERC20))
-  let quickBalance = toDecimal(token.QUICKBalance(Address.fromString(TREASURY_ADDRESS)), 18)
-  log.debug('quick balance of treasury = {}', [quickBalance.toString()])
-  let marketValue = quickBalance.times(usdPerQuick)
-  log.debug('quick marketValue = {}', [marketValue.toString()])
-  return marketValue
-}
-
-export function getDystMarketValue(): BigDecimal {
-  let usdPerDyst = getDystUsdRate()
-  log.debug('1 Dyst = {} USD', [usdPerDyst.toString()])
-
-  let token = Dyst.bind(Address.fromString(DYST_ERC20))
-  let DystBalance = toDecimal(token.balanceOf(Address.fromString(DAO_WALLET)), 18)
-  log.debug('Dyst balance of treasury = {}', [DystBalance.toString()])
-  let marketValue = DystBalance.times(usdPerDyst)
-  log.debug('Dyst marketValue = {}', [marketValue.toString()])
-  return marketValue
-}
-
-export function getOtterClamQiMarketValue(): BigDecimal {
-  let usdPerQi = getQiUsdRate()
-  log.debug('1 Qi = {} USD', [usdPerQi.toString()])
-
-  let ocQi = ERC20.bind(Address.fromString(OCQI_CONTRACT))
-  let ocQiBalance = toDecimal(ocQi.balanceOf(Address.fromString(TREASURY_ADDRESS)), 18)
-  log.debug('ocQi balance of treasury = {}', [ocQiBalance.toString()])
-  let marketValue = ocQiBalance.times(usdPerQi)
-  log.debug('ocQi marketValue = {}', [marketValue.toString()])
+export function getTreasuryTokenValue(address: Address) {
+  let usdPerToken = findPrice(address)
+  let token = ERC20.bind(address)
+  let tokenBalance = toDecimal(token.balanceOf(Address.fromString(TREASURY_ADDRESS)), token.decimals()).plus(
+    toDecimal(token.balanceOf(Address.fromString(DAO_WALLET)), token.decimals()),
+  )
+  let marketValue = tokenBalance.times(usdPerToken)
   return marketValue
 }
 
 /* Mutates the provided ProtocolMetric by setting the relevant properties*/
-function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): BigDecimal[] {
+function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): ProtocolMetric {
   let maiERC20 = ERC20.bind(Address.fromString(MAI_ERC20))
   let fraxERC20 = ERC20.bind(Address.fromString(FRAX_ERC20))
   let daiERC20 = ERC20.bind(Address.fromString(DAI_ERC20))
@@ -378,7 +350,7 @@ function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): Bi
     let pair = OtterQuickSwapInvestment.bind(Address.fromString(UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR))
     let clamMaiInvestmentBalance = pair.balanceOf(treasury_address)
     clamMaiBalance = clamMaiBalance.plus(clamMaiInvestmentBalance)
-    dQuickMarketValue = getdQuickMarketValue()
+    dQuickMarketValue = getTreasuryTokenValue(Address.fromString(DQUICK_ERC20))
   }
 
   let clamMaiTotalLP = toDecimal(clamMaiPair.totalSupply(), 18)
@@ -484,7 +456,7 @@ function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): Bi
 
   let ocQiMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(QCQI_START_BLOCK))) {
-    ocQiMarketValue = getOtterClamQiMarketValue()
+    ocQiMarketValue = getTreasuryTokenValue(Address.fromString(OCQI_CONTRACT))
   }
 
   //DYSTOPIA & PENROSE
@@ -499,8 +471,8 @@ function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): Bi
   let penMarketValue = BigDecimal.zero()
   let vlPenMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString('28773233'))) {
-    dystMarketValue = getDystMarketValue()
-    penMarketValue = getPenMarketValue()
+    dystMarketValue = getTreasuryTokenValue(Address.fromString(DYST_ERC20))
+    penMarketValue = getTreasuryTokenValue(Address.fromString(PEN_ERC20))
 
     for (let i = 0; i < DYSTOPIA_TRACKED_PAIRS.length; i++) {
       let pair_address = DYSTOPIA_TRACKED_PAIRS[i]
@@ -562,6 +534,7 @@ function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): Bi
     .plus(dystMarketValue)
     .plus(veDystMarketValue)
     .plus(penMarketValue)
+    .plus(vlPenMarketValue)
   let rfv = stableValueDecimal.plus(rfvLpValue)
 
   //Attach results and return
@@ -571,11 +544,11 @@ function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): Bi
   protocolMetric.treasuryMaiUsdcQiInvestmentRiskFreeValue = maiUsdcQiInvestmentValueDecimal
   protocolMetric.treasuryCurveMai3PoolValue = mai3poolValueDecimal
   protocolMetric.treasuryCurveMai3PoolInvestmentValue = mai3poolInvestmentValueDecimal
-  protocolMetric.treasuryMaiRiskFreeValue = clamMai_rfv.plus(toDecimal(maiBalance 18))
-  protocolMetric.treasuryMaiMarketValue = clamMai_value.plus(toDecimal(maiBalance 18))
-  protocolMetric.treasuryFraxRiskFreeValue = clamFrax_rfv.plus(toDecimal(fraxBalance 18))
-  protocolMetric.treasuryFraxMarketValue = clamFrax_value.plus(toDecimal(fraxBalance 18))
-  protocolMetric.treasuryDaiRiskFreeValue = toDecimal(daiBalance 18)
+  protocolMetric.treasuryMaiRiskFreeValue = clamMai_rfv.plus(toDecimal(maiBalance, 18))
+  protocolMetric.treasuryMaiMarketValue = clamMai_value.plus(toDecimal(maiBalance, 18))
+  protocolMetric.treasuryFraxRiskFreeValue = clamFrax_rfv.plus(toDecimal(fraxBalance, 18))
+  protocolMetric.treasuryFraxMarketValue = clamFrax_value.plus(toDecimal(fraxBalance, 18))
+  protocolMetric.treasuryDaiRiskFreeValue = toDecimal(daiBalance, 18)
   protocolMetric.treasuryWmaticRiskFreeValue = clamWmatic_rfv.plus(wmatic_value)
   protocolMetric.treasuryWmaticMarketValue = clamWmatic_value.plus(wmatic_value).plus(pearlWmaticMarketValue)
   protocolMetric.treasuryQiMarketValue = qiMarketValue
@@ -601,7 +574,7 @@ function getMV_RFV(transaction: Transaction, protocolMetric: ProtocolMetric): Bi
   return protocolMetric
 }
 
-function getNextCLAMRebase(transaction: Transaction): BigDecimal {
+function getNextCLAMRebase(): BigDecimal {
   let staking_contract = OtterStaking.bind(Address.fromString(STAKING_CONTRACT))
   let distribution_v1 = toDecimal(staking_contract.epoch().value3, 9)
   log.debug('next_distribution v2 {}', [distribution_v1.toString()])
@@ -778,10 +751,10 @@ function getRunway(totalSupply: BigDecimal, rfv: BigDecimal): BigDecimal[] {
 
 export function updateProtocolMetrics(transaction: Transaction): void {
   let pm = loadOrCreateProtocolMetric(transaction.timestamp)
-  
+
   //Treasury RFV and MV
-  pm = getMV_RFV(transaction,pm)
-  
+  pm = getMV_RFV(transaction, pm)
+
   //Total Supply
   pm.totalSupply = getTotalSupply()
 
@@ -801,7 +774,7 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.totalValueLocked = pm.sClamCirculatingSupply.times(pm.clamPrice)
 
   // Rebase rewards, APY, rebase
-  pm.nextDistributedClam = getNextCLAMRebase(transaction)
+  pm.nextDistributedClam = getNextCLAMRebase()
   let apy_rebase = getAPY_Rebase(pm.sClamCirculatingSupply, pm.nextDistributedClam)
   pm.currentAPY = apy_rebase[0]
   pm.nextEpochRebase = apy_rebase[1]

@@ -2011,159 +2011,6 @@ export class ProtocolMetric extends Entity {
     this.set("diamondHandAPY", Value.fromBigDecimal(value));
   }
 
-  get runway2dot5k(): BigDecimal | null {
-    let value = this.get("runway2dot5k");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigDecimal();
-    }
-  }
-
-  set runway2dot5k(value: BigDecimal | null) {
-    if (!value) {
-      this.unset("runway2dot5k");
-    } else {
-      this.set("runway2dot5k", Value.fromBigDecimal(<BigDecimal>value));
-    }
-  }
-
-  get runway5k(): BigDecimal | null {
-    let value = this.get("runway5k");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigDecimal();
-    }
-  }
-
-  set runway5k(value: BigDecimal | null) {
-    if (!value) {
-      this.unset("runway5k");
-    } else {
-      this.set("runway5k", Value.fromBigDecimal(<BigDecimal>value));
-    }
-  }
-
-  get runway7dot5k(): BigDecimal | null {
-    let value = this.get("runway7dot5k");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigDecimal();
-    }
-  }
-
-  set runway7dot5k(value: BigDecimal | null) {
-    if (!value) {
-      this.unset("runway7dot5k");
-    } else {
-      this.set("runway7dot5k", Value.fromBigDecimal(<BigDecimal>value));
-    }
-  }
-
-  get runway10k(): BigDecimal | null {
-    let value = this.get("runway10k");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigDecimal();
-    }
-  }
-
-  set runway10k(value: BigDecimal | null) {
-    if (!value) {
-      this.unset("runway10k");
-    } else {
-      this.set("runway10k", Value.fromBigDecimal(<BigDecimal>value));
-    }
-  }
-
-  get runway20k(): BigDecimal | null {
-    let value = this.get("runway20k");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigDecimal();
-    }
-  }
-
-  set runway20k(value: BigDecimal | null) {
-    if (!value) {
-      this.unset("runway20k");
-    } else {
-      this.set("runway20k", Value.fromBigDecimal(<BigDecimal>value));
-    }
-  }
-
-  get runway50k(): BigDecimal | null {
-    let value = this.get("runway50k");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigDecimal();
-    }
-  }
-
-  set runway50k(value: BigDecimal | null) {
-    if (!value) {
-      this.unset("runway50k");
-    } else {
-      this.set("runway50k", Value.fromBigDecimal(<BigDecimal>value));
-    }
-  }
-
-  get runway70k(): BigDecimal | null {
-    let value = this.get("runway70k");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigDecimal();
-    }
-  }
-
-  set runway70k(value: BigDecimal | null) {
-    if (!value) {
-      this.unset("runway70k");
-    } else {
-      this.set("runway70k", Value.fromBigDecimal(<BigDecimal>value));
-    }
-  }
-
-  get runway100k(): BigDecimal | null {
-    let value = this.get("runway100k");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigDecimal();
-    }
-  }
-
-  set runway100k(value: BigDecimal | null) {
-    if (!value) {
-      this.unset("runway100k");
-    } else {
-      this.set("runway100k", Value.fromBigDecimal(<BigDecimal>value));
-    }
-  }
-
-  get runwayCurrent(): BigDecimal | null {
-    let value = this.get("runwayCurrent");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigDecimal();
-    }
-  }
-
-  set runwayCurrent(value: BigDecimal | null) {
-    if (!value) {
-      this.unset("runwayCurrent");
-    } else {
-      this.set("runwayCurrent", Value.fromBigDecimal(<BigDecimal>value));
-    }
-  }
-
   get treasuryClamMaiPOL(): BigDecimal {
     let value = this.get("treasuryClamMaiPOL");
     return value!.toBigDecimal();
@@ -2787,7 +2634,7 @@ export class TotalBuybacks extends Entity {
   }
 }
 
-export class DystopiaLPBalance extends Entity {
+export class DystopiaGaugeBalance extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -2797,20 +2644,20 @@ export class DystopiaLPBalance extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save DystopiaLPBalance entity without an ID");
+    assert(id != null, "Cannot save DystopiaGaugeBalance entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save DystopiaLPBalance entity with non-string ID. " +
+        "Cannot save DystopiaGaugeBalance entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("DystopiaLPBalance", id.toString(), this);
+      store.set("DystopiaGaugeBalance", id.toString(), this);
     }
   }
 
-  static load(id: string): DystopiaLPBalance | null {
-    return changetype<DystopiaLPBalance | null>(
-      store.get("DystopiaLPBalance", id)
+  static load(id: string): DystopiaGaugeBalance | null {
+    return changetype<DystopiaGaugeBalance | null>(
+      store.get("DystopiaGaugeBalance", id)
     );
   }
 

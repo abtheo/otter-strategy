@@ -1,5 +1,5 @@
 import { Address, log, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
-import { Transfer, DystopiaLPBalance } from '../generated/schema'
+import { Transfer, DystopiaGaugeBalance } from '../generated/schema'
 import { Transfer as TransferEvent } from '../generated/DystMaiClamPair/DystPair'
 import { loadOrCreateTransaction } from './utils/Transactions'
 
@@ -42,7 +42,7 @@ export function handleTransfer(event: TransferEvent): void {
 
   entity.save()
   //update LP balance
-  let dystLp = loadOrCreateDystopiaLPBalance(Address.fromString(pair))
+  let dystLp = loadOrCreateDystopiaGaugeBalance(Address.fromString(pair))
   if (
     addressEqualsString(event.params.from, DAO_WALLET) &&
     DYSTOPIA_TRACKED_GAUGES.includes(event.params.to.toHexString())
@@ -70,13 +70,13 @@ export function handleTransfer(event: TransferEvent): void {
   ])
 }
 
-export function loadOrCreateDystopiaLPBalance(lpAddress: Address): DystopiaLPBalance {
-  let dystLp = DystopiaLPBalance.load(lpAddress.toHexString())
+export function loadOrCreateDystopiaGaugeBalance(lpAddress: Address): DystopiaGaugeBalance {
+  let dystLp = DystopiaGaugeBalance.load(lpAddress.toHexString())
   if (dystLp == null) {
-    dystLp = new DystopiaLPBalance(lpAddress.toHexString())
+    dystLp = new DystopiaGaugeBalance(lpAddress.toHexString())
     dystLp.balance = BigInt.fromString('0')
     dystLp.save()
   }
 
-  return dystLp as DystopiaLPBalance
+  return dystLp as DystopiaGaugeBalance
 }

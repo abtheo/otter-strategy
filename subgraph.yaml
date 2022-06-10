@@ -22,7 +22,7 @@ dataSources:
   #       - Transfer
   #       - APY
   #       - TreasuryRevenue
-  #       - DystopiaLPBalance
+  #       - DystopiaGaugeBalance
   #     abis:
   #       - name: StakedOtterClamERC20V2
   #         file: ./abis/StakedOtterClamERC20V2.json
@@ -129,7 +129,7 @@ dataSources:
   #       - RewardsMinted
   #       - Withdrawal
   #       - Transfer
-  #       - DystopiaLPBalance
+  #       - DystopiaGaugeBalance
   #     abis:
   #       - name: OtterTreasury
   #         file: ./abis/OtterTreasury.json
@@ -410,7 +410,7 @@ dataSources:
   #     entities:
   #       - Transaction
   #       - Transfer
-  #       - DystopiaLPBalance
+  #       - DystopiaGaugeBalance
   #     abis:
   #       - name: Dyst
   #         file: ./abis/Dyst.json
@@ -443,7 +443,7 @@ dataSources:
       entities:
         - Transaction
         - Transfer
-        - DystopiaLPBalance
+        - DystopiaGaugeBalance
       abis:
         - name: Dyst
           file: ./abis/Dyst.json
@@ -475,7 +475,7 @@ templates:
       entities:
         - Transaction
         - Transfer
-        - DystopiaLPBalance
+        - DystopiaGaugeBalance
       abis:
         - name: Dyst
           file: ./abis/Dyst.json

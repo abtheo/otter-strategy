@@ -1,5 +1,5 @@
 import { Address, log, BigInt, BigDecimal, DataSourceContext } from '@graphprotocol/graph-ts'
-import { Transfer, DystopiaLPBalance } from '../generated/schema'
+import { Transfer, DystopiaGaugeBalance } from '../generated/schema'
 import { PairCreated as PairCreatedEvent } from '../generated/DystPairFactory/DystPairFactory'
 import { loadOrCreateTransaction } from './utils/Transactions'
 

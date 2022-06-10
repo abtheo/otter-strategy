@@ -263,7 +263,7 @@ type TotalBuybacks @entity {
   boughtMarketValue: BigDecimal!
 }
 
-type DystopiaLPBalance @entity {
+type DystopiaGaugeBalance @entity {
   id: ID! #lp token address
   balance: BigInt!
 }

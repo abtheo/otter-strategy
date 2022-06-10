@@ -87,7 +87,7 @@ import {
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
 import { DystPair } from '../../generated/OtterTreasury/DystPair'
-import { loadOrCreateDystopiaLPBalance } from '../DystPair'
+import { loadOrCreateDystopiaGaugeBalance } from '../DystPair'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -476,7 +476,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       if (pairDystBalance.reverted) continue
       let pairValue = getDystPairUSD(pairDystBalance.value, pair_address)
       //then add the Gauge staked LP balance
-      let dystGaugeLp = loadOrCreateDystopiaLPBalance(Address.fromString(pair_address))
+      let dystGaugeLp = loadOrCreateDystopiaGaugeBalance(Address.fromString(pair_address))
       pairValue = pairValue.plus(getDystPairUSD(dystGaugeLp.balance, pair_address))
 
       //finally, associate with relevant property

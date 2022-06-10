@@ -6,13 +6,15 @@ import {
   UNI_QUICK_WMATIC_PAIR,
   UNI_WETH_USDC_PAIR,
   DYSTOPIA_PAIR_WMATIC_DYST,
-  MATIC_ERC20_CONTRACT,
+  DYSTOPIA_PAIR_WMATIC_PEN,
+  MATIC_ERC20,
   DYST_ERC20,
-  FRAX_ERC20_CONTRACT,
-  USDPLUS_ERC20_CONTRACT,
-  MAI_ERC20_CONTRACT,
-  USDC_ERC20_CONTRACT,
-  CLAM_ERC20_CONTRACT,
+  FRAX_ERC20,
+  USDPLUS_ERC20,
+  MAI_ERC20,
+  USDC_ERC20,
+  CLAM_ERC20,
+  PEN_ERC20,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
@@ -49,15 +51,30 @@ export function getDystUsdRate(): BigDecimal {
   let lp = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_WMATIC_DYST))
   let wmatic = toDecimal(lp.getReserves().value0, 18)
   let dyst = toDecimal(lp.getReserves().value1, 18)
-  let wmaticPerQi = wmatic.div(dyst)
-  let usdPerQi = wmaticPerQi.times(getwMaticUsdRate())
+  let wmaticPerDyst = wmatic.div(dyst)
+  let usdPerDyst = wmaticPerDyst.times(getwMaticUsdRate())
   log.debug('wmatic = {}, dyst = {}, 1 dyst = {} wmatic = {} USD', [
     wmatic.toString(),
     dyst.toString(),
-    wmaticPerQi.toString(),
-    usdPerQi.toString(),
+    wmaticPerDyst.toString(),
+    usdPerDyst.toString(),
   ])
-  return usdPerQi
+  return usdPerDyst
+}
+
+export function getPenUsdRate(): BigDecimal {
+  let lp = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_WMATIC_PEN))
+  let wmatic = toDecimal(lp.getReserves().value0, 18)
+  let Pen = toDecimal(lp.getReserves().value1, 18)
+  let wmaticPerPen = wmatic.div(Pen)
+  let usdPerPen = wmaticPerPen.times(getwMaticUsdRate())
+  log.debug('wmatic = {}, Pen = {}, 1 Pen = {} wmatic = {} USD', [
+    wmatic.toString(),
+    Pen.toString(),
+    wmaticPerPen.toString(),
+    usdPerPen.toString(),
+  ])
+  return usdPerPen
 }
 
 export function getQuickUsdRate(): BigDecimal {
@@ -168,14 +185,15 @@ export function getDystPairUSD(lp_amount: BigInt, pair_address: string): BigDeci
 }
 
 function findPrice(address: Address): BigDecimal {
-  if (addressEqualsString(address, CLAM_ERC20_CONTRACT)) return getClamUsdRate()
-  if (addressEqualsString(address, MATIC_ERC20_CONTRACT)) return getwMaticUsdRate()
+  if (addressEqualsString(address, CLAM_ERC20)) return getClamUsdRate()
+  if (addressEqualsString(address, MATIC_ERC20)) return getwMaticUsdRate()
   if (addressEqualsString(address, DYST_ERC20)) return getDystUsdRate()
+  if (addressEqualsString(address, PEN_ERC20)) return getPenUsdRate()
   if (
-    addressEqualsString(address, FRAX_ERC20_CONTRACT) ||
-    addressEqualsString(address, MAI_ERC20_CONTRACT) ||
-    addressEqualsString(address, USDPLUS_ERC20_CONTRACT) ||
-    addressEqualsString(address, USDC_ERC20_CONTRACT)
+    addressEqualsString(address, FRAX_ERC20) ||
+    addressEqualsString(address, MAI_ERC20) ||
+    addressEqualsString(address, USDPLUS_ERC20) ||
+    addressEqualsString(address, USDC_ERC20)
   )
     return BigDecimal.fromString('1')
 
@@ -219,6 +237,15 @@ export function getDystMarketValue(balance: BigDecimal): BigDecimal {
 
   let marketValue = balance.times(usdPerDYST)
   log.debug('DYST marketValue = {}', [marketValue.toString()])
+  return marketValue
+}
+
+export function getPenMarketValue(balance: BigDecimal): BigDecimal {
+  let usdPerPEN = getPenUsdRate()
+  log.debug('1 PEN = {} USD', [usdPerPEN.toString()])
+
+  let marketValue = balance.times(usdPerPEN)
+  log.debug('PEN marketValue = {}', [marketValue.toString()])
   return marketValue
 }
 

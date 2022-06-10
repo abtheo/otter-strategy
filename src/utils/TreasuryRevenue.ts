@@ -8,19 +8,18 @@ import {
   Transfer,
   Buyback,
   TotalBuybacks,
-  TotalBribeRewards,
+  TotalBribeReward,
 } from '../../generated/schema'
 import { getQiMarketValue } from '../utils/Price'
+import { QI_ERC20, DAI_ERC20, MAI_ERC20, FRAX_ERC20, MATIC_ERC20, WETH_ERC20 } from './Constants'
 import {
-  QI_ERC20_CONTRACT,
-  DAI_ERC20_CONTRACT,
-  MAI_ERC20_CONTRACT,
-  FRAX_ERC20_CONTRACT,
-  MATIC_ERC20_CONTRACT,
-  WETH_CONTRACT,
-} from './Constants'
-import { getwMATICMarketValue, getClamUsdRate, getwETHMarketValue, getDystMarketValue } from './Price'
-import { addressEqualsString } from './'
+  getwMATICMarketValue,
+  getClamUsdRate,
+  getwETHMarketValue,
+  getDystMarketValue,
+  getPenMarketValue,
+} from './Price'
+import { bytesEqualsString } from './'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
   let ts = dayFromTimestamp(timestamp)
@@ -33,6 +32,8 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
     treasuryRevenue.qiMarketValue = BigDecimal.zero()
     treasuryRevenue.dystClamAmount = BigDecimal.zero()
     treasuryRevenue.dystMarketValue = BigDecimal.zero()
+    treasuryRevenue.penClamAmount = BigDecimal.zero()
+    treasuryRevenue.penMarketValue = BigDecimal.zero()
     treasuryRevenue.totalRevenueMarketValue = BigDecimal.zero()
     treasuryRevenue.totalRevenueClamAmount = BigDecimal.zero()
     treasuryRevenue.buybackClamAmount = BigDecimal.zero()
@@ -122,30 +123,54 @@ export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {
   treasuryRevenue.save()
 }
 
+export function updateTreasuryRevenuePenTransfer(transfer: Transfer): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
+
+  let penMarketValue = getPenMarketValue(toDecimal(transfer.value, 18))
+  let clamAmount = penMarketValue.div(getClamUsdRate())
+
+  log.debug('TransferEvent, txid: {}, penMarketValue {}, clamAmount: {}', [
+    transfer.id,
+    penMarketValue.toString(),
+    clamAmount.toString(),
+  ])
+
+  treasuryRevenue.penClamAmount = treasuryRevenue.penClamAmount.plus(clamAmount)
+  treasuryRevenue.penMarketValue = treasuryRevenue.penMarketValue.plus(penMarketValue)
+
+  treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
+  treasuryRevenue.yieldMarketValue = treasuryRevenue.yieldMarketValue.plus(penMarketValue)
+
+  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
+  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(penMarketValue)
+
+  treasuryRevenue.save()
+}
+
 export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
   log.debug('BuybackEvent, txid: {}, token: ', [buyback.id, buyback.token.toHexString()])
   let treasuryRevenue = loadOrCreateTreasuryRevenue(buyback.timestamp)
   let marketValue = BigDecimal.zero()
   let clamAmountDec = buyback.clamAmount.divDecimal(BigDecimal.fromString('1e9'))
 
-  if (addressEqualsString(buyback.token, QI_ERC20_CONTRACT)) {
+  if (bytesEqualsString(buyback.token, QI_ERC20)) {
     marketValue = getQiMarketValue(toDecimal(buyback.tokenAmount, 18))
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
-  if (addressEqualsString(buyback.token, MATIC_ERC20_CONTRACT)) {
+  if (bytesEqualsString(buyback.token, MATIC_ERC20)) {
     marketValue = getwMATICMarketValue(toDecimal(buyback.tokenAmount, 18))
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
 
-  if (addressEqualsString(buyback.token, WETH_CONTRACT)) {
+  if (bytesEqualsString(buyback.token, WETH_ERC20)) {
     marketValue = getwETHMarketValue(buyback.tokenAmount.toBigDecimal())
     log.debug('BuybackEvent using wETH, txid: {}', [buyback.id])
   }
   //stablecoins (18 decimals)
   if (
-    addressEqualsString(buyback.token, DAI_ERC20_CONTRACT) ||
-    addressEqualsString(buyback.token, FRAX_ERC20_CONTRACT) ||
-    addressEqualsString(buyback.token, MAI_ERC20_CONTRACT)
+    bytesEqualsString(buyback.token, DAI_ERC20) ||
+    bytesEqualsString(buyback.token, FRAX_ERC20) ||
+    bytesEqualsString(buyback.token, MAI_ERC20)
   ) {
     marketValue = toDecimal(buyback.tokenAmount, 18)
     log.debug('BuybackEvent using Stablecoins, txid: {}', [buyback.id])
@@ -177,13 +202,14 @@ export function loadOrCreateTotalBuybacksSingleton(): TotalBuybacks {
   }
   return total
 }
-export function loadOrCreateTotalBribeRewardsSingleton(): TotalBribeRewards {
-  let total = TotalBribeRewards.load('1')
+export function loadOrCreateTotalBribeRewardsSingleton(): TotalBribeReward {
+  let total = TotalBribeReward.load('1')
   if (total == null) {
-    total = new TotalBribeRewards('1')
+    total = new TotalBribeReward('1')
     total.qiBribeRewardsMarketValue = BigDecimal.zero()
     total.polygonGrantMaticMarketValue = BigDecimal.zero()
     total.dystopiaBribeRewardsMarketValue = BigDecimal.zero()
+    total.save()
   }
   return total
 }

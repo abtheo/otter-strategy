@@ -240,6 +240,8 @@ type TreasuryRevenue @entity {
   qiMarketValue: BigDecimal!
   dystClamAmount: BigDecimal!
   dystMarketValue: BigDecimal!
+  penClamAmount: BigDecimal!
+  penMarketValue: BigDecimal!
   ottopiaClamAmount: BigDecimal!
   ottopiaMarketValue: BigDecimal!
   buybackClamAmount: BigDecimal!
@@ -272,7 +274,7 @@ type DystopiaLPBalance @entity {
   balance: BigInt!
 }
 
-type TotalBribeRewards @entity {
+type TotalBribeReward @entity {
   id: ID!
   qiBribeRewardsMarketValue: BigDecimal!
   polygonGrantMaticMarketValue: BigDecimal!

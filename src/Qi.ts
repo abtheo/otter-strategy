@@ -1,10 +1,11 @@
 import { Transfer as TransferEvent } from '../generated/Qi/Qi'
 import { Address, log } from '@graphprotocol/graph-ts'
-import { Transfer } from '../generated/schema'
+import { Transfer, TotalBribeReward } from '../generated/schema'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateTreasuryRevenueQiTransfer, loadOrCreateTotalBribeRewardsSingleton } from './utils/TreasuryRevenue'
 import { addressEqualsString } from './utils'
 import {
+  OTTER_DEPLOYER,
   QI_BRIBE_REWARDS,
   TREASURY_ADDRESS,
   UNI_MAI_USDC_QI_INVESTMENT_PAIR,
@@ -36,7 +37,10 @@ export function handleQiTransfer(event: TransferEvent): void {
     //Pass entity to TreasuryRevenue
     updateTreasuryRevenueQiTransfer(entity)
   }
-  if (addressEqualsString(event.params.from, QI_BRIBE_REWARDS)) {
+  if (
+    addressEqualsString(event.params.from, OTTER_DEPLOYER) &&
+    addressEqualsString(event.params.to, TREASURY_ADDRESS)
+  ) {
     log.debug('QiDao Bribe Recieved {} for {} Qi, from: {}, to: {}', [
       event.transaction.hash.toHexString(),
       toDecimal(event.transaction.value, 18).toString(),
@@ -59,5 +63,7 @@ export function handleQiTransfer(event: TransferEvent): void {
     let bribes = loadOrCreateTotalBribeRewardsSingleton()
     let qiMarketValue = getQiMarketValue(toDecimal(event.params.value, 18))
     bribes.qiBribeRewardsMarketValue = bribes.qiBribeRewardsMarketValue.plus(qiMarketValue)
+    bribes.save()
+    log.warning('QI BRIBE', [])
   }
 }

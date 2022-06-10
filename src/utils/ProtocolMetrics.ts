@@ -20,12 +20,12 @@ import { StakedOtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/S
 import {
   CIRCULATING_SUPPLY_CONTRACT,
   CIRCULATING_SUPPLY_CONTRACT_BLOCK,
-  CLAM_ERC20_CONTRACT,
-  DAI_ERC20_CONTRACT,
-  DQUICK_CONTRACT,
-  FRAX_ERC20_CONTRACT,
-  MAI_ERC20_CONTRACT,
-  MATIC_ERC20_CONTRACT,
+  CLAM_ERC20,
+  DAI_ERC20,
+  DQUICK_ERC20,
+  FRAX_ERC20,
+  MAI_ERC20,
+  MATIC_ERC20,
   OCQI_CONTRACT,
   QCQI_START_BLOCK,
   TETU_QI_CONTRACT,
@@ -34,9 +34,9 @@ import {
   XTETU_QI_START_BLOCK,
   OTTER_LAKE_ADDRESS,
   PEARL_CHEST_BLOCK,
-  PEARL_ERC20_CONTRACT,
-  QI_ERC20_CONTRACT,
-  SCLAM_ERC20_CONTRACT,
+  PEARL_ERC20,
+  QI_ERC20,
+  SCLAM_ERC20,
   STAKING_CONTRACT,
   STAKING_DISTRIBUTOR_CONTRACT,
   TREASURY_ADDRESS,
@@ -74,6 +74,7 @@ import {
   DYSTOPIA_PAIR_USDPLUS_CLAM,
   DYSTOPIA_PAIR_MAI_USDC,
   DYSTOPIA_PAIR_FRAX_USDC,
+  DYSTOPIA_PAIR_WMATIC_PEN,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -149,7 +150,7 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
 }
 
 function getTotalSupply(): BigDecimal {
-  let clam_contract = OtterClamERC20V2.bind(Address.fromString(CLAM_ERC20_CONTRACT))
+  let clam_contract = OtterClamERC20V2.bind(Address.fromString(CLAM_ERC20))
   let total_supply = toDecimal(clam_contract.totalSupply(), 9)
   log.debug('Total Supply {}', [total_supply.toString()])
   return total_supply
@@ -170,7 +171,7 @@ function getCirculatingSupply(transaction: Transaction, total_supply: BigDecimal
 function getSClamSupply(transaction: Transaction): BigDecimal {
   let sclam_supply = BigDecimal.zero()
 
-  let sclam_contract = StakedOtterClamERC20V2.bind(Address.fromString(SCLAM_ERC20_CONTRACT))
+  let sclam_contract = StakedOtterClamERC20V2.bind(Address.fromString(SCLAM_ERC20))
   sclam_supply = toDecimal(sclam_contract.circulatingSupply(), 9)
 
   log.debug('sCLAM Supply {}', [sclam_supply.toString()])
@@ -314,7 +315,7 @@ export function getdQuickMarketValue(): BigDecimal {
   let usdPerQuick = getQuickUsdRate()
   log.debug('1 Quick = {} USD', [usdPerQuick.toString()])
 
-  let token = dQuick.bind(Address.fromString(DQUICK_CONTRACT))
+  let token = dQuick.bind(Address.fromString(DQUICK_ERC20))
   let quickBalance = toDecimal(token.QUICKBalance(Address.fromString(TREASURY_ADDRESS)), 18)
   log.debug('quick balance of treasury = {}', [quickBalance.toString()])
   let marketValue = quickBalance.times(usdPerQuick)
@@ -347,11 +348,11 @@ export function getOtterClamQiMarketValue(): BigDecimal {
 }
 
 function getMV_RFV(transaction: Transaction): BigDecimal[] {
-  let maiERC20 = ERC20.bind(Address.fromString(MAI_ERC20_CONTRACT))
-  let fraxERC20 = ERC20.bind(Address.fromString(FRAX_ERC20_CONTRACT))
-  let daiERC20 = ERC20.bind(Address.fromString(DAI_ERC20_CONTRACT))
-  let maticERC20 = ERC20.bind(Address.fromString(MATIC_ERC20_CONTRACT))
-  let qiERC20 = ERC20.bind(Address.fromString(QI_ERC20_CONTRACT))
+  let maiERC20 = ERC20.bind(Address.fromString(MAI_ERC20))
+  let fraxERC20 = ERC20.bind(Address.fromString(FRAX_ERC20))
+  let daiERC20 = ERC20.bind(Address.fromString(DAI_ERC20))
+  let maticERC20 = ERC20.bind(Address.fromString(MATIC_ERC20))
+  let qiERC20 = ERC20.bind(Address.fromString(QI_ERC20))
   let tetuQiERC20 = ERC20.bind(Address.fromString(TETU_QI_CONTRACT))
 
   let xTetuQiERC20 = xTetuQi.bind(Address.fromString(XTETU_QI_CONTRACT))
@@ -493,6 +494,7 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
   let usdcFraxDystValue = BigDecimal.zero()
   let dystMarketValue = BigDecimal.zero()
   let veDystMarketValue = BigDecimal.zero()
+  let wMaticPenValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString('28773233'))) {
     dystMarketValue = getDystMarketValue()
 
@@ -513,6 +515,7 @@ function getMV_RFV(transaction: Transaction): BigDecimal[] {
       if (pair_address == DYSTOPIA_PAIR_USDPLUS_CLAM) clamUsdplusDystValue = pairValue
       if (pair_address == DYSTOPIA_PAIR_MAI_USDC) usdcMaiDystValue = pairValue
       if (pair_address == DYSTOPIA_PAIR_FRAX_USDC) usdcFraxDystValue = pairValue
+      if (pair_address == DYSTOPIA_PAIR_WMATIC_PEN) wMaticPenValue = pairValue
     }
 
     //plus the locked veDyst inside NFT
@@ -645,7 +648,7 @@ function getAPY_Rebase(sCLAM: BigDecimal, distributedCLAM: BigDecimal): BigDecim
 
 function getAPY_PearlChest(nextEpochRebase: BigDecimal): BigDecimal[] {
   let lake = OtterLake.bind(Address.fromString(OTTER_LAKE_ADDRESS))
-  let pearl = OtterPearlERC20.bind(Address.fromString(PEARL_ERC20_CONTRACT))
+  let pearl = OtterPearlERC20.bind(Address.fromString(PEARL_ERC20))
   let termsCount = lake.termsCount().toI32()
   log.debug('pearl chest termsCount {}', [termsCount.toString()])
   let rebaseRate = Number.parseFloat(nextEpochRebase.toString()) / 100

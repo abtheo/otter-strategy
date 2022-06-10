@@ -2407,6 +2407,8 @@ export class TreasuryRevenue extends Entity {
     this.set("qiMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("dystClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("dystMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("penClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("penMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("buybackClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
@@ -2497,6 +2499,24 @@ export class TreasuryRevenue extends Entity {
 
   set dystMarketValue(value: BigDecimal) {
     this.set("dystMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get penClamAmount(): BigDecimal {
+    let value = this.get("penClamAmount");
+    return value!.toBigDecimal();
+  }
+
+  set penClamAmount(value: BigDecimal) {
+    this.set("penClamAmount", Value.fromBigDecimal(value));
+  }
+
+  get penMarketValue(): BigDecimal {
+    let value = this.get("penMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set penMarketValue(value: BigDecimal) {
+    this.set("penMarketValue", Value.fromBigDecimal(value));
   }
 
   get ottopiaClamAmount(): BigDecimal {
@@ -2774,7 +2794,7 @@ export class DystopiaLPBalance extends Entity {
   }
 }
 
-export class TotalBribeRewards extends Entity {
+export class TotalBribeReward extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -2795,20 +2815,20 @@ export class TotalBribeRewards extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save TotalBribeRewards entity without an ID");
+    assert(id != null, "Cannot save TotalBribeReward entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save TotalBribeRewards entity with non-string ID. " +
+        "Cannot save TotalBribeReward entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("TotalBribeRewards", id.toString(), this);
+      store.set("TotalBribeReward", id.toString(), this);
     }
   }
 
-  static load(id: string): TotalBribeRewards | null {
-    return changetype<TotalBribeRewards | null>(
-      store.get("TotalBribeRewards", id)
+  static load(id: string): TotalBribeReward | null {
+    return changetype<TotalBribeReward | null>(
+      store.get("TotalBribeReward", id)
     );
   }
 

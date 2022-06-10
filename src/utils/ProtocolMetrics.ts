@@ -8,12 +8,11 @@ import { OtterPearlERC20 } from '../../generated/OtterTreasury/OtterPearlERC20'
 import { OtterQiDAOInvestment } from '../../generated/OtterTreasury/OtterQiDAOInvestment'
 import { OtterQuickSwapInvestment } from '../../generated/OtterTreasury/OtterQuickSwapInvestment'
 import { OtterStaking } from '../../generated/OtterTreasury/OtterStaking'
-import { OtterStakingDistributor } from '../../generated/OtterTreasury/OtterStakingDistributor'
 import { QiFarm } from '../../generated/OtterTreasury/QiFarm'
 import { veDyst } from '../../generated/OtterTreasury/veDyst'
 import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
 import { CurveMai3poolContract } from '../../generated/OtterTreasury/CurveMai3poolContract'
-import { ProtocolMetric, Transaction, DystopiaLPBalance } from '../../generated/schema'
+import { ProtocolMetric, Transaction } from '../../generated/schema'
 import { StakedOtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
 import {
   CIRCULATING_SUPPLY_CONTRACT,
@@ -36,7 +35,6 @@ import {
   QI_ERC20,
   SCLAM_ERC20,
   STAKING_CONTRACT,
-  STAKING_DISTRIBUTOR_CONTRACT,
   TREASURY_ADDRESS,
   UNI_CLAM_FRAX_PAIR,
   UNI_CLAM_FRAX_PAIR_BLOCK,
@@ -84,8 +82,8 @@ import {
   getwMaticUsdRate,
   getDystUsdRate,
   getDystPairUSD,
-  getQiMarketValue,
   findPrice,
+  getQiUsdRate,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
 import { DystPair } from '../../generated/OtterTreasury/DystPair'
@@ -412,7 +410,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let maiUsdcQiInvestmentValueDecimal = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_MAI_USDC_QI_INVESTMENT_PAIR_BLOCK))) {
     maiUsdcQiInvestmentValueDecimal = getMaiUsdcInvestmentValue()
-    qiMarketValue = getQiMarketValue(
+    qiMarketValue = getQiUsdRate().times(
       toDecimal(qiERC20.balanceOf(Address.fromString(TREASURY_ADDRESS)), qiERC20.decimals()),
     )
   }
@@ -420,12 +418,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let tetuQiMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(TETU_QI_START_BLOCK))) {
     tetuQiMarketValue = tetuQiMarketValue.plus(
-      getQiMarketValue(toDecimal(tetuQiERC20.balanceOf(Address.fromString(TREASURY_ADDRESS)), tetuQiERC20.decimals())),
+      getQiUsdRate().times(
+        toDecimal(tetuQiERC20.balanceOf(Address.fromString(TREASURY_ADDRESS)), tetuQiERC20.decimals()),
+      ),
     )
   }
   if (transaction.blockNumber.gt(BigInt.fromString(XTETU_QI_START_BLOCK))) {
     tetuQiMarketValue = tetuQiMarketValue.plus(
-      getQiMarketValue(
+      getQiUsdRate().times(
         toDecimal(
           xTetuQiERC20.underlyingBalanceWithInvestmentForHolder(Address.fromString(TREASURY_ADDRESS)),
           xTetuQiERC20.decimals(),

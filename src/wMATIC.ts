@@ -6,7 +6,7 @@ import { loadOrCreateTotalBribeRewardsSingleton } from './utils/TreasuryRevenue'
 import { addressEqualsString } from './utils'
 import { DAO_WALLET, POLYGON_WMATIC_GRANT } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
-import { getwMATICMarketValue } from './utils/Price'
+import { getwMaticUsdRate } from './utils/Price'
 
 export function handlewMATICTransfer(event: TransferEvent): void {
   if (
@@ -33,7 +33,7 @@ export function handlewMATICTransfer(event: TransferEvent): void {
 
     //Count for Polygon Grants
     let bribes = loadOrCreateTotalBribeRewardsSingleton()
-    let wmaticMarketValue = getwMATICMarketValue(toDecimal(event.params.wad, 18))
+    let wmaticMarketValue = getwMaticUsdRate().times(toDecimal(event.params.wad, 18))
     bribes.polygonGrantMaticMarketValue = bribes.polygonGrantMaticMarketValue.plus(wmaticMarketValue)
     bribes.save()
   }

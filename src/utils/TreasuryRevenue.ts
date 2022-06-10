@@ -10,15 +10,15 @@ import {
   TotalBuybacks,
   TotalBribeReward,
 } from '../../generated/schema'
-import { getQiMarketValue } from '../utils/Price'
-import { QI_ERC20, DAI_ERC20, MAI_ERC20, FRAX_ERC20, MATIC_ERC20, WETH_ERC20 } from './Constants'
 import {
-  getwMATICMarketValue,
   getClamUsdRate,
-  getwETHMarketValue,
-  getDystMarketValue,
-  getPenMarketValue,
-} from './Price'
+  getDystUsdRate,
+  getPenUsdRate,
+  getQiUsdRate,
+  getwEthUsdRate,
+  getwMaticUsdRate,
+} from '../utils/Price'
+import { QI_ERC20, DAI_ERC20, MAI_ERC20, FRAX_ERC20, MATIC_ERC20, WETH_ERC20 } from './Constants'
 import { bytesEqualsString } from './'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
@@ -55,7 +55,7 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
 export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(harvest.timestamp)
   let qi = toDecimal(harvest.amount, 18)
-  let qiMarketValue = getQiMarketValue(qi)
+  let qiMarketValue = getQiUsdRate().times(qi)
   let clamAmount = qiMarketValue.div(getClamUsdRate())
   log.debug('HarvestEvent, txid: {}, qiMarketValue {}, clamAmount {}', [
     harvest.id,
@@ -78,7 +78,7 @@ export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
 export function updateTreasuryRevenueQiTransfer(transfer: Transfer): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
 
-  let qiMarketValue = getQiMarketValue(toDecimal(transfer.value, 18))
+  let qiMarketValue = getQiUsdRate().times(toDecimal(transfer.value, 18))
   let clamAmount = qiMarketValue.div(getClamUsdRate())
 
   log.debug('TransferEvent, txid: {}, qiMarketValue {}, clamAmount: {}', [
@@ -102,7 +102,7 @@ export function updateTreasuryRevenueQiTransfer(transfer: Transfer): void {
 export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
 
-  let dystMarketValue = getDystMarketValue(toDecimal(transfer.value, 18))
+  let dystMarketValue = getDystUsdRate().times(toDecimal(transfer.value, 18))
   let clamAmount = dystMarketValue.div(getClamUsdRate())
 
   log.debug('TransferEvent, txid: {}, dystMarketValue {}, clamAmount: {}', [
@@ -126,7 +126,7 @@ export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {
 export function updateTreasuryRevenuePenTransfer(transfer: Transfer): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
 
-  let penMarketValue = getPenMarketValue(toDecimal(transfer.value, 18))
+  let penMarketValue = getPenUsdRate().times(toDecimal(transfer.value, 18))
   let clamAmount = penMarketValue.div(getClamUsdRate())
 
   log.debug('TransferEvent, txid: {}, penMarketValue {}, clamAmount: {}', [
@@ -154,16 +154,16 @@ export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
   let clamAmountDec = buyback.clamAmount.divDecimal(BigDecimal.fromString('1e9'))
 
   if (bytesEqualsString(buyback.token, QI_ERC20)) {
-    marketValue = getQiMarketValue(toDecimal(buyback.tokenAmount, 18))
+    marketValue = getQiUsdRate().times(toDecimal(buyback.tokenAmount, 18))
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
   if (bytesEqualsString(buyback.token, MATIC_ERC20)) {
-    marketValue = getwMATICMarketValue(toDecimal(buyback.tokenAmount, 18))
+    marketValue = getwMaticUsdRate().times(toDecimal(buyback.tokenAmount, 18))
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
 
   if (bytesEqualsString(buyback.token, WETH_ERC20)) {
-    marketValue = getwETHMarketValue(buyback.tokenAmount.toBigDecimal())
+    marketValue = getwEthUsdRate().times(buyback.tokenAmount.toBigDecimal())
     log.debug('BuybackEvent using wETH, txid: {}', [buyback.id])
   }
   //stablecoins (18 decimals)

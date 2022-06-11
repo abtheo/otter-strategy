@@ -2690,11 +2690,15 @@ export class TotalBribeReward extends Entity {
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
+      "dystopiaBribeRewardsMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
       "polygonGrantMaticMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
-      "dystopiaBribeRewardsMarketValue",
+      "polygonGrantMaticAmount",
       Value.fromBigDecimal(BigDecimal.zero())
     );
   }
@@ -2736,6 +2740,15 @@ export class TotalBribeReward extends Entity {
     this.set("qiBribeRewardsMarketValue", Value.fromBigDecimal(value));
   }
 
+  get dystopiaBribeRewardsMarketValue(): BigDecimal {
+    let value = this.get("dystopiaBribeRewardsMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set dystopiaBribeRewardsMarketValue(value: BigDecimal) {
+    this.set("dystopiaBribeRewardsMarketValue", Value.fromBigDecimal(value));
+  }
+
   get polygonGrantMaticMarketValue(): BigDecimal {
     let value = this.get("polygonGrantMaticMarketValue");
     return value!.toBigDecimal();
@@ -2745,12 +2758,12 @@ export class TotalBribeReward extends Entity {
     this.set("polygonGrantMaticMarketValue", Value.fromBigDecimal(value));
   }
 
-  get dystopiaBribeRewardsMarketValue(): BigDecimal {
-    let value = this.get("dystopiaBribeRewardsMarketValue");
+  get polygonGrantMaticAmount(): BigDecimal {
+    let value = this.get("polygonGrantMaticAmount");
     return value!.toBigDecimal();
   }
 
-  set dystopiaBribeRewardsMarketValue(value: BigDecimal) {
-    this.set("dystopiaBribeRewardsMarketValue", Value.fromBigDecimal(value));
+  set polygonGrantMaticAmount(value: BigDecimal) {
+    this.set("polygonGrantMaticAmount", Value.fromBigDecimal(value));
   }
 }

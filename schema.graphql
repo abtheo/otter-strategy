@@ -271,6 +271,7 @@ type DystopiaGaugeBalance @entity {
 type TotalBribeReward @entity {
   id: ID!
   qiBribeRewardsMarketValue: BigDecimal!
-  polygonGrantMaticMarketValue: BigDecimal!
   dystopiaBribeRewardsMarketValue: BigDecimal!
+  polygonGrantMaticMarketValue: BigDecimal!
+  polygonGrantMaticAmount: BigDecimal!
 }

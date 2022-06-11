@@ -18,7 +18,16 @@ import {
   getwEthUsdRate,
   getwMaticUsdRate,
 } from '../utils/Price'
-import { QI_ERC20, DAI_ERC20, MAI_ERC20, FRAX_ERC20, MATIC_ERC20, WETH_ERC20 } from './Constants'
+import {
+  QI_ERC20,
+  DAI_ERC20,
+  MAI_ERC20,
+  FRAX_ERC20,
+  MATIC_ERC20,
+  WETH_ERC20,
+  POLYGON_WMATIC_GRANT,
+  DAO_WALLET,
+} from './Constants'
 import { bytesEqualsString } from './'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
@@ -207,9 +216,10 @@ export function loadOrCreateTotalBribeRewardsSingleton(): TotalBribeReward {
   if (total == null) {
     total = new TotalBribeReward('1')
     total.qiBribeRewardsMarketValue = BigDecimal.zero()
-    total.polygonGrantMaticMarketValue = BigDecimal.zero()
     total.dystopiaBribeRewardsMarketValue = BigDecimal.zero()
-    total.save()
+    total.polygonGrantMaticMarketValue = BigDecimal.zero()
+    total.polygonGrantMaticAmount = BigDecimal.zero()
   }
+
   return total
 }

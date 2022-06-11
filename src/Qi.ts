@@ -12,7 +12,7 @@ import {
   UNI_QI_WMATIC_INVESTMENT_PAIR,
 } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
-import { getQiMarketValue } from './utils/Price'
+import { getQiUsdRate } from './utils/Price'
 
 export function handleQiTransfer(event: TransferEvent): void {
   if (
@@ -61,7 +61,7 @@ export function handleQiTransfer(event: TransferEvent): void {
 
     //Count for QiBribes
     let bribes = loadOrCreateTotalBribeRewardsSingleton()
-    let qiMarketValue = getQiMarketValue(toDecimal(event.params.value, 18))
+    let qiMarketValue = getQiUsdRate().times(toDecimal(event.params.value, 18))
     bribes.qiBribeRewardsMarketValue = bribes.qiBribeRewardsMarketValue.plus(qiMarketValue)
     bribes.save()
     log.warning('QI BRIBE', [])

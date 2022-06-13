@@ -212,6 +212,7 @@ type ProtocolMetric @entity {
   treasuryVeDystMarketValue: BigDecimal!
   treasuryPenMarketValue: BigDecimal!
   treasuryVlPenMarketValue: BigDecimal!
+  treasuryPenDystMarketValue: BigDecimal!
 }
 
 type TotalBurnedClam @entity {

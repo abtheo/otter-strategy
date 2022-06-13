@@ -12,6 +12,8 @@ import { QiFarm } from '../../generated/OtterTreasury/QiFarm'
 import { veDyst } from '../../generated/OtterTreasury/veDyst'
 import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
 import { CurveMai3poolContract } from '../../generated/OtterTreasury/CurveMai3poolContract'
+import { PenDystRewards } from '../../generated/OtterTreasury/PenDystRewards'
+import { PenLockerV2 } from '../../generated/OtterTreasury/PenLockerV2'
 import { ProtocolMetric, Transaction } from '../../generated/schema'
 import { StakedOtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
 import {
@@ -72,6 +74,11 @@ import {
   DYSTOPIA_PAIR_FRAX_USDC,
   DYSTOPIA_PAIR_WMATIC_PEN,
   PEN_ERC20,
+  PENDYST_ERC20,
+  PEN_DYST_REWARDS,
+  DAO_WALLET_PENROSE_USER_PROXY,
+  PEN_DYST_REWARD_PROXY,
+  VLPEN_LOCKER,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -84,6 +91,8 @@ import {
   getDystPairUSD,
   findPrice,
   getQiUsdRate,
+  getPenDystUsdRate,
+  getPenUsdRate,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
 import { DystPair } from '../../generated/OtterTreasury/DystPair'
@@ -138,6 +147,7 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystMarketValue = BigDecimal.zero()
     protocolMetric.treasuryVeDystMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryPenDystMarketValue = BigDecimal.zero()
 
     protocolMetric.save()
   }
@@ -306,7 +316,7 @@ function getPearlWmaticMarketValue(): BigDecimal {
   return value
 }
 
-export function getTreasuryTokenValue(address: Address) {
+export function getTreasuryTokenValue(address: Address): BigDecimal {
   let usdPerToken = findPrice(address)
   let token = ERC20.bind(address)
   let tokenBalance = toDecimal(token.balanceOf(Address.fromString(TREASURY_ADDRESS)), token.decimals()).plus(
@@ -464,9 +474,9 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let veDystMarketValue = BigDecimal.zero()
   let penMarketValue = BigDecimal.zero()
   let vlPenMarketValue = BigDecimal.zero()
+  let penDystMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString('28773233'))) {
     dystMarketValue = getTreasuryTokenValue(Address.fromString(DYST_ERC20))
-    penMarketValue = getTreasuryTokenValue(Address.fromString(PEN_ERC20))
 
     for (let i = 0; i < DYSTOPIA_TRACKED_PAIRS.length; i++) {
       let pair_address = DYSTOPIA_TRACKED_PAIRS[i]
@@ -494,7 +504,26 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       getDystUsdRate(),
     )
   }
+  if (transaction.blockNumber.gt(BigInt.fromString('29401160'))) {
+    penMarketValue = getTreasuryTokenValue(Address.fromString(PEN_ERC20))
+    let penDyst = ERC20.bind(Address.fromString(PENDYST_ERC20))
+    let penDystStaking = PenDystRewards.bind(Address.fromString(PEN_DYST_REWARD_PROXY))
 
+    let penDystAmount = toDecimal(
+      penDyst
+        .balanceOf(Address.fromString(DAO_WALLET))
+        .plus(penDyst.balanceOf(Address.fromString(DAO_WALLET_PENROSE_USER_PROXY)))
+        .plus(penDystStaking.balanceOf(Address.fromString(DAO_WALLET_PENROSE_USER_PROXY))),
+      18,
+    )
+
+    penDystMarketValue = penDystAmount.times(getPenDystUsdRate())
+
+    let vlPenContract = PenLockerV2.bind(Address.fromString(VLPEN_LOCKER))
+    vlPenMarketValue = toDecimal(vlPenContract.balanceOf(Address.fromString(DAO_WALLET_PENROSE_USER_PROXY)), 18).times(
+      getPenUsdRate(),
+    )
+  }
   let stableValue = maiBalance.plus(fraxBalance).plus(daiBalance)
   let stableValueDecimal = toDecimal(stableValue, 18)
     .plus(maiUsdcValueDecimal)
@@ -527,6 +556,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(veDystMarketValue)
     .plus(penMarketValue)
     .plus(vlPenMarketValue)
+    .plus(penDystMarketValue)
 
   //Attach results and return
   protocolMetric.treasuryMarketValue = mv
@@ -557,6 +587,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryVeDystMarketValue = veDystMarketValue
   protocolMetric.treasuryPenMarketValue = penMarketValue
   protocolMetric.treasuryVlPenMarketValue = vlPenMarketValue
+  protocolMetric.treasuryPenDystMarketValue = penDystMarketValue
 
   return protocolMetric
 }

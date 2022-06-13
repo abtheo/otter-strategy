@@ -4,7 +4,7 @@ import { Transfer as TransferEvent } from '../generated/Dyst/DystPair'
 import { loadOrCreateTransaction } from './utils/Transactions'
 
 import { toDecimal } from './utils/Decimals'
-import { DAO_WALLET, DYSTOPIA_TRACKED_GAUGES } from './utils/Constants'
+import { DAO_WALLET, DAO_WALLET_PENROSE_USER_PROXY, DYSTOPIA_TRACKED_GAUGES, PENROSE_PROXY } from './utils/Constants'
 import { dataSource } from '@graphprotocol/graph-ts'
 import { addressEqualsString } from './utils'
 
@@ -45,7 +45,9 @@ export function handleTransfer(event: TransferEvent): void {
   let dystLp = loadOrCreateDystopiaGaugeBalance(Address.fromString(pair))
   if (
     addressEqualsString(event.params.from, DAO_WALLET) &&
-    DYSTOPIA_TRACKED_GAUGES.includes(event.params.to.toHexString())
+    (DYSTOPIA_TRACKED_GAUGES.includes(event.params.to.toHexString()) ||
+      addressEqualsString(event.params.to, DAO_WALLET_PENROSE_USER_PROXY) ||
+      addressEqualsString(event.params.to, PENROSE_PROXY))
   ) {
     //deposit
     dystLp.balance = dystLp.balance.plus(event.params.value)
@@ -53,14 +55,16 @@ export function handleTransfer(event: TransferEvent): void {
   }
   if (
     addressEqualsString(event.params.to, DAO_WALLET) &&
-    DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString())
+    (DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString()) ||
+      addressEqualsString(event.params.from, DAO_WALLET_PENROSE_USER_PROXY) ||
+      addressEqualsString(event.params.from, PENROSE_PROXY))
   ) {
     //withdraw
     dystLp.balance = dystLp.balance.minus(event.params.value)
     dystLp.save()
   }
 
-  log.debug('Transfered Dystopia MAI-CLAM LP Gauge in TX: {}, LP: {} Amount {}, from: {}, to: {}, balance: {}', [
+  log.debug('Transfered Dystopia LP Gauge in TX: {}, LP: {} Amount {}, from: {}, to: {}, balance: {}', [
     transaction.id,
     pair,
     event.params.value.toString(),

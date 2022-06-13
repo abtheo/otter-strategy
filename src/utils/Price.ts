@@ -15,6 +15,11 @@ import {
   CLAM_ERC20,
   PEN_ERC20,
   WETH_ERC20,
+  DYSTOPIA_PAIR_PENDYST_DYST,
+  PENDYST_ERC20,
+  DQUICK_ERC20,
+  QI_ERC20,
+  OCQI_CONTRACT,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
@@ -25,6 +30,7 @@ import { ERC20 } from '../../generated/OtterTreasury/ERC20'
 import { addressEqualsString } from '../utils/'
 
 let BIG_DECIMAL_1E9 = BigDecimal.fromString('1e9')
+let BIG_DECIMAL_1E18 = BigDecimal.fromString('1e18')
 
 export function getwMaticUsdRate(): BigDecimal {
   let pair = AggregatorV3InterfaceABI.bind(Address.fromString(USDC_MATIC_AGGREGATOR))
@@ -75,6 +81,19 @@ export function getPenUsdRate(): BigDecimal {
     usdPerPen.toString(),
   ])
   return usdPerPen
+}
+
+/*Stable pools on Dystopia do not use Uniswap xy=k formula */
+export function getPenDystUsdRate(): BigDecimal {
+  let lp = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_PENDYST_DYST))
+  let hasDystAmount = lp.try_getAmountOut(BigInt.fromString('1000000000000000000'), Address.fromString(PENDYST_ERC20))
+  if (hasDystAmount.reverted) return BigDecimal.zero()
+
+  let amountDyst = hasDystAmount.value.divDecimal(BigDecimal.fromString('1e18'))
+
+  log.debug('1 penDYST = {} DYST', [amountDyst.toString()])
+
+  return amountDyst.times(getDystUsdRate())
 }
 
 export function getQuickUsdRate(): BigDecimal {
@@ -131,24 +150,6 @@ export function getClamUsdRate(): BigDecimal {
   return clamRate
 }
 
-//(slp_treasury/slp_supply)*(2*sqrt(lp_dai * lp_ohm))
-export function getDiscountedPairUSD(lp_amount: BigInt, pair_address: string): BigDecimal {
-  let pair = UniswapV2Pair.bind(Address.fromString(pair_address))
-
-  let total_lp = pair.totalSupply()
-  let lp_token_1 = toDecimal(pair.getReserves().value1, 9)
-  let lp_token_2 = toDecimal(pair.getReserves().value0, 18)
-  let kLast = lp_token_1.times(lp_token_2).truncate(0).digits
-
-  let part1 = toDecimal(lp_amount, 18).div(toDecimal(total_lp, 18))
-  let two = BigInt.fromI32(2)
-
-  let sqrt = kLast.sqrt()
-  let part2 = toDecimal(two.times(sqrt), 0)
-  let result = part1.times(part2)
-  return result
-}
-
 export function getPairUSD(lp_amount: BigInt, pair_address: string): BigDecimal {
   let pair = UniswapV2Pair.bind(Address.fromString(pair_address))
   let total_lp = pair.totalSupply()
@@ -186,10 +187,12 @@ export function getDystPairUSD(lp_amount: BigInt, pair_address: string): BigDeci
 
 export function findPrice(address: Address): BigDecimal {
   if (addressEqualsString(address, CLAM_ERC20)) return getClamUsdRate()
+  if (addressEqualsString(address, QI_ERC20) || addressEqualsString(address, OCQI_CONTRACT)) return getQiUsdRate()
   if (addressEqualsString(address, MATIC_ERC20)) return getwMaticUsdRate()
   if (addressEqualsString(address, DYST_ERC20)) return getDystUsdRate()
   if (addressEqualsString(address, PEN_ERC20)) return getPenUsdRate()
   if (addressEqualsString(address, WETH_ERC20)) return getwEthUsdRate()
+  if (addressEqualsString(address, DQUICK_ERC20)) return getQuickUsdRate()
   if (
     addressEqualsString(address, FRAX_ERC20) ||
     addressEqualsString(address, MAI_ERC20) ||

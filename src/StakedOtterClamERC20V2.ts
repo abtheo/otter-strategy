@@ -39,25 +39,6 @@ export function handleLogRebase(event: LogRebaseEvent): void {
   calculateApy(transaction.timestamp)
 }
 
-export function handleLogStakingContractUpdated(event: LogStakingContractUpdatedEvent): void {
-  let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let entity = new LogStakingContractUpdated(transaction.id)
-  entity.stakingContract = event.params.stakingContract
-  entity.timestamp = transaction.timestamp
-  entity.transaction = transaction.id
-  entity.save()
-}
-
-export function handleLogSupply(event: LogSupplyEvent): void {
-  let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let entity = new LogSupply(transaction.id)
-  entity.epoch = event.params.epoch
-  entity.timestamp = event.params.timestamp
-  entity.totalSupply = event.params.totalSupply
-  entity.transaction = transaction.id
-  entity.save()
-}
-
 export function handleTransfer(event: TransferEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
   let entity = new Transfer(transaction.id)

@@ -9,15 +9,6 @@ type Transaction @entity {
   gasPrice: BigInt!
 }
 
-type Approval @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  owner: Bytes! # address
-  spender: Bytes! # address
-  value: BigInt! # uint256
-}
-
 type LogRebase @entity {
   id: ID!
   transaction: Transaction!
@@ -27,129 +18,12 @@ type LogRebase @entity {
   index: BigInt! # uint256
 }
 
-type LogStakingContractUpdated @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  stakingContract: Bytes! # address
-}
-
-type LogSupply @entity {
-  id: ID!
-  transaction: Transaction!
-  epoch: BigInt! # uint256
-  timestamp: BigInt! # uint256
-  totalSupply: BigInt! # uint256
-}
-
 type Transfer @entity {
   id: ID!
   transaction: Transaction!
   timestamp: BigInt!
   from: Bytes! # address
   to: Bytes! # address
-  value: BigInt! # uint256
-}
-
-type ChangeActivated @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  managing: Int! # uint8
-  activated: Bytes! # address
-  result: Boolean! # bool
-}
-
-type ChangeQueued @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  managing: Int! # uint8
-  queued: Bytes! # address
-}
-
-type CreateDebt @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  debtor: Bytes! # address
-  token: Bytes! # address
-  amount: BigInt! # uint256
-  value: BigInt! # uint256
-}
-
-type Deposit @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  token: Bytes! # address
-  amount: BigInt! # uint256
-  value: BigInt! # uint256
-}
-
-type OwnershipPulled @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  previousOwner: Bytes! # address
-  newOwner: Bytes! # address
-}
-
-type OwnershipPushed @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  previousOwner: Bytes! # address
-  newOwner: Bytes! # address
-}
-
-type RepayDebt @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  debtor: Bytes! # address
-  token: Bytes! # address
-  amount: BigInt! # uint256
-  value: BigInt! # uint256
-}
-
-type ReservesAudited @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  totalReserves: BigInt! # uint256
-}
-
-type ReservesManaged @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  token: Bytes! # address
-  amount: BigInt! # uint256
-}
-
-type ReservesUpdated @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  totalReserves: BigInt! # uint256
-}
-
-type RewardsMinted @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  caller: Bytes! # address
-  recipient: Bytes! # address
-  amount: BigInt! # uint256
-}
-
-type Withdrawal @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  token: Bytes! # address
-  amount: BigInt! # uint256
   value: BigInt! # uint256
 }
 

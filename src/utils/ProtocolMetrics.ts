@@ -520,9 +520,15 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     penDystMarketValue = penDystAmount.times(getPenDystUsdRate())
 
     let vlPenContract = PenLockerV2.bind(Address.fromString(VLPEN_LOCKER))
-    vlPenMarketValue = toDecimal(vlPenContract.balanceOf(Address.fromString(DAO_WALLET_PENROSE_USER_PROXY)), 18).times(
-      getPenUsdRate(),
-    )
+    let vlPenAmt = toDecimal(vlPenContract.balanceOf(Address.fromString(DAO_WALLET_PENROSE_USER_PROXY)), 18)
+    vlPenMarketValue = vlPenAmt.times(getPenUsdRate())
+    log.debug('Pen MV {};   PenDyst Amount {} MV {};  vlPEN Amt {} MV {}', [
+      penMarketValue.toString(),
+      penDystAmount.toString(),
+      penDystMarketValue.toString(),
+      vlPenAmt.toString(),
+      vlPenMarketValue.toString(),
+    ])
   }
   let stableValue = maiBalance.plus(fraxBalance).plus(daiBalance)
   let stableValueDecimal = toDecimal(stableValue, 18)

@@ -149,6 +149,7 @@ type TotalBribeReward @entity {
   id: ID!
   qiBribeRewardsMarketValue: BigDecimal!
   dystopiaBribeRewardsMarketValue: BigDecimal!
+  #TODO: Track manually, maybe even in front-end
   polygonGrantMaticMarketValue: BigDecimal!
   polygonGrantMaticAmount: BigDecimal!
 }

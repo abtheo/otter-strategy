@@ -65,7 +65,6 @@ import {
   DAO_WALLET,
   DYSTOPIA_PAIR_WMATIC_DYST,
   DYSTOPIA_PAIR_MAI_CLAM,
-  DYSTOPIA_PAIR_MAI_CLAM_START_BLOCK,
   DYSTOPIA_veDYST,
   DYSTOPIA_veDYST_ERC721_ID,
   DYSTOPIA_TRACKED_PAIRS,
@@ -75,7 +74,6 @@ import {
   DYSTOPIA_PAIR_WMATIC_PEN,
   PEN_ERC20,
   PENDYST_ERC20,
-  PEN_DYST_REWARDS,
   DAO_WALLET_PENROSE_USER_PROXY,
   PEN_DYST_REWARD_PROXY,
   VLPEN_LOCKER,
@@ -485,7 +483,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       let pairDystBalance = dystopiaPair.try_balanceOf(Address.fromString(DAO_WALLET))
       if (pairDystBalance.reverted) continue
       let pairValue = getDystPairUSD(pairDystBalance.value, pair_address)
-      //then add the Gauge staked LP balance
+      //then add the Gauge staked LP balance from Dystopia & Penrose
       let dystGaugeLp = loadOrCreateDystopiaGaugeBalance(Address.fromString(pair_address))
       pairValue = pairValue.plus(getDystPairUSD(dystGaugeLp.balance, pair_address))
 
@@ -723,25 +721,13 @@ function getAPY_PearlChest(nextEpochRebase: BigDecimal): BigDecimal[] {
 export function updateProtocolMetrics(transaction: Transaction): void {
   let pm = loadOrCreateProtocolMetric(transaction.timestamp)
 
-  //Treasury MV
+  //Set metrics
   pm = setTreasuryAssetMarketValues(transaction, pm)
-
-  //Total Supply
   pm.totalSupply = getTotalSupply()
-
-  //Circ Supply
   pm.clamCirculatingSupply = getCirculatingSupply(transaction, pm.totalSupply)
-
-  //sClam Supply
   pm.sClamCirculatingSupply = getSClamSupply(transaction)
-
-  //CLAM Price
   pm.clamPrice = getClamUsdRate()
-
-  //CLAM Market Cap
   pm.marketCap = pm.clamCirculatingSupply.times(pm.clamPrice)
-
-  //Total Value Locked
   pm.totalValueLocked = pm.sClamCirculatingSupply.times(pm.clamPrice)
 
   // Rebase rewards, APY, rebase

@@ -36,6 +36,7 @@ type Buyback @entity {
   clamAmount: BigInt! # uint256
 }
 
+#TODO: Remove or rename Risk-Free Values
 type ProtocolMetric @entity {
   id: ID!
   timestamp: BigInt!
@@ -115,12 +116,13 @@ type TreasuryRevenue @entity {
   ottopiaMarketValue: BigDecimal!
   buybackClamAmount: BigDecimal!
   buybackMarketValue: BigDecimal!
-  yieldClamAmount: BigDecimal!
-  yieldMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
   cumulativeBuybackClamAmount: BigDecimal!
   cumulativeBuybackMarketValue: BigDecimal!
+  #TODO: Remove Yields
+  yieldClamAmount: BigDecimal!
+  yieldMarketValue: BigDecimal!
 }
 
 type APY @entity {

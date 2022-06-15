@@ -1,24 +1,13 @@
-import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import {
-  Approval as ApprovalEvent,
   LogRebase as LogRebaseEvent,
-  LogStakingContractUpdated as LogStakingContractUpdatedEvent,
-  LogSupply as LogSupplyEvent,
   Transfer as TransferEvent,
 } from '../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
-import {
-  Approval,
-  APY,
-  LogRebase,
-  LogStakingContractUpdated,
-  LogSupply,
-  ProtocolMetric,
-  Transfer,
-  TreasuryRevenue,
-} from '../generated/schema'
+import { APY, LogRebase, ProtocolMetric, Transfer, TreasuryRevenue } from '../generated/schema'
 import { log } from '@graphprotocol/graph-ts'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateProtocolMetrics } from './utils/ProtocolMetrics'
+import { saveTransfer } from './utils'
 
 const CLAM_DECIMALS = BigDecimal.fromString('1e9')
 const ONE = BigDecimal.fromString('1')
@@ -37,17 +26,12 @@ export function handleLogRebase(event: LogRebaseEvent): void {
   entity.transaction = transaction.id
   entity.save()
   calculateApy(transaction.timestamp)
+  updateProtocolMetrics(transaction)
 }
 
 export function handleTransfer(event: TransferEvent): void {
-  let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let entity = new Transfer(transaction.id)
-  entity.from = event.params.from
-  entity.to = event.params.to
-  entity.value = event.params.value
-  entity.timestamp = transaction.timestamp
-  entity.transaction = transaction.id
-  updateProtocolMetrics(transaction)
+  let entity = saveTransfer(event)
+  updateProtocolMetrics(entity.transaction)
   entity.save()
 }
 

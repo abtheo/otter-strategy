@@ -1,9 +1,7 @@
 import { Transfer as TransferEvent } from '../generated/Qi/Qi'
-import { Address, log } from '@graphprotocol/graph-ts'
-import { Transfer } from '../generated/schema'
-import { loadOrCreateTransaction } from './utils/Transactions'
+import { log } from '@graphprotocol/graph-ts'
 import { updateTreasuryRevenuePenTransfer } from './utils/TreasuryRevenue'
-import { addressEqualsString } from './utils'
+import { addressEqualsString, saveTransfer } from './utils'
 import { DAO_WALLET, DAO_WALLET_PENROSE_USER_PROXY } from './utils/Constants'
 
 export function handlePenTransfer(event: TransferEvent): void {
@@ -16,16 +14,9 @@ export function handlePenTransfer(event: TransferEvent): void {
       event.params.from.toHexString(),
       event.params.to.toHexString(),
     ])
-    let transaction = loadOrCreateTransaction(event.transaction, event.block)
-    let entity = new Transfer(transaction.id)
-    entity.transaction = transaction.id
-    entity.timestamp = transaction.timestamp
-    entity.from = event.params.from
-    entity.to = event.params.to
-    entity.value = event.params.value
+    let entity = saveTransfer(event)
 
     //Pass entity to TreasuryRevenue
     updateTreasuryRevenuePenTransfer(entity)
-    entity.save()
   }
 }

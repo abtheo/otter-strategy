@@ -1,19 +1,19 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { ClamCirculatingSupply } from '../../generated/OtterTreasury/ClamCirculatingSupply'
-import { xTetuQi } from '../../generated/OtterTreasury/xTetuQi'
-import { ERC20 } from '../../generated/OtterTreasury/ERC20'
-import { OtterClamERC20V2 } from '../../generated/OtterTreasury/OtterClamERC20V2'
-import { OtterLake } from '../../generated/OtterTreasury/OtterLake'
-import { OtterPearlERC20 } from '../../generated/OtterTreasury/OtterPearlERC20'
-import { OtterQiDAOInvestment } from '../../generated/OtterTreasury/OtterQiDAOInvestment'
-import { OtterQuickSwapInvestment } from '../../generated/OtterTreasury/OtterQuickSwapInvestment'
-import { OtterStaking } from '../../generated/OtterTreasury/OtterStaking'
-import { QiFarm } from '../../generated/OtterTreasury/QiFarm'
-import { veDyst } from '../../generated/OtterTreasury/veDyst'
-import { UniswapV2Pair } from '../../generated/OtterTreasury/UniswapV2Pair'
-import { CurveMai3poolContract } from '../../generated/OtterTreasury/CurveMai3poolContract'
-import { PenDystRewards } from '../../generated/OtterTreasury/PenDystRewards'
-import { PenLockerV2 } from '../../generated/OtterTreasury/PenLockerV2'
+import { ClamCirculatingSupply } from '../../generated/StakedOtterClamERC20V2/ClamCirculatingSupply'
+import { xTetuQi } from '../../generated/StakedOtterClamERC20V2/xTetuQi'
+import { ERC20 } from '../../generated/StakedOtterClamERC20V2/ERC20'
+import { OtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/OtterClamERC20V2'
+import { OtterLake } from '../../generated/StakedOtterClamERC20V2/OtterLake'
+import { OtterPearlERC20 } from '../../generated/StakedOtterClamERC20V2/OtterPearlERC20'
+import { OtterQiDAOInvestment } from '../../generated/StakedOtterClamERC20V2/OtterQiDAOInvestment'
+import { OtterQuickSwapInvestment } from '../../generated/StakedOtterClamERC20V2/OtterQuickSwapInvestment'
+import { OtterStaking } from '../../generated/StakedOtterClamERC20V2/OtterStaking'
+import { QiFarm } from '../../generated/StakedOtterClamERC20V2/QiFarm'
+import { veDyst } from '../../generated/StakedOtterClamERC20V2/veDyst'
+import { UniswapV2Pair } from '../../generated/StakedOtterClamERC20V2/UniswapV2Pair'
+import { CurveMai3poolContract } from '../../generated/StakedOtterClamERC20V2/CurveMai3poolContract'
+import { PenDystRewards } from '../../generated/StakedOtterClamERC20V2/PenDystRewards'
+import { PenLockerV2 } from '../../generated/StakedOtterClamERC20V2/PenLockerV2'
 import { ProtocolMetric, Transaction } from '../../generated/schema'
 import { StakedOtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
 import {
@@ -93,7 +93,7 @@ import {
   getPenUsdRate,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
-import { DystPair } from '../../generated/OtterTreasury/DystPair'
+import { DystPair } from '../../generated/StakedOtterClamERC20V2/DystPair'
 import { loadOrCreateDystopiaGaugeBalance } from '../DystPair'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
@@ -171,7 +171,7 @@ function getCirculatingSupply(transaction: Transaction, total_supply: BigDecimal
   return circ_supply
 }
 
-function getSClamSupply(transaction: Transaction): BigDecimal {
+function getSClamSupply(): BigDecimal {
   let sclam_supply = BigDecimal.zero()
 
   let sclam_contract = StakedOtterClamERC20V2.bind(Address.fromString(SCLAM_ERC20))
@@ -725,7 +725,7 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm = setTreasuryAssetMarketValues(transaction, pm)
   pm.totalSupply = getTotalSupply()
   pm.clamCirculatingSupply = getCirculatingSupply(transaction, pm.totalSupply)
-  pm.sClamCirculatingSupply = getSClamSupply(transaction)
+  pm.sClamCirculatingSupply = getSClamSupply()
   pm.clamPrice = getClamUsdRate()
   pm.marketCap = pm.clamCirculatingSupply.times(pm.clamPrice)
   pm.totalValueLocked = pm.sClamCirculatingSupply.times(pm.clamPrice)

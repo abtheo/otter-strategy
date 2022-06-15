@@ -53,37 +53,35 @@ export function getQiUsdRate(): BigDecimal {
   return usdPerQi
 }
 
+/*Pools on Dystopia do not use Uniswap xy=k formula */
 export function getDystUsdRate(): BigDecimal {
   let lp = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_WMATIC_DYST))
-  let wmatic = toDecimal(lp.getReserves().value0, 18)
-  let dyst = toDecimal(lp.getReserves().value1, 18)
-  let wmaticPerDyst = wmatic.div(dyst)
-  let usdPerDyst = wmaticPerDyst.times(getwMaticUsdRate())
-  log.debug('wmatic = {}, dyst = {}, 1 dyst = {} wmatic = {} USD', [
-    wmatic.toString(),
-    dyst.toString(),
-    wmaticPerDyst.toString(),
-    usdPerDyst.toString(),
-  ])
-  return usdPerDyst
+  let hasMaticAmount = lp.try_getAmountOut(BigInt.fromString('1000000000000000000'), Address.fromString(DYST_ERC20))
+  if (hasMaticAmount.reverted) return BigDecimal.zero()
+
+  let amountMatic = hasMaticAmount.value.divDecimal(BigDecimal.fromString('1e18'))
+  let usdVal = amountMatic.times(getwMaticUsdRate())
+
+  log.debug('1 DYST = {} MATIC = {} USD', [amountMatic.toString(), usdVal.toString()])
+
+  return usdVal
 }
 
+/*Pools on Dystopia do not use Uniswap xy=k formula */
 export function getPenUsdRate(): BigDecimal {
   let lp = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_WMATIC_PEN))
-  let wmatic = toDecimal(lp.getReserves().value0, 18)
-  let Pen = toDecimal(lp.getReserves().value1, 18)
-  let wmaticPerPen = wmatic.div(Pen)
-  let usdPerPen = wmaticPerPen.times(getwMaticUsdRate())
-  log.debug('wmatic = {}, Pen = {}, 1 Pen = {} wmatic = {} USD', [
-    wmatic.toString(),
-    Pen.toString(),
-    wmaticPerPen.toString(),
-    usdPerPen.toString(),
-  ])
-  return usdPerPen
+  let hasMaticAmount = lp.try_getAmountOut(BigInt.fromString('1000000000000000000'), Address.fromString(PEN_ERC20))
+  if (hasMaticAmount.reverted) return BigDecimal.zero()
+
+  let amountMatic = hasMaticAmount.value.divDecimal(BigDecimal.fromString('1e18'))
+  let usdVal = amountMatic.times(getwMaticUsdRate())
+
+  log.debug('1 PEN = {} MATIC = {} USD', [amountMatic.toString(), usdVal.toString()])
+
+  return usdVal
 }
 
-/*Stable pools on Dystopia do not use Uniswap xy=k formula */
+/*Pools on Dystopia do not use Uniswap xy=k formula */
 export function getPenDystUsdRate(): BigDecimal {
   let lp = DystPair.bind(Address.fromString(DYSTOPIA_PAIR_PENDYST_DYST))
   let hasDystAmount = lp.try_getAmountOut(BigInt.fromString('1000000000000000000'), Address.fromString(PENDYST_ERC20))

@@ -103,6 +103,129 @@ dataSources:
       file: ./src/OtterClamERC20V2.ts
 
   - kind: ethereum/contract
+    name: OtterTreasury
+    network: matic
+    source:
+      address: '0x8ce47D56EAa1299d3e06FF3E04637449fFb01C9C'
+      abi: OtterTreasury
+      startBlock: 21593527
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - ProtocolMetric
+        - ChangeActivated
+        - ChangeQueued
+        - CreateDebt
+        - Deposit
+        - RepayDebt
+        - ReservesAudited
+        - ReservesManaged
+        - ReservesUpdated
+        - RewardsMinted
+        - Withdrawal
+        - Transfer
+        - DystopiaLPBalance
+      abis:
+        - name: OtterTreasury
+          file: ./abis/OtterTreasury.json
+        # -- ProtocolMetric --
+        - name: StakedOtterClamERC20V2
+          file: ./abis/StakedOtterClamERC20V2.json
+        - name: OtterClamERC20V2
+          file: ./abis/OtterClamERC20V2.json
+        - name: OtterBondStakeDepository
+          file: ./abis/OtterBondStakeDepository.json
+        - name: OtterStaking
+          file: ./abis/OtterStaking.json
+        - name: OtterStakingDistributor
+          file: './abis/OtterStakingDistributor.json'
+        - name: ClamCirculatingSupply
+          file: ./abis/ClamCirculatingSupply.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: dQuick
+          file: ./abis/dQuick.json
+        - name: xTetuQi
+          file: ./abis/xTetuQi.json
+        - name: OtterQiDAOInvestment
+          file: ./abis/OtterQiDAOInvestment.json
+        - name: QiFarm
+          file: ./abis/QiFarm.json
+        - name: OtterQuickSwapInvestment
+          file: ./abis/OtterQuickSwapInvestment.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: OtterLake
+          file: ./abis/OtterLake.json
+        - name: PearlNote
+          file: ./abis/PearlNote.json
+        - name: OtterPearlERC20
+          file: ./abis/OtterPearlERC20.json
+        - name: CurveMai3poolContract
+          file: ./abis/CurveMai3poolContract.json
+        - name: Dyst
+          file: ./abis/Dyst.json      
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: veDyst
+          file: ./abis/veDyst.json
+        # --------------------
+      eventHandlers:
+        - event: ChangeActivated(indexed uint8,address,bool)
+          handler: handleChangeActivated
+        - event: ChangeQueued(indexed uint8,address)
+          handler: handleChangeQueued
+        - event: CreateDebt(indexed address,indexed address,uint256,uint256)
+          handler: handleCreateDebt
+        - event: Deposit(indexed address,uint256,uint256)
+          handler: handleDeposit
+        - event: RepayDebt(indexed address,indexed address,uint256,uint256)
+          handler: handleRepayDebt
+        - event: ReservesAudited(indexed uint256)
+          handler: handleReservesAudited
+        - event: ReservesManaged(indexed address,uint256)
+          handler: handleReservesManaged
+        - event: ReservesUpdated(indexed uint256)
+          handler: handleReservesUpdated
+        - event: RewardsMinted(indexed address,indexed address,uint256)
+          handler: handleRewardsMinted
+        - event: Withdrawal(indexed address,uint256,uint256)
+          handler: handleWithdrawal
+      file: ./src/OtterTreasury.ts
+
+  - kind: ethereum/contract
+    name: OtterLake
+    network: matic
+    source:
+      address: '0xc67aBdA25D0421FE9Dc1afd64183b179A426a256'
+      abi: OtterLake
+      startBlock: 25352622
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Term
+      abis:
+        - name: OtterLake
+          file: ./abis/OtterLake.json
+      eventHandlers:
+        - event: TermAdded(indexed address,uint256,uint256,uint16)
+          handler: handleTermAdded
+        - event: TermUpdated(indexed address,uint8,uint256)
+          handler: handleTermUpdated
+        - event: TermRemoved(indexed address)
+          handler: handleTermRemoved
+        - event: TermDisabled(indexed address)
+          handler: handleTermDisabled
+      file: ./src/OtterLake.ts
+
+  - kind: ethereum/contract
     name: OtterQiLocker
     network: matic
     source:

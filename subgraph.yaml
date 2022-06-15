@@ -223,6 +223,8 @@ dataSources:
           handler: handleTermRemoved
         - event: TermDisabled(indexed address)
           handler: handleTermDisabled
+        - event: Locked(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleLocked
       file: ./src/OtterLake.ts
 
   - kind: ethereum/contract

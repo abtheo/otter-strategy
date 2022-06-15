@@ -1,5 +1,5 @@
-import { Term } from '../generated/schema'
-import { TermAdded, TermUpdated, TermRemoved, TermDisabled } from '../generated/OtterTreasury/OtterLake';
+import { Term, NoteToken } from '../generated/schema'
+import { TermAdded, TermUpdated, TermRemoved, TermDisabled, Locked } from '../generated/OtterTreasury/OtterLake';
 import { store } from '@graphprotocol/graph-ts';
 
 enum TERM_SETTING {
@@ -46,4 +46,15 @@ export function handleTermDisabled(event: TermDisabled) {
 
   term.enabled = false;
   term.save();
+}
+
+export function handleLocked(event: Locked) {
+  const id = event.params.tokenId.toHex();
+  let token = NoteToken.load(id) ?? new NoteToken(id);
+  token.tokenId = event.params.tokenId;
+  token.note = event.params.note;
+  token.amount = event.params.amount;
+  token.user = event.params.user;
+  token.updatedAt = event.block.timestamp;
+  token.save();
 }

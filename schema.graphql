@@ -162,3 +162,12 @@ type Term @entity {
   multiplier: Int!
   enabled: Boolean!
 }
+
+type NoteToken @entity {
+  id: ID!
+  tokenId: BigInt!
+  note: Bytes!
+  user: Bytes!
+  amount: BigInt!
+  updatedAt: BigInt!
+}

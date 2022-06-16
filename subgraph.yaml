@@ -204,7 +204,7 @@ dataSources:
     source:
       address: '0xc67aBdA25D0421FE9Dc1afd64183b179A426a256'
       abi: OtterLake
-      startBlock: 25352622
+      startBlock: 23553352
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

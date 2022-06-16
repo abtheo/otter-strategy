@@ -1,24 +1,13 @@
-import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import {
-  Approval as ApprovalEvent,
   LogRebase as LogRebaseEvent,
-  LogStakingContractUpdated as LogStakingContractUpdatedEvent,
-  LogSupply as LogSupplyEvent,
   Transfer as TransferEvent,
 } from '../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
-import {
-  Approval,
-  APY,
-  LogRebase,
-  LogStakingContractUpdated,
-  LogSupply,
-  ProtocolMetric,
-  Transfer,
-  TreasuryRevenue,
-} from '../generated/schema'
+import { APY, LogRebase, ProtocolMetric, Transfer, TreasuryRevenue } from '../generated/schema'
 import { log } from '@graphprotocol/graph-ts'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateProtocolMetrics } from './utils/ProtocolMetrics'
+import { saveTransfer } from './utils'
 
 const CLAM_DECIMALS = BigDecimal.fromString('1e9')
 const ONE = BigDecimal.fromString('1')
@@ -37,36 +26,12 @@ export function handleLogRebase(event: LogRebaseEvent): void {
   entity.transaction = transaction.id
   entity.save()
   calculateApy(transaction.timestamp)
-}
-
-export function handleLogStakingContractUpdated(event: LogStakingContractUpdatedEvent): void {
-  let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let entity = new LogStakingContractUpdated(transaction.id)
-  entity.stakingContract = event.params.stakingContract
-  entity.timestamp = transaction.timestamp
-  entity.transaction = transaction.id
-  entity.save()
-}
-
-export function handleLogSupply(event: LogSupplyEvent): void {
-  let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let entity = new LogSupply(transaction.id)
-  entity.epoch = event.params.epoch
-  entity.timestamp = event.params.timestamp
-  entity.totalSupply = event.params.totalSupply
-  entity.transaction = transaction.id
-  entity.save()
+  updateProtocolMetrics(transaction)
 }
 
 export function handleTransfer(event: TransferEvent): void {
-  let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let entity = new Transfer(transaction.id)
-  entity.from = event.params.from
-  entity.to = event.params.to
-  entity.value = event.params.value
-  entity.timestamp = transaction.timestamp
-  entity.transaction = transaction.id
-  updateProtocolMetrics(transaction)
+  let entity = saveTransfer(event)
+  updateProtocolMetrics(entity.transaction)
   entity.save()
 }
 
@@ -116,7 +81,7 @@ export function calculateApy(timestamp: BigInt): void {
 
   //in CLAMS per rebase, averaged over N days*3 rebases
   let rebaseRevenue = pastRevenues
-    .reduce((x, y) => x.plus(y), BigDecimal.fromString('0'))
+    .reduce((x, y) => x.plus(y), BigDecimal.zero())
     .div(
       BigInt.fromI32(pastRevenues.length)
         .times(BigInt.fromString('3'))
@@ -165,5 +130,6 @@ export function calculateApy(timestamp: BigInt): void {
   apyEntity.apy = apy
   apyEntity.rebaseReward = rebaseReward
   apyEntity.clamDistributed = distributedClam
+  apyEntity.clamDistributedDecimal = distributedClam.divDecimal(BigDecimal.fromString('1e9'))
   apyEntity.save()
 }

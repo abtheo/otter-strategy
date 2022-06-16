@@ -4,26 +4,22 @@ import { Transfer } from '../generated/schema'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateTreasuryRevenueDystTransfer } from './utils/TreasuryRevenue'
 
-import { DAO_WALLET, DYSTOPIA_TRACKED_GAUGES } from './utils/Constants'
+import { DAO_WALLET, DAO_WALLET_PENROSE_USER_PROXY, DYSTOPIA_TRACKED_GAUGES } from './utils/Constants'
+import { addressEqualsString, saveTransfer } from './utils'
 
 export function handleDystTransfer(event: TransferEvent): void {
   if (
-    DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString().toLowerCase()) &&
-    event.params.to.toHexString().toLowerCase() == DAO_WALLET.toLowerCase()
+    (DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString()) ||
+      addressEqualsString(event.params.from, DAO_WALLET_PENROSE_USER_PROXY)) &&
+    event.params.to.toHexString() == DAO_WALLET.toLowerCase()
   ) {
-    log.debug('Dystopia Harvest {}, from: {}, to: {}', [
+    log.debug('DYST Harvest {}, from: {}, to: {}', [
       event.transaction.hash.toHexString(),
       event.params.from.toHexString(),
       event.params.to.toHexString(),
     ])
-    let transaction = loadOrCreateTransaction(event.transaction, event.block)
-    let entity = new Transfer(transaction.id)
-    entity.transaction = transaction.id
-    entity.timestamp = transaction.timestamp
-    entity.from = event.params.from
-    entity.to = event.params.to
-    entity.value = event.params.value
 
+    let entity = saveTransfer(event)
     //Pass entity to TreasuryRevenue
     updateTreasuryRevenueDystTransfer(entity)
     entity.save()

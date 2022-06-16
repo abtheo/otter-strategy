@@ -9,15 +9,6 @@ type Transaction @entity {
   gasPrice: BigInt!
 }
 
-type Approval @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  owner: Bytes! # address
-  spender: Bytes! # address
-  value: BigInt! # uint256
-}
-
 type LogRebase @entity {
   id: ID!
   transaction: Transaction!
@@ -27,129 +18,12 @@ type LogRebase @entity {
   index: BigInt! # uint256
 }
 
-type LogStakingContractUpdated @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  stakingContract: Bytes! # address
-}
-
-type LogSupply @entity {
-  id: ID!
-  transaction: Transaction!
-  epoch: BigInt! # uint256
-  timestamp: BigInt! # uint256
-  totalSupply: BigInt! # uint256
-}
-
 type Transfer @entity {
   id: ID!
   transaction: Transaction!
   timestamp: BigInt!
   from: Bytes! # address
   to: Bytes! # address
-  value: BigInt! # uint256
-}
-
-type ChangeActivated @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  managing: Int! # uint8
-  activated: Bytes! # address
-  result: Boolean! # bool
-}
-
-type ChangeQueued @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  managing: Int! # uint8
-  queued: Bytes! # address
-}
-
-type CreateDebt @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  debtor: Bytes! # address
-  token: Bytes! # address
-  amount: BigInt! # uint256
-  value: BigInt! # uint256
-}
-
-type Deposit @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  token: Bytes! # address
-  amount: BigInt! # uint256
-  value: BigInt! # uint256
-}
-
-type OwnershipPulled @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  previousOwner: Bytes! # address
-  newOwner: Bytes! # address
-}
-
-type OwnershipPushed @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  previousOwner: Bytes! # address
-  newOwner: Bytes! # address
-}
-
-type RepayDebt @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  debtor: Bytes! # address
-  token: Bytes! # address
-  amount: BigInt! # uint256
-  value: BigInt! # uint256
-}
-
-type ReservesAudited @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  totalReserves: BigInt! # uint256
-}
-
-type ReservesManaged @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  token: Bytes! # address
-  amount: BigInt! # uint256
-}
-
-type ReservesUpdated @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  totalReserves: BigInt! # uint256
-}
-
-type RewardsMinted @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  caller: Bytes! # address
-  recipient: Bytes! # address
-  amount: BigInt! # uint256
-}
-
-type Withdrawal @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  token: Bytes! # address
-  amount: BigInt! # uint256
   value: BigInt! # uint256
 }
 
@@ -162,6 +36,7 @@ type Buyback @entity {
   clamAmount: BigInt! # uint256
 }
 
+#TODO: Remove or rename Risk-Free Values
 type ProtocolMetric @entity {
   id: ID!
   timestamp: BigInt!
@@ -197,15 +72,6 @@ type ProtocolMetric @entity {
   furryHandAPY: BigDecimal!
   stoneHandAPY: BigDecimal!
   diamondHandAPY: BigDecimal!
-  runway2dot5k: BigDecimal
-  runway5k: BigDecimal
-  runway7dot5k: BigDecimal
-  runway10k: BigDecimal
-  runway20k: BigDecimal
-  runway50k: BigDecimal
-  runway70k: BigDecimal
-  runway100k: BigDecimal
-  runwayCurrent: BigDecimal
   treasuryClamMaiPOL: BigDecimal!
   treasuryClamFraxPOL: BigDecimal!
   treasuryClamWmaticPOL: BigDecimal!
@@ -216,8 +82,12 @@ type ProtocolMetric @entity {
   treasuryDystopiaPairUSDPLUSClamMarketValue: BigDecimal!
   treasuryDystopiaPairMaiUsdcMarketValue: BigDecimal!
   treasuryDystopiaPairFraxUsdcMarketValue: BigDecimal!
+  treasuryDystopiaPairwMaticPenMarketValue: BigDecimal!
   treasuryDystMarketValue: BigDecimal!
   treasuryVeDystMarketValue: BigDecimal!
+  treasuryPenMarketValue: BigDecimal!
+  treasuryVlPenMarketValue: BigDecimal!
+  treasuryPenDystMarketValue: BigDecimal!
 }
 
 type TotalBurnedClam @entity {
@@ -240,16 +110,19 @@ type TreasuryRevenue @entity {
   qiMarketValue: BigDecimal!
   dystClamAmount: BigDecimal!
   dystMarketValue: BigDecimal!
+  penClamAmount: BigDecimal!
+  penMarketValue: BigDecimal!
   ottopiaClamAmount: BigDecimal!
   ottopiaMarketValue: BigDecimal!
   buybackClamAmount: BigDecimal!
   buybackMarketValue: BigDecimal!
-  yieldClamAmount: BigDecimal!
-  yieldMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
   cumulativeBuybackClamAmount: BigDecimal!
   cumulativeBuybackMarketValue: BigDecimal!
+  #TODO: Remove Yields
+  yieldClamAmount: BigDecimal!
+  yieldMarketValue: BigDecimal!
 }
 
 type APY @entity {
@@ -267,7 +140,16 @@ type TotalBuybacks @entity {
   boughtMarketValue: BigDecimal!
 }
 
-type DystopiaLPBalance @entity {
-  id: ID! #lp tokenId
+type DystopiaGaugeBalance @entity {
+  id: ID! #lp token address
   balance: BigInt!
+}
+
+type TotalBribeReward @entity {
+  id: ID!
+  qiBribeRewardsMarketValue: BigDecimal!
+  dystopiaBribeRewardsMarketValue: BigDecimal!
+  #TODO: Track manually, maybe even in front-end
+  polygonGrantMaticMarketValue: BigDecimal!
+  polygonGrantMaticAmount: BigDecimal!
 }

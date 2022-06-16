@@ -1,11 +1,11 @@
-import { BigDecimal, ethereum } from '@graphprotocol/graph-ts'
+import { BigDecimal } from '@graphprotocol/graph-ts'
 import { Transfer as TransferEvent } from '../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
-import { Transfer, TotalBurnedClam } from '../generated/schema'
+import { TotalBurnedClam } from '../generated/schema'
 import { log } from '@graphprotocol/graph-ts'
-import { loadOrCreateTransaction } from './utils/Transactions'
 import { getClamUsdRate } from './utils/Price'
 import { DAO_WALLET, OTTOPIA_STORE, OTTO_PORTAL_MINTING } from './utils/Constants'
 import { loadOrCreateTreasuryRevenue } from './utils/TreasuryRevenue'
+import { addressEqualsString, saveTransfer } from './utils'
 
 export function handleTransfer(event: TransferEvent): void {
   //BURN events
@@ -27,8 +27,9 @@ export function handleTransfer(event: TransferEvent): void {
   }
   //Otto Portal minting & Store shell chests
   if (
-    (event.params.from.toHexString() == OTTO_PORTAL_MINTING || event.params.from.toHexString() == OTTOPIA_STORE) &&
-    event.params.to.toHexString() == DAO_WALLET
+    (addressEqualsString(event.params.from, OTTO_PORTAL_MINTING) ||
+      addressEqualsString(event.params.from, OTTOPIA_STORE)) &&
+    addressEqualsString(event.params.to, DAO_WALLET)
   ) {
     saveTransfer(event)
 
@@ -57,19 +58,8 @@ export function loadOrCreateTotalBurnedClamSingleton(): TotalBurnedClam {
   let total = TotalBurnedClam.load('1')
   if (total == null) {
     total = new TotalBurnedClam('1')
-    total.burnedClam = BigDecimal.fromString('0')
-    total.burnedValueUsd = BigDecimal.fromString('0')
+    total.burnedClam = BigDecimal.zero()
+    total.burnedValueUsd = BigDecimal.zero()
   }
   return total
-}
-
-function saveTransfer(event: TransferEvent): void {
-  let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let entity = new Transfer(transaction.id)
-  entity.from = event.params.from
-  entity.to = event.params.to
-  entity.value = event.params.value
-  entity.timestamp = transaction.timestamp
-  entity.transaction = transaction.id
-  entity.save()
 }

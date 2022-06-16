@@ -1,11 +1,12 @@
-import { BigDecimal } from '@graphprotocol/graph-ts'
+import { BigDecimal, ethereum } from '@graphprotocol/graph-ts'
 import { Transfer as TransferEvent } from '../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
-import { TotalBurnedClam } from '../generated/schema'
+import { Transfer, TotalBurnedClam } from '../generated/schema'
 import { log } from '@graphprotocol/graph-ts'
+import { loadOrCreateTransaction } from './utils/Transactions'
 import { getClamUsdRate } from './utils/Price'
 import { DAO_WALLET, OTTOPIA_STORE, OTTO_PORTAL_MINTING } from './utils/Constants'
 import { loadOrCreateTreasuryRevenue } from './utils/TreasuryRevenue'
-import { addressEqualsString, saveTransfer } from './utils'
+import { addressEqualsString } from './utils'
 
 export function handleTransfer(event: TransferEvent): void {
   //BURN events
@@ -62,4 +63,15 @@ export function loadOrCreateTotalBurnedClamSingleton(): TotalBurnedClam {
     total.burnedValueUsd = BigDecimal.zero()
   }
   return total
+}
+
+function saveTransfer(event: TransferEvent): void {
+  let transaction = loadOrCreateTransaction(event.transaction, event.block)
+  let entity = new Transfer(transaction.id)
+  entity.from = event.params.from
+  entity.to = event.params.to
+  entity.value = event.params.value
+  entity.timestamp = transaction.timestamp
+  entity.transaction = transaction.id
+  entity.save()
 }

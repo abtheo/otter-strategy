@@ -6,7 +6,7 @@ import { loadOrCreateTransaction } from './utils/Transactions'
 import { toDecimal } from './utils/Decimals'
 import { DAO_WALLET, DAO_WALLET_PENROSE_USER_PROXY, DYSTOPIA_TRACKED_GAUGES, PENROSE_PROXY } from './utils/Constants'
 import { dataSource } from '@graphprotocol/graph-ts'
-import { addressEqualsString, saveTransfer } from './utils'
+import { addressEqualsString } from './utils'
 
 /*
 Dystopia LP Staking does not return any vested tokens to the DAO.
@@ -32,7 +32,15 @@ export function handleTransfer(event: TransferEvent): void {
   let context = dataSource.context()
   let pair = context.getString('pair')
 
-  saveTransfer(event)
+  let transaction = loadOrCreateTransaction(event.transaction, event.block)
+  let entity = new Transfer(transaction.id)
+  entity.transaction = transaction.id
+  entity.timestamp = transaction.timestamp
+  entity.from = event.params.from
+  entity.to = event.params.to
+  entity.value = event.params.value
+
+  entity.save()
   //update LP balance
   let dystLp = loadOrCreateDystopiaGaugeBalance(Address.fromString(pair))
   if (
@@ -57,7 +65,7 @@ export function handleTransfer(event: TransferEvent): void {
   }
 
   log.debug('Transfered Dystopia LP Gauge in TX: {}, LP: {} Amount {}, from: {}, to: {}, balance: {}', [
-    event.transaction.hash.toHexString(),
+    transaction.id,
     pair,
     event.params.value.toString(),
     event.params.from.toHexString(),
@@ -73,5 +81,6 @@ export function loadOrCreateDystopiaGaugeBalance(lpAddress: Address): DystopiaGa
     dystLp.balance = BigInt.fromString('0')
     dystLp.save()
   }
+
   return dystLp as DystopiaGaugeBalance
 }

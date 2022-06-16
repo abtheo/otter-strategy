@@ -7,7 +7,6 @@ import { APY, LogRebase, ProtocolMetric, Transfer, TreasuryRevenue } from '../ge
 import { log } from '@graphprotocol/graph-ts'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateProtocolMetrics } from './utils/ProtocolMetrics'
-import { saveTransfer } from './utils'
 
 const CLAM_DECIMALS = BigDecimal.fromString('1e9')
 const ONE = BigDecimal.fromString('1')
@@ -30,9 +29,15 @@ export function handleLogRebase(event: LogRebaseEvent): void {
 }
 
 export function handleTransfer(event: TransferEvent): void {
-  let entity = saveTransfer(event)
-  updateProtocolMetrics(entity.transaction)
+  let transaction = loadOrCreateTransaction(event.transaction, event.block)
+  let entity = new Transfer(transaction.id)
+  entity.transaction = transaction.id
+  entity.timestamp = transaction.timestamp
+  entity.from = event.params.from
+  entity.to = event.params.to
+  entity.value = event.params.value
   entity.save()
+  updateProtocolMetrics(transaction)
 }
 
 /*

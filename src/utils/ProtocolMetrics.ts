@@ -10,11 +10,12 @@ import { OtterQuickSwapInvestment } from '../../generated/StakedOtterClamERC20V2
 import { OtterStaking } from '../../generated/StakedOtterClamERC20V2/OtterStaking'
 import { QiFarm } from '../../generated/StakedOtterClamERC20V2/QiFarm'
 import { veDyst } from '../../generated/StakedOtterClamERC20V2/veDyst'
+import { PenLens } from '../../generated/StakedOtterClamERC20V2/PenLens'
 import { UniswapV2Pair } from '../../generated/StakedOtterClamERC20V2/UniswapV2Pair'
 import { CurveMai3poolContract } from '../../generated/StakedOtterClamERC20V2/CurveMai3poolContract'
 import { PenDystRewards } from '../../generated/StakedOtterClamERC20V2/PenDystRewards'
 import { PenLockerV2 } from '../../generated/StakedOtterClamERC20V2/PenLockerV2'
-import { ProtocolMetric, Transaction } from '../../generated/schema'
+import { ProtocolMetric, Transaction, VotePosition, Vote } from '../../generated/schema'
 import { StakedOtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
 import {
   CIRCULATING_SUPPLY_CONTRACT,
@@ -77,6 +78,7 @@ import {
   DAO_WALLET_PENROSE_USER_PROXY,
   PEN_DYST_REWARD_PROXY,
   VLPEN_LOCKER,
+  PENROSE_LENS_PROXY,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -527,6 +529,11 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       vlPenAmt.toString(),
       vlPenMarketValue.toString(),
     ])
+    //Calculate our voting power in vlPEN
+    let penLockedDyst = penDyst.balanceOf(Address.fromString(VLPEN_LOCKER))
+    let penLockedPen = ERC20.bind(Address.fromString(PEN_ERC20)).balanceOf(Address.fromString(VLPEN_LOCKER))
+
+    let percentPenOwned = vlPenAmt.div(toDecimal(penLockedPen, 18)).times(BigDecimal.fromString('100'))
   }
   let stableValue = maiBalance.plus(fraxBalance).plus(daiBalance)
   let stableValueDecimal = toDecimal(stableValue, 18)
@@ -748,5 +755,49 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.totalBurnedClam = burns.burnedClam
   pm.totalBurnedClamMarketValue = burns.burnedValueUsd
 
+  /*Penrose Votes
+  PenLens.json ABI has been stripped out to contain only the `votePositionsOf` function,
+  because GraphQL cannot parse functions which return nested lists e.g. type[][]
+  Quick Google says this is a long-standing issue https://github.com/graphprotocol/graph-cli/issues/342
+  but there has been activity during June 2022, 
+  so fingers crossed this will be fixed before we need a function of that signature.
+  */
+  if (transaction.timestamp.gt(BigInt.fromString('29400000'))) {
+    let voteSingleton = loadOrCreateVotePositionSingleton()
+    let voteContract = PenLens.bind(Address.fromString(PENROSE_LENS_PROXY))
+
+    let tryVoteTuple = voteContract.try_votePositionsOf(Address.fromString(DAO_WALLET_PENROSE_USER_PROXY))
+    let currentVotes: string[] = []
+    if (!tryVoteTuple.reverted) {
+      let voteTuple = tryVoteTuple.value
+      for (let i = 0; i < voteTuple.votes.length; i++) {
+        let vote = new Vote(voteTuple.votes[i].poolAddress.toHexString())
+        vote.vote = toDecimal(voteTuple.votes[i].weight, 18)
+        vote.timestamp = transaction.timestamp
+        vote.save()
+
+        log.debug('Penrose vote of {} vlPen for pool {} @ time {}', [
+          vote.vote.toString(),
+          vote.id,
+          transaction.timestamp.toString(),
+        ])
+        currentVotes.push(vote.id)
+      }
+      voteSingleton.votes = currentVotes
+      voteSingleton.save()
+    }
+  }
+  //QiDAO veDYST votes
+
   pm.save()
+}
+
+export function loadOrCreateVotePositionSingleton(): VotePosition {
+  let votes = VotePosition.load('1')
+  if (votes == null) {
+    votes = new VotePosition('1')
+    votes.votes = []
+    votes.save()
+  }
+  return votes
 }

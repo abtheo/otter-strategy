@@ -1,0 +1,60 @@
+[
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "accountAddress",
+                "type": "address"
+            }
+        ],
+        "name": "votePositionsOf",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "delegateAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "weightTotal",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "weightUsed",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "weightAvailable",
+                        "type": "uint256"
+                    },
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "poolAddress",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "weight",
+                                "type": "int256"
+                            }
+                        ],
+                        "internalType": "struct IVotingSnapshot.Vote[]",
+                        "name": "votes",
+                        "type": "tuple[]"
+                    }
+                ],
+                "internalType": "struct PenLens.VotesData",
+                "name": "",
+                "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]

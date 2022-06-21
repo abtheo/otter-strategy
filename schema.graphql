@@ -153,3 +153,14 @@ type TotalBribeReward @entity {
   polygonGrantMaticMarketValue: BigDecimal!
   polygonGrantMaticAmount: BigDecimal!
 }
+
+type Vote @entity {
+  id: ID! #lp token address
+  timestamp: BigInt!
+  vote: BigDecimal!
+}
+
+type VotePosition @entity {
+  id: ID!
+  votes: [Vote!]
+}

@@ -1,15 +1,7 @@
 import { toDecimal } from './Decimals'
-import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { dayFromTimestamp } from './Dates'
-import {
-  TreasuryRevenue,
-  Transaction,
-  Harvest,
-  Transfer,
-  Buyback,
-  TotalBuybacks,
-  TotalBribeReward,
-} from '../../generated/schema'
+import { TreasuryRevenue, Harvest, Transfer, Buyback, TotalBuybacks, TotalBribeReward } from '../../generated/schema'
 import {
   getClamUsdRate,
   getDystUsdRate,
@@ -18,16 +10,7 @@ import {
   getwEthUsdRate,
   getwMaticUsdRate,
 } from '../utils/Price'
-import {
-  QI_ERC20,
-  DAI_ERC20,
-  MAI_ERC20,
-  FRAX_ERC20,
-  MATIC_ERC20,
-  WETH_ERC20,
-  POLYGON_WMATIC_GRANT,
-  DAO_WALLET,
-} from './Constants'
+import { QI_ERC20, DAI_ERC20, MAI_ERC20, FRAX_ERC20, MATIC_ERC20, WETH_ERC20 } from './Constants'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
   let ts = dayFromTimestamp(timestamp)
@@ -211,7 +194,9 @@ export function loadOrCreateTotalBribeRewardsSingleton(): TotalBribeReward {
   if (total == null) {
     total = new TotalBribeReward('1')
     total.qiBribeRewardsMarketValue = BigDecimal.zero()
+    // TODO: Once Penrose implements their Bribe rewards, start tracking
     // total.dystopiaBribeRewardsMarketValue = BigDecimal.zero()
+    // total.penroseBribeRewardsMarketValue = BigDecimal.zero()
     // total.polygonGrantMaticMarketValue = BigDecimal.zero()
     // total.polygonGrantMaticAmount = BigDecimal.zero()
   }

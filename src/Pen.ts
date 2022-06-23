@@ -1,9 +1,8 @@
 import { Transfer as TransferEvent } from '../generated/Qi/Qi'
-import { Address, log } from '@graphprotocol/graph-ts'
+import { log } from '@graphprotocol/graph-ts'
 import { Transfer } from '../generated/schema'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateTreasuryRevenuePenTransfer } from './utils/TreasuryRevenue'
-import { addressEqualsString } from './utils'
 import { DAO_WALLET, DAO_WALLET_PENROSE_USER_PROXY } from './utils/Constants'
 
 export function handlePenTransfer(event: TransferEvent): void {

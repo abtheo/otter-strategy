@@ -167,7 +167,13 @@ type GovernanceMetric @entity {
   id: ID!
   timestamp: BigInt!
   qiDaoVeDystAmt: BigDecimal!
-  percentVlPenOwned: BigDecimal!
+  dystTotalSupply: BigDecimal!
+  veDystTotalSupply: BigDecimal!
+  penDystTotalSupply: BigDecimal!
+  vlPenTotalSupply: BigDecimal!
+  otterClamVlPenTotalOwned: BigDecimal!
+  otterClamVlPenPercentOwned: BigDecimal!
+  otterClamVeDystPercentOwned: BigDecimal!
   #Set from TotalBribeReward singleton
   totalQiBribeRewardsMarketValue: BigDecimal!
 }

@@ -15,7 +15,7 @@ import { UniswapV2Pair } from '../../generated/StakedOtterClamERC20V2/UniswapV2P
 import { CurveMai3poolContract } from '../../generated/StakedOtterClamERC20V2/CurveMai3poolContract'
 import { PenDystRewards } from '../../generated/StakedOtterClamERC20V2/PenDystRewards'
 import { PenLockerV2 } from '../../generated/StakedOtterClamERC20V2/PenLockerV2'
-import { ProtocolMetric, Transaction, VotePosition, Vote } from '../../generated/schema'
+import { ProtocolMetric, Transaction, VotePosition, Vote, GovernanceMetric } from '../../generated/schema'
 import { StakedOtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
 import {
   CIRCULATING_SUPPLY_CONTRACT,
@@ -98,6 +98,7 @@ import {
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
 import { DystPair } from '../../generated/StakedOtterClamERC20V2/DystPair'
 import { loadOrCreateDystopiaGaugeBalance } from '../DystPair'
+import { loadOrCreateTotalBribeRewardsSingleton } from './TreasuryRevenue'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -153,6 +154,22 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.save()
   }
   return protocolMetric as ProtocolMetric
+}
+
+export function loadOrCreateGovernanceMetric(timestamp: BigInt): GovernanceMetric {
+  let dayTimestamp = dayFromTimestamp(timestamp)
+
+  let governanceMetric = GovernanceMetric.load(dayTimestamp)
+  if (governanceMetric == null) {
+    governanceMetric = new GovernanceMetric(dayTimestamp)
+    governanceMetric.timestamp = timestamp
+    governanceMetric.totalQiBribeRewardsMarketValue = BigDecimal.zero()
+    governanceMetric.percentVlPenOwned = BigDecimal.zero()
+    governanceMetric.qiDaoVeDystAmt = BigDecimal.zero()
+
+    governanceMetric.save()
+  }
+  return governanceMetric as GovernanceMetric
 }
 
 function getTotalSupply(): BigDecimal {
@@ -743,6 +760,13 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.totalBurnedClam = burns.burnedClam
   pm.totalBurnedClamMarketValue = burns.burnedValueUsd
 
+  pm.save()
+
+  //Also trigger a Governance Metrics update
+  updateGovernanceMetrics(transaction)
+}
+
+export function updateGovernanceMetrics(transaction: Transaction): void {
   /*Penrose Votes
   PenLens.json ABI has been stripped out to contain only the `votePositionsOf` function,
   because GraphQL cannot parse functions which return nested lists e.g. type[][]
@@ -750,57 +774,75 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   but there has been activity during June 2022, 
   so fingers crossed this will be fixed before we need a function of that signature.
   */
-  if (transaction.timestamp.gt(BigInt.fromString('29400000'))) {
-    let voteSingleton = loadOrCreateVotePositionSingleton()
-    let voteContract = PenLens.bind(PENROSE_LENS_PROXY)
+  if (!transaction.timestamp.gt(BigInt.fromString('29400000'))) return
 
-    let tryVoteTuple = voteContract.try_votePositionsOf(DAO_WALLET_PENROSE_USER_PROXY)
-    let currentVotes: string[] = []
-    if (!tryVoteTuple.reverted) {
-      let voteTuple = tryVoteTuple.value
-      for (let i = 0; i < voteTuple.votes.length; i++) {
-        let vote = new Vote(voteTuple.votes[i].poolAddress.toHexString())
-        vote.vote = toDecimal(voteTuple.votes[i].weight, 18)
-        vote.timestamp = transaction.timestamp
-        vote.save()
+  let governanceMetric = loadOrCreateGovernanceMetric(transaction.timestamp)
+  let voteSingleton = loadOrCreateVotePositionSingleton()
+  let voteContract = PenLens.bind(PENROSE_LENS_PROXY)
 
-        log.debug('Penrose vote of {} vlPen for pool {} @ time {}', [
-          vote.vote.toString(),
-          vote.id,
-          transaction.timestamp.toString(),
-        ])
-        currentVotes.push(vote.id)
-      }
-      voteSingleton.votes = currentVotes
-      voteSingleton.save()
+  let tryVoteTuple = voteContract.try_votePositionsOf(DAO_WALLET_PENROSE_USER_PROXY)
+  let currentVotes: string[] = []
+  if (!tryVoteTuple.reverted) {
+    let voteTuple = tryVoteTuple.value
+    for (let i = 0; i < voteTuple.votes.length; i++) {
+      let vote = new Vote(voteTuple.votes[i].poolAddress.toHexString())
+      vote.vote = toDecimal(voteTuple.votes[i].weight, 18)
+      vote.timestamp = transaction.timestamp
+      vote.save()
+
+      log.debug('Penrose vote of {} vlPen for pool {} @ time {}', [
+        vote.vote.toString(),
+        vote.id,
+        transaction.timestamp.toString(),
+      ])
+      currentVotes.push(vote.id)
     }
-
-    //Calculate our vlPEN voting power in DYST
-    let penDyst = ERC20.bind(PENDYST_ERC20)
-    let vlPenContract = PenLockerV2.bind(VLPEN_LOCKER)
-    let vlPenAmt = toDecimal(vlPenContract.balanceOf(DAO_WALLET_PENROSE_USER_PROXY), 18)
-
-    let penLockedDyst = toDecimal(penDyst.totalSupply(), 18)
-    let vlPenTotal = ERC20.bind(PEN_ERC20).balanceOf(VLPEN_LOCKER)
-
-    let percentVlPenOwned = vlPenAmt.div(toDecimal(vlPenTotal, 18))
-    let finalDystWeight = percentVlPenOwned.times(penLockedDyst)
-    percentVlPenOwned = percentVlPenOwned.times(BigDecimal.fromString('100'))
-
-    //QiDAO veDYST votes
-    let qiDaoVeDystAmt = toDecimal(
-      veDyst.bind(DYSTOPIA_veDYST).balanceOfNFT(BigInt.fromString(DYSTOPIA_veDYST_ERC721_ID)),
-      18,
-    )
-
-    // governanceMetric.dystTotalSupply = ERC20.bind(DYST_ERC20).totalSupply()
-    // governanceMetric.veDystTotalSupply = governanceMetric.dystTotalSupply = governanceMetric.dystTotalSupply = governanceMetric.dystTotalSupply = governanceMetric.dystTotalSupply = governanceMetric.percentVlPenOwned = percentVlPenOwned
-    // governanceMetric.penroseTotalDystWeight = penLockedDyst
-    // governanceMetric.penroseOwnedDystWeight = finalDystWeight
-    // governanceMetric.qiDaoVeDystAmt = qiDaoVeDystAmt
+    voteSingleton.votes = currentVotes
+    voteSingleton.save()
   }
 
-  pm.save()
+  //Calculate our vlPEN voting power in DYST
+  let penDyst = ERC20.bind(PENDYST_ERC20)
+  let vlPenContract = PenLockerV2.bind(VLPEN_LOCKER)
+  let vlPenAmt = toDecimal(vlPenContract.balanceOf(DAO_WALLET_PENROSE_USER_PROXY), 18)
+
+  let penLockedDyst = toDecimal(penDyst.totalSupply(), 18)
+  let vlPenTotal = ERC20.bind(PEN_ERC20).balanceOf(VLPEN_LOCKER)
+
+  let percentVlPenOwned = vlPenAmt.div(toDecimal(vlPenTotal, 18))
+  let finalDystWeight = percentVlPenOwned.times(penLockedDyst)
+
+  let veDystTotalSupply = toDecimal(ERC20.bind(DYST_ERC20).totalSupply(), 18)
+  let percentVeDystWeight = finalDystWeight.div(veDystTotalSupply).times(BigDecimal.fromString('100'))
+  percentVlPenOwned = percentVlPenOwned.times(BigDecimal.fromString('100'))
+
+  //QiDAO veDYST votes
+  let qiDaoVeDystAmt = toDecimal(
+    veDyst.bind(DYSTOPIA_veDYST).balanceOfNFT(BigInt.fromString(DYSTOPIA_veDYST_ERC721_ID)),
+    18,
+  )
+  // funnel chart
+  governanceMetric.dystTotalSupply = toDecimal(ERC20.bind(DYST_ERC20).totalSupply(), 18)
+  governanceMetric.veDystTotalSupply = veDystTotalSupply
+  governanceMetric.penDystTotalSupply = toDecimal(penDyst.totalSupply(), 18)
+  governanceMetric.vlPenTotalSupply = toDecimal(vlPenContract.totalSupply(), 18)
+  governanceMetric.otterClamVlPenTotalOwned = vlPenAmt
+  // funnel chart metrics
+  governanceMetric.otterClamVlPenPercentOwned = percentVlPenOwned
+  governanceMetric.otterClamVeDystPercentOwned = percentVeDystWeight
+
+  // QiDao metrics
+  governanceMetric.qiDaoVeDystAmt = qiDaoVeDystAmt
+  let bribes = loadOrCreateTotalBribeRewardsSingleton()
+  governanceMetric.totalQiBribeRewardsMarketValue = bribes.qiBribeRewardsMarketValue
+
+  log.debug('Governance Metrics for date {}: OtterClam vlPen owned%: {}, OtterClam equivalent veDYST owned%: {}', [
+    transaction.timestamp.toString(),
+    percentVlPenOwned.toString(),
+    percentVeDystWeight.toString(),
+  ])
+
+  governanceMetric.save()
 }
 
 export function loadOrCreateVotePositionSingleton(): VotePosition {

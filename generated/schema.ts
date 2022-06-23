@@ -1679,6 +1679,22 @@ export class GovernanceMetric extends Entity {
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
     this.set("qiDaoVeDystAmt", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("percentVlPenOwned", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("dystTotalSupply", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("veDystTotalSupply", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("penDystTotalSupply", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("vlPenTotalSupply", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set(
+      "otterClamVlPenTotalOwned",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "otterClamVlPenPercentOwned",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "otterClamVeDystPercentOwned",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
     this.set(
       "totalQiBribeRewardsMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
@@ -1738,6 +1754,69 @@ export class GovernanceMetric extends Entity {
 
   set percentVlPenOwned(value: BigDecimal) {
     this.set("percentVlPenOwned", Value.fromBigDecimal(value));
+  }
+
+  get dystTotalSupply(): BigDecimal {
+    let value = this.get("dystTotalSupply");
+    return value!.toBigDecimal();
+  }
+
+  set dystTotalSupply(value: BigDecimal) {
+    this.set("dystTotalSupply", Value.fromBigDecimal(value));
+  }
+
+  get veDystTotalSupply(): BigDecimal {
+    let value = this.get("veDystTotalSupply");
+    return value!.toBigDecimal();
+  }
+
+  set veDystTotalSupply(value: BigDecimal) {
+    this.set("veDystTotalSupply", Value.fromBigDecimal(value));
+  }
+
+  get penDystTotalSupply(): BigDecimal {
+    let value = this.get("penDystTotalSupply");
+    return value!.toBigDecimal();
+  }
+
+  set penDystTotalSupply(value: BigDecimal) {
+    this.set("penDystTotalSupply", Value.fromBigDecimal(value));
+  }
+
+  get vlPenTotalSupply(): BigDecimal {
+    let value = this.get("vlPenTotalSupply");
+    return value!.toBigDecimal();
+  }
+
+  set vlPenTotalSupply(value: BigDecimal) {
+    this.set("vlPenTotalSupply", Value.fromBigDecimal(value));
+  }
+
+  get otterClamVlPenTotalOwned(): BigDecimal {
+    let value = this.get("otterClamVlPenTotalOwned");
+    return value!.toBigDecimal();
+  }
+
+  set otterClamVlPenTotalOwned(value: BigDecimal) {
+    this.set("otterClamVlPenTotalOwned", Value.fromBigDecimal(value));
+  }
+
+  get otterClamVlPenPercentOwned(): BigDecimal {
+    let value = this.get("otterClamVlPenPercentOwned");
+    return value!.toBigDecimal();
+  }
+
+  set otterClamVlPenPercentOwned(value: BigDecimal) {
+    this.set("otterClamVlPenPercentOwned", Value.fromBigDecimal(value));
+  }
+
+  get otterClamVeDystPercentOwned(): BigDecimal {
+    let value = this.get("otterClamVeDystPercentOwned");
+    return value!.toBigDecimal();
+  }
+
+  set otterClamVeDystPercentOwned(value: BigDecimal) {
+    this.set("otterClamVeDystPercentOwned", Value.fromBigDecimal(value));
   }
 
   get totalQiBribeRewardsMarketValue(): BigDecimal {

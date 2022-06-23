@@ -7,8 +7,12 @@ enum TERM_SETTING {
   LOCK_PERIOD = 2,
 }
 
+const getNoteTokenIdFromEvent = (event: Locked | Redeemed) => ['NoteToken', event.params.tokenId.toHex()].join('_')
+
+const getTermIdFromEvent = (event: TermAdded | TermUpdated | TermRemoved | TermDisabled) => ['Term', event.params.note.toHex()].join('_')
+
 export function handleTermAdded(event: TermAdded): void {
-  const term = new Term(event.params.note.toHex());
+  const term = new Term(getTermIdFromEvent(event));
   term.enabled = true;
   term.note = event.params.note;
   term.minLockAmount = event.params.minLockAmount;
@@ -18,7 +22,7 @@ export function handleTermAdded(event: TermAdded): void {
 }
 
 export function handleTermUpdated(event: TermUpdated): void {
-  const term = Term.load(event.params.note.toHex())
+  const term = Term.load(getTermIdFromEvent(event))
   if (!term) {
     return;
   }
@@ -35,11 +39,11 @@ export function handleTermUpdated(event: TermUpdated): void {
 }
 
 export function handleTermRemoved(event: TermRemoved): void {
-  store.remove('Term', event.params.note.toHex());
+  store.remove('Term', getTermIdFromEvent(event));
 }
 
 export function handleTermDisabled(event: TermDisabled): void {
-  const term = Term.load(event.params.note.toHex())
+  const term = Term.load(getTermIdFromEvent(event))
   if (!term) {
     return;
   }
@@ -49,7 +53,7 @@ export function handleTermDisabled(event: TermDisabled): void {
 }
 
 export function handleLocked(event: Locked): void {
-  const id = event.params.tokenId.toHex();
+  const id = getNoteTokenIdFromEvent(event);
   let token = (NoteToken.load(id) || new NoteToken(id)) as NoteToken;
   token.tokenId = event.params.tokenId;
   token.note = event.params.note;
@@ -60,5 +64,5 @@ export function handleLocked(event: Locked): void {
 }
 
 export function handleRedeemed(event: Redeemed): void {
-  store.remove('NoteToken', event.params.tokenId.toHex());
+  store.remove('NoteToken', getNoteTokenIdFromEvent(event));
 }

@@ -7,10 +7,7 @@ import { addressEqualsString } from './utils'
 import { DAO_WALLET, DAO_WALLET_PENROSE_USER_PROXY } from './utils/Constants'
 
 export function handlePenTransfer(event: TransferEvent): void {
-  if (
-    addressEqualsString(event.params.from, DAO_WALLET_PENROSE_USER_PROXY) &&
-    addressEqualsString(event.params.to, DAO_WALLET)
-  ) {
+  if (event.params.from == DAO_WALLET_PENROSE_USER_PROXY && event.params.to == DAO_WALLET) {
     log.debug('Penrose Harvest {}, from: {}, to: {}', [
       event.transaction.hash.toHexString(),
       event.params.from.toHexString(),

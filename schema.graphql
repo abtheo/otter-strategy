@@ -148,10 +148,8 @@ type DystopiaGaugeBalance @entity {
 type TotalBribeReward @entity {
   id: ID!
   qiBribeRewardsMarketValue: BigDecimal!
-  dystopiaBribeRewardsMarketValue: BigDecimal!
-  #TODO: Track manually, maybe even in front-end
-  polygonGrantMaticMarketValue: BigDecimal!
-  polygonGrantMaticAmount: BigDecimal!
+  # dystopiaBribeRewardsMarketValue: BigDecimal!
+  # penroseBribeRewardsMarketValue: BigDecimal!
 }
 
 type Vote @entity {
@@ -163,4 +161,13 @@ type Vote @entity {
 type VotePosition @entity {
   id: ID!
   votes: [Vote!]
+}
+
+type GovernanceMetric @entity {
+  id: ID!
+  timestamp: BigInt!
+  qiDaoVeDystAmt: BigDecimal!
+  percentVlPenOwned: BigDecimal!
+  #Set from TotalBribeReward singleton
+  totalQiBribeRewardsMarketValue: BigDecimal!
 }

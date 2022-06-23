@@ -6,7 +6,6 @@ import { loadOrCreateTransaction } from './utils/Transactions'
 import { getClamUsdRate } from './utils/Price'
 import { DAO_WALLET, OTTOPIA_STORE, OTTO_PORTAL_MINTING } from './utils/Constants'
 import { loadOrCreateTreasuryRevenue } from './utils/TreasuryRevenue'
-import { addressEqualsString } from './utils'
 
 export function handleTransfer(event: TransferEvent): void {
   //BURN events
@@ -28,9 +27,8 @@ export function handleTransfer(event: TransferEvent): void {
   }
   //Otto Portal minting & Store shell chests
   if (
-    (addressEqualsString(event.params.from, OTTO_PORTAL_MINTING) ||
-      addressEqualsString(event.params.from, OTTOPIA_STORE)) &&
-    addressEqualsString(event.params.to, DAO_WALLET)
+    (event.params.from == OTTO_PORTAL_MINTING || event.params.from == OTTOPIA_STORE) &&
+    event.params.to == DAO_WALLET
   ) {
     saveTransfer(event)
 

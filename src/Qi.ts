@@ -3,7 +3,6 @@ import { Address, log } from '@graphprotocol/graph-ts'
 import { Transfer, TotalBribeReward } from '../generated/schema'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateTreasuryRevenueQiTransfer, loadOrCreateTotalBribeRewardsSingleton } from './utils/TreasuryRevenue'
-import { addressEqualsString } from './utils'
 import {
   OTTER_DEPLOYER,
   QI_BRIBE_REWARDS,
@@ -16,9 +15,8 @@ import { getQiUsdRate } from './utils/Price'
 
 export function handleQiTransfer(event: TransferEvent): void {
   if (
-    (addressEqualsString(event.params.from, UNI_MAI_USDC_QI_INVESTMENT_PAIR) ||
-      addressEqualsString(event.params.from, UNI_QI_WMATIC_INVESTMENT_PAIR)) &&
-    addressEqualsString(event.params.to, TREASURY_ADDRESS)
+    (event.params.from == UNI_MAI_USDC_QI_INVESTMENT_PAIR || event.params.from == UNI_QI_WMATIC_INVESTMENT_PAIR) &&
+    event.params.to == TREASURY_ADDRESS
   ) {
     log.debug('QiDaoInvestmentHarvestTransfer {}, from: {}, to: {}', [
       event.transaction.hash.toHexString(),
@@ -37,10 +35,7 @@ export function handleQiTransfer(event: TransferEvent): void {
     //Pass entity to TreasuryRevenue
     updateTreasuryRevenueQiTransfer(entity)
   }
-  if (
-    addressEqualsString(event.params.from, QI_BRIBE_REWARDS) &&
-    addressEqualsString(event.params.to, OTTER_DEPLOYER)
-  ) {
+  if (event.params.from == QI_BRIBE_REWARDS && event.params.to == OTTER_DEPLOYER) {
     log.debug('QiDao Bribe Recieved {} for {} Qi, from: {}, to: {}', [
       event.transaction.hash.toHexString(),
       toDecimal(event.transaction.value, 18).toString(),
@@ -64,6 +59,5 @@ export function handleQiTransfer(event: TransferEvent): void {
     let qiMarketValue = getQiUsdRate().times(toDecimal(event.params.value, 18))
     bribes.qiBribeRewardsMarketValue = bribes.qiBribeRewardsMarketValue.plus(qiMarketValue)
     bribes.save()
-    log.warning('QI BRIBE', [])
   }
 }

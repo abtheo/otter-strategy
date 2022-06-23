@@ -2,11 +2,8 @@ import { Address, log, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
 import { Transfer, DystopiaGaugeBalance } from '../generated/schema'
 import { Transfer as TransferEvent } from '../generated/Dyst/DystPair'
 import { loadOrCreateTransaction } from './utils/Transactions'
-
-import { toDecimal } from './utils/Decimals'
 import { DAO_WALLET, DAO_WALLET_PENROSE_USER_PROXY, DYSTOPIA_TRACKED_GAUGES, PENROSE_PROXY } from './utils/Constants'
 import { dataSource } from '@graphprotocol/graph-ts'
-import { addressEqualsString } from './utils'
 
 /*
 Dystopia LP Staking does not return any vested tokens to the DAO.
@@ -23,11 +20,7 @@ Possible LPs:
 */
 export function handleTransfer(event: TransferEvent): void {
   //only track DAO txs
-  if (
-    event.params.from.toHexString() != DAO_WALLET.toLowerCase() &&
-    event.params.to.toHexString() != DAO_WALLET.toLowerCase()
-  )
-    return
+  if (event.params.from != DAO_WALLET && event.params.to != DAO_WALLET) return
 
   let context = dataSource.context()
   let pair = context.getString('pair')
@@ -44,20 +37,20 @@ export function handleTransfer(event: TransferEvent): void {
   //update LP balance
   let dystLp = loadOrCreateDystopiaGaugeBalance(Address.fromString(pair))
   if (
-    addressEqualsString(event.params.from, DAO_WALLET) &&
-    (DYSTOPIA_TRACKED_GAUGES.includes(event.params.to.toHexString()) ||
-      addressEqualsString(event.params.to, DAO_WALLET_PENROSE_USER_PROXY) ||
-      addressEqualsString(event.params.to, PENROSE_PROXY))
+    event.params.from == DAO_WALLET &&
+    (DYSTOPIA_TRACKED_GAUGES.includes(event.params.to) ||
+      event.params.to == DAO_WALLET_PENROSE_USER_PROXY ||
+      event.params.to == PENROSE_PROXY)
   ) {
     //deposit
     dystLp.balance = dystLp.balance.plus(event.params.value)
     dystLp.save()
   }
   if (
-    addressEqualsString(event.params.to, DAO_WALLET) &&
-    (DYSTOPIA_TRACKED_GAUGES.includes(event.params.from.toHexString()) ||
-      addressEqualsString(event.params.from, DAO_WALLET_PENROSE_USER_PROXY) ||
-      addressEqualsString(event.params.from, PENROSE_PROXY))
+    event.params.to == DAO_WALLET &&
+    (DYSTOPIA_TRACKED_GAUGES.includes(event.params.from) ||
+      event.params.from == DAO_WALLET_PENROSE_USER_PROXY ||
+      event.params.from == PENROSE_PROXY)
   ) {
     //withdraw
     dystLp.balance = dystLp.balance.minus(event.params.value)

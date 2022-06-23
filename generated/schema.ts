@@ -1527,18 +1527,6 @@ export class TotalBribeReward extends Entity {
       "qiBribeRewardsMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
-    this.set(
-      "dystopiaBribeRewardsMarketValue",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
-    this.set(
-      "polygonGrantMaticMarketValue",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
-    this.set(
-      "polygonGrantMaticAmount",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
   }
 
   save(): void {
@@ -1576,33 +1564,6 @@ export class TotalBribeReward extends Entity {
 
   set qiBribeRewardsMarketValue(value: BigDecimal) {
     this.set("qiBribeRewardsMarketValue", Value.fromBigDecimal(value));
-  }
-
-  get dystopiaBribeRewardsMarketValue(): BigDecimal {
-    let value = this.get("dystopiaBribeRewardsMarketValue");
-    return value!.toBigDecimal();
-  }
-
-  set dystopiaBribeRewardsMarketValue(value: BigDecimal) {
-    this.set("dystopiaBribeRewardsMarketValue", Value.fromBigDecimal(value));
-  }
-
-  get polygonGrantMaticMarketValue(): BigDecimal {
-    let value = this.get("polygonGrantMaticMarketValue");
-    return value!.toBigDecimal();
-  }
-
-  set polygonGrantMaticMarketValue(value: BigDecimal) {
-    this.set("polygonGrantMaticMarketValue", Value.fromBigDecimal(value));
-  }
-
-  get polygonGrantMaticAmount(): BigDecimal {
-    let value = this.get("polygonGrantMaticAmount");
-    return value!.toBigDecimal();
-  }
-
-  set polygonGrantMaticAmount(value: BigDecimal) {
-    this.set("polygonGrantMaticAmount", Value.fromBigDecimal(value));
   }
 }
 
@@ -1707,5 +1668,84 @@ export class VotePosition extends Entity {
     } else {
       this.set("votes", Value.fromStringArray(<Array<string>>value));
     }
+  }
+}
+
+export class GovernanceMetric extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("qiDaoVeDystAmt", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("percentVlPenOwned", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set(
+      "totalQiBribeRewardsMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save GovernanceMetric entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save GovernanceMetric entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("GovernanceMetric", id.toString(), this);
+    }
+  }
+
+  static load(id: string): GovernanceMetric | null {
+    return changetype<GovernanceMetric | null>(
+      store.get("GovernanceMetric", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get qiDaoVeDystAmt(): BigDecimal {
+    let value = this.get("qiDaoVeDystAmt");
+    return value!.toBigDecimal();
+  }
+
+  set qiDaoVeDystAmt(value: BigDecimal) {
+    this.set("qiDaoVeDystAmt", Value.fromBigDecimal(value));
+  }
+
+  get percentVlPenOwned(): BigDecimal {
+    let value = this.get("percentVlPenOwned");
+    return value!.toBigDecimal();
+  }
+
+  set percentVlPenOwned(value: BigDecimal) {
+    this.set("percentVlPenOwned", Value.fromBigDecimal(value));
+  }
+
+  get totalQiBribeRewardsMarketValue(): BigDecimal {
+    let value = this.get("totalQiBribeRewardsMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set totalQiBribeRewardsMarketValue(value: BigDecimal) {
+    this.set("totalQiBribeRewardsMarketValue", Value.fromBigDecimal(value));
   }
 }

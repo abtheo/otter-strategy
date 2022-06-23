@@ -1,5 +1,5 @@
 import { Term, NoteToken } from '../generated/schema'
-import { TermAdded, TermUpdated, TermRemoved, TermDisabled, Locked } from '../generated/OtterTreasury/OtterLake';
+import { TermAdded, TermUpdated, TermRemoved, TermDisabled, Locked } from '../generated/OtterLake/OtterLake';
 import { store } from '@graphprotocol/graph-ts';
 
 enum TERM_SETTING {

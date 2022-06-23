@@ -1605,3 +1605,171 @@ export class TotalBribeReward extends Entity {
     this.set("polygonGrantMaticAmount", Value.fromBigDecimal(value));
   }
 }
+
+export class Term extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("note", Value.fromBytes(Bytes.empty()));
+    this.set("minLockAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("lockPeriod", Value.fromBigInt(BigInt.zero()));
+    this.set("multiplier", Value.fromI32(0));
+    this.set("enabled", Value.fromBoolean(false));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Term entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Term entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Term", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Term | null {
+    return changetype<Term | null>(store.get("Term", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get note(): Bytes {
+    let value = this.get("note");
+    return value!.toBytes();
+  }
+
+  set note(value: Bytes) {
+    this.set("note", Value.fromBytes(value));
+  }
+
+  get minLockAmount(): BigInt {
+    let value = this.get("minLockAmount");
+    return value!.toBigInt();
+  }
+
+  set minLockAmount(value: BigInt) {
+    this.set("minLockAmount", Value.fromBigInt(value));
+  }
+
+  get lockPeriod(): BigInt {
+    let value = this.get("lockPeriod");
+    return value!.toBigInt();
+  }
+
+  set lockPeriod(value: BigInt) {
+    this.set("lockPeriod", Value.fromBigInt(value));
+  }
+
+  get multiplier(): i32 {
+    let value = this.get("multiplier");
+    return value!.toI32();
+  }
+
+  set multiplier(value: i32) {
+    this.set("multiplier", Value.fromI32(value));
+  }
+
+  get enabled(): boolean {
+    let value = this.get("enabled");
+    return value!.toBoolean();
+  }
+
+  set enabled(value: boolean) {
+    this.set("enabled", Value.fromBoolean(value));
+  }
+}
+
+export class NoteToken extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("tokenId", Value.fromBigInt(BigInt.zero()));
+    this.set("note", Value.fromBytes(Bytes.empty()));
+    this.set("user", Value.fromBytes(Bytes.empty()));
+    this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("updatedAt", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save NoteToken entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save NoteToken entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("NoteToken", id.toString(), this);
+    }
+  }
+
+  static load(id: string): NoteToken | null {
+    return changetype<NoteToken | null>(store.get("NoteToken", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get tokenId(): BigInt {
+    let value = this.get("tokenId");
+    return value!.toBigInt();
+  }
+
+  set tokenId(value: BigInt) {
+    this.set("tokenId", Value.fromBigInt(value));
+  }
+
+  get note(): Bytes {
+    let value = this.get("note");
+    return value!.toBytes();
+  }
+
+  set note(value: Bytes) {
+    this.set("note", Value.fromBytes(value));
+  }
+
+  get user(): Bytes {
+    let value = this.get("user");
+    return value!.toBytes();
+  }
+
+  set user(value: Bytes) {
+    this.set("user", Value.fromBytes(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get updatedAt(): BigInt {
+    let value = this.get("updatedAt");
+    return value!.toBigInt();
+  }
+
+  set updatedAt(value: BigInt) {
+    this.set("updatedAt", Value.fromBigInt(value));
+  }
+}

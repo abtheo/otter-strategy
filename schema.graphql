@@ -153,3 +153,21 @@ type TotalBribeReward @entity {
   polygonGrantMaticMarketValue: BigDecimal!
   polygonGrantMaticAmount: BigDecimal!
 }
+
+type Term @entity {
+  id: ID!
+  note: Bytes!
+  minLockAmount: BigInt!
+  lockPeriod: BigInt!
+  multiplier: Int!
+  enabled: Boolean!
+}
+
+type NoteToken @entity {
+  id: ID!
+  tokenId: BigInt!
+  note: Bytes!
+  user: Bytes!
+  amount: BigInt!
+  updatedAt: BigInt!
+}

@@ -211,19 +211,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "newDuration",
-        "type": "uint256"
-      }
-    ],
-    "name": "RewardsDurationUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": true,
         "internalType": "address",
         "name": "note",
@@ -275,6 +262,31 @@
       }
     ],
     "name": "TermRemoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "note",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum OtterLake.TERM_SETTING",
+        "name": "setting",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "TermUpdated",
     "type": "event"
   },
   {
@@ -815,6 +827,29 @@
       }
     ],
     "name": "setPaused",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "note_",
+        "type": "address"
+      },
+      {
+        "internalType": "enum OtterLake.TERM_SETTING",
+        "name": "setting_",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value_",
+        "type": "uint256"
+      }
+    ],
+    "name": "setTerm",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

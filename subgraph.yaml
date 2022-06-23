@@ -103,6 +103,37 @@ dataSources:
       file: ./src/OtterClamERC20V2.ts
 
   - kind: ethereum/contract
+    name: OtterLake
+    network: matic
+    source:
+      address: '0xc67aBdA25D0421FE9Dc1afd64183b179A426a256'
+      abi: OtterLake
+      startBlock: 23553352
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Term
+      abis:
+        - name: OtterLake
+          file: ./abis/OtterLake.json
+      eventHandlers:
+        - event: TermAdded(indexed address,uint256,uint256,uint16)
+          handler: handleTermAdded
+        - event: TermUpdated(indexed address,uint8,uint256)
+          handler: handleTermUpdated
+        - event: TermRemoved(indexed address)
+          handler: handleTermRemoved
+        - event: TermDisabled(indexed address)
+          handler: handleTermDisabled
+        - event: Locked(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleLocked
+        - event: Redeemed(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleRedeemed
+      file: ./src/OtterLake.ts
+
+  - kind: ethereum/contract
     name: OtterQiLocker
     network: matic
     source:

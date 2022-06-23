@@ -1,5 +1,5 @@
 import { Term, NoteToken } from '../generated/schema'
-import { TermAdded, TermUpdated, TermRemoved, TermDisabled, Locked } from '../generated/OtterLake/OtterLake';
+import { TermAdded, TermUpdated, TermRemoved, TermDisabled, Locked, Redeemed } from '../generated/OtterLake/OtterLake';
 import { store } from '@graphprotocol/graph-ts';
 
 enum TERM_SETTING {
@@ -57,4 +57,8 @@ export function handleLocked(event: Locked): void {
   token.user = event.params.user;
   token.updatedAt = event.block.timestamp;
   token.save();
+}
+
+export function handleRedeemed(event: Redeemed): void {
+  store.remove('NoteToken', event.params.tokenId.toHex());
 }

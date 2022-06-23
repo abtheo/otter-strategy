@@ -129,6 +129,8 @@ dataSources:
           handler: handleTermDisabled
         - event: Locked(indexed address,indexed address,indexed uint256,uint256)
           handler: handleLocked
+        - event: Redeemed(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleRedeemed
       file: ./src/OtterLake.ts
 
   - kind: ethereum/contract

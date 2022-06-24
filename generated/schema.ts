@@ -1678,7 +1678,6 @@ export class GovernanceMetric extends Entity {
 
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
     this.set("qiDaoVeDystAmt", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("percentVlPenOwned", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("dystTotalSupply", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("veDystTotalSupply", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("penDystTotalSupply", Value.fromBigDecimal(BigDecimal.zero()));
@@ -1745,15 +1744,6 @@ export class GovernanceMetric extends Entity {
 
   set qiDaoVeDystAmt(value: BigDecimal) {
     this.set("qiDaoVeDystAmt", Value.fromBigDecimal(value));
-  }
-
-  get percentVlPenOwned(): BigDecimal {
-    let value = this.get("percentVlPenOwned");
-    return value!.toBigDecimal();
-  }
-
-  set percentVlPenOwned(value: BigDecimal) {
-    this.set("percentVlPenOwned", Value.fromBigDecimal(value));
   }
 
   get dystTotalSupply(): BigDecimal {

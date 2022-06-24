@@ -14,6 +14,7 @@ import { PenLens } from '../../generated/StakedOtterClamERC20V2/PenLens'
 import { UniswapV2Pair } from '../../generated/StakedOtterClamERC20V2/UniswapV2Pair'
 import { CurveMai3poolContract } from '../../generated/StakedOtterClamERC20V2/CurveMai3poolContract'
 import { PenDystRewards } from '../../generated/StakedOtterClamERC20V2/PenDystRewards'
+import { PenrosePartnerRewards } from '../../generated/StakedOtterClamERC20V2/PenrosePartnerRewards'
 import { PenLockerV2 } from '../../generated/StakedOtterClamERC20V2/PenLockerV2'
 import { ProtocolMetric, Transaction, VotePosition, Vote, GovernanceMetric } from '../../generated/schema'
 import { StakedOtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
@@ -80,6 +81,7 @@ import {
   VLPEN_LOCKER,
   PENROSE_LENS_PROXY,
   QIDAO_veDYST_ERC721_ID,
+  PEN_DYST_PARTNER_REWARDS,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -163,9 +165,16 @@ export function loadOrCreateGovernanceMetric(timestamp: BigInt): GovernanceMetri
   if (governanceMetric == null) {
     governanceMetric = new GovernanceMetric(dayTimestamp)
     governanceMetric.timestamp = timestamp
-    governanceMetric.totalQiBribeRewardsMarketValue = BigDecimal.zero()
-    governanceMetric.percentVlPenOwned = BigDecimal.zero()
     governanceMetric.qiDaoVeDystAmt = BigDecimal.zero()
+    governanceMetric.qiDaoVeDystAmt = BigDecimal.zero()
+    governanceMetric.dystTotalSupply = BigDecimal.zero()
+    governanceMetric.veDystTotalSupply = BigDecimal.zero()
+    governanceMetric.penDystTotalSupply = BigDecimal.zero()
+    governanceMetric.vlPenTotalSupply = BigDecimal.zero()
+    governanceMetric.otterClamVlPenTotalOwned = BigDecimal.zero()
+    governanceMetric.otterClamVlPenPercentOwned = BigDecimal.zero()
+    governanceMetric.otterClamVeDystPercentOwned = BigDecimal.zero()
+    governanceMetric.totalQiBribeRewardsMarketValue = BigDecimal.zero()
 
     governanceMetric.save()
   }
@@ -518,12 +527,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     penMarketValue = getTreasuryTokenValue(PEN_ERC20)
     let penDyst = ERC20.bind(PENDYST_ERC20)
     let penDystStaking = PenDystRewards.bind(PEN_DYST_REWARD_PROXY)
+    let penDystStaking2 = PenrosePartnerRewards.bind(PEN_DYST_PARTNER_REWARDS)
 
     let penDystAmount = toDecimal(
       penDyst
         .balanceOf(DAO_WALLET)
         .plus(penDyst.balanceOf(DAO_WALLET_PENROSE_USER_PROXY))
-        .plus(penDystStaking.balanceOf(DAO_WALLET_PENROSE_USER_PROXY)),
+        .plus(penDystStaking.balanceOf(DAO_WALLET_PENROSE_USER_PROXY))
+        .plus(penDystStaking2.balanceOf(DAO_WALLET_PENROSE_USER_PROXY)),
       18,
     )
 
@@ -774,7 +785,7 @@ export function updateGovernanceMetrics(transaction: Transaction): void {
   but there has been activity during June 2022, 
   so fingers crossed this will be fixed before we need a function of that signature.
   */
-  if (!transaction.timestamp.gt(BigInt.fromString('29400000'))) return
+  if (transaction.blockNumber.lt(BigInt.fromString('29400000'))) return
 
   let governanceMetric = loadOrCreateGovernanceMetric(transaction.timestamp)
   let voteSingleton = loadOrCreateVotePositionSingleton()

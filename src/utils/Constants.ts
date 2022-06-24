@@ -126,6 +126,7 @@ export const PENROSE_PROXY = Address.fromString('0xc9ae7dac956f82074437c6d40f67d
 export const DAO_WALLET_PENROSE_USER_PROXY = Address.fromString('0x3c56307bdbc8a59e85542cc795aa31c628748c62')
 export const PEN_DYST_REWARDS = Address.fromString('0x68c08ac637fcac8e63060aaca89dba4c32fdd912')
 export const PEN_DYST_REWARD_PROXY = Address.fromString('0x62f9b938323fb68379b9ac1641012f9bee339c69')
+export const PEN_DYST_PARTNER_REWARDS = Address.fromString('0x5DD340DD4142D093c1926282CD56B0D4690dEB11')
 
 export const PENROSE_GAUGE_MAI_CLAM = Address.fromString('0x4edc2f4368179be77e5e8fba295fff0a82e3df21')
 export const PENROSE_LENS_PROXY = Address.fromString('0x1432c3553fdf7fbd593a84b3a4d380c643cbf7a2')

@@ -24,6 +24,7 @@ dataSources:
         - Vote
         - VotePosition
         - GovernanceMetric
+        - TotalBribeReward
       abis:
         - name: StakedOtterClamERC20V2
           file: ./abis/StakedOtterClamERC20V2.json
@@ -73,6 +74,8 @@ dataSources:
           file: ./abis/PenLockerV2.json
         - name: PenLens
           file: ./abis/PenLens.json
+        - name: PenrosePartnerRewards
+          file: ./abis/PenrosePartnerRewards.json
       eventHandlers:
         - event: LogRebase(indexed uint256,uint256,uint256)
           handler: handleLogRebase

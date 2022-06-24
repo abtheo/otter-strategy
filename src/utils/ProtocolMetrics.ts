@@ -829,7 +829,7 @@ export function updateGovernanceMetrics(transaction: Transaction): void {
 
   //QiDAO veDYST votes
   let qiDaoVeDystAmt = toDecimal(
-    veDyst.bind(DYSTOPIA_veDYST).balanceOfNFT(BigInt.fromString(DYSTOPIA_veDYST_ERC721_ID)),
+    veDyst.bind(DYSTOPIA_veDYST).balanceOfNFT(BigInt.fromString(QIDAO_veDYST_ERC721_ID)),
     18,
   )
   // funnel chart

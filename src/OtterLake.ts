@@ -1,18 +1,22 @@
 import { Term, NoteToken } from '../generated/schema'
 import { TermAdded, TermUpdated, TermRemoved, TermDisabled, Locked, Redeemed } from '../generated/OtterLake/OtterLake';
-import { store } from '@graphprotocol/graph-ts';
+import { Address, BigInt, store } from '@graphprotocol/graph-ts';
 
 enum TERM_SETTING {
   MIN_LOCK_AMOUNT = 1,
   LOCK_PERIOD = 2,
 }
 
-const getNoteTokenIdFromEvent = (event: Locked | Redeemed) => ['NoteToken', event.params.tokenId.toHex()].join('_')
+function getNoteTokenId(tokenId: BigInt): string {
+  return ['NoteToken', tokenId.toHex()].join('_');
+}
 
-const getTermIdFromEvent = (event: TermAdded | TermUpdated | TermRemoved | TermDisabled) => ['Term', event.params.note.toHex()].join('_')
+function getTermId(note: Address): string {
+  return ['Term', note.toHex()].join('_');
+}
 
 export function handleTermAdded(event: TermAdded): void {
-  const term = new Term(getTermIdFromEvent(event));
+  const term = new Term(getTermId(event.params.note));
   term.enabled = true;
   term.note = event.params.note;
   term.minLockAmount = event.params.minLockAmount;
@@ -22,7 +26,7 @@ export function handleTermAdded(event: TermAdded): void {
 }
 
 export function handleTermUpdated(event: TermUpdated): void {
-  const term = Term.load(getTermIdFromEvent(event))
+  const term = Term.load(getTermId(event.params.note))
   if (!term) {
     return;
   }
@@ -39,11 +43,11 @@ export function handleTermUpdated(event: TermUpdated): void {
 }
 
 export function handleTermRemoved(event: TermRemoved): void {
-  store.remove('Term', getTermIdFromEvent(event));
+  store.remove('Term', getTermId(event.params.note));
 }
 
 export function handleTermDisabled(event: TermDisabled): void {
-  const term = Term.load(getTermIdFromEvent(event))
+  const term = Term.load(getTermId(event.params.note))
   if (!term) {
     return;
   }
@@ -53,7 +57,7 @@ export function handleTermDisabled(event: TermDisabled): void {
 }
 
 export function handleLocked(event: Locked): void {
-  const id = getNoteTokenIdFromEvent(event);
+  const id = getNoteTokenId(event.params.tokenId);
   let token = (NoteToken.load(id) || new NoteToken(id)) as NoteToken;
   token.tokenId = event.params.tokenId;
   token.note = event.params.note;
@@ -64,5 +68,5 @@ export function handleLocked(event: Locked): void {
 }
 
 export function handleRedeemed(event: Redeemed): void {
-  store.remove('NoteToken', getNoteTokenIdFromEvent(event));
+  store.remove('NoteToken', getNoteTokenId(event.params.tokenId));
 }

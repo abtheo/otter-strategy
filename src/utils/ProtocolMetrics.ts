@@ -823,7 +823,7 @@ export function updateGovernanceMetrics(transaction: Transaction): void {
   let percentVlPenOwned = vlPenAmt.div(toDecimal(vlPenTotal, 18))
   let finalDystWeight = percentVlPenOwned.times(penLockedDyst)
 
-  let veDystTotalSupply = toDecimal(ERC20.bind(DYST_ERC20).totalSupply(), 18)
+  let veDystTotalSupply = toDecimal(veDyst.bind(DYSTOPIA_veDYST).totalSupply(), 18)
   let percentVeDystWeight = finalDystWeight.div(veDystTotalSupply).times(BigDecimal.fromString('100'))
   percentVlPenOwned = percentVlPenOwned.times(BigDecimal.fromString('100'))
 

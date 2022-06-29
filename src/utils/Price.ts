@@ -175,7 +175,7 @@ export function getDystPairUSD(lp_amount: BigInt, pair_address: Address): BigDec
 
   //get total pool usd value
   let usd_value_token0 = toDecimal(lp_token_0, token0.decimals()).times(findPrice(pair.token0()))
-  let usd_value_token1 = toDecimal(lp_token_1, token1.decimals()).times(findPrice(pair.token0()))
+  let usd_value_token1 = toDecimal(lp_token_1, token1.decimals()).times(findPrice(pair.token1()))
   let total_lp_usd = usd_value_token0.plus(usd_value_token1)
 
   return ownedLP.times(total_lp_usd)

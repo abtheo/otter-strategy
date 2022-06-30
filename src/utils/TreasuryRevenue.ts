@@ -1,15 +1,7 @@
 import { toDecimal } from './Decimals'
-import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { dayFromTimestamp } from './Dates'
-import {
-  TreasuryRevenue,
-  Transaction,
-  Harvest,
-  Transfer,
-  Buyback,
-  TotalBuybacks,
-  TotalBribeReward,
-} from '../../generated/schema'
+import { TreasuryRevenue, Harvest, Transfer, Buyback, TotalBuybacks, TotalBribeReward } from '../../generated/schema'
 import {
   getClamUsdRate,
   getDystUsdRate,
@@ -18,17 +10,7 @@ import {
   getwEthUsdRate,
   getwMaticUsdRate,
 } from '../utils/Price'
-import {
-  QI_ERC20,
-  DAI_ERC20,
-  MAI_ERC20,
-  FRAX_ERC20,
-  MATIC_ERC20,
-  WETH_ERC20,
-  POLYGON_WMATIC_GRANT,
-  DAO_WALLET,
-} from './Constants'
-import { bytesEqualsString } from './'
+import { QI_ERC20, DAI_ERC20, MAI_ERC20, FRAX_ERC20, MATIC_ERC20, WETH_ERC20 } from './Constants'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
   let ts = dayFromTimestamp(timestamp)
@@ -162,25 +144,21 @@ export function updateTreasuryRevenueBuyback(buyback: Buyback): void {
   let marketValue = BigDecimal.zero()
   let clamAmountDec = buyback.clamAmount.divDecimal(BigDecimal.fromString('1e9'))
 
-  if (bytesEqualsString(buyback.token, QI_ERC20)) {
+  if (buyback.token == QI_ERC20) {
     marketValue = getQiUsdRate().times(toDecimal(buyback.tokenAmount, 18))
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
-  if (bytesEqualsString(buyback.token, MATIC_ERC20)) {
+  if (buyback.token == MATIC_ERC20) {
     marketValue = getwMaticUsdRate().times(toDecimal(buyback.tokenAmount, 18))
     log.debug('BuybackEvent using Qi, txid: {}', [buyback.id])
   }
 
-  if (bytesEqualsString(buyback.token, WETH_ERC20)) {
+  if (buyback.token == WETH_ERC20) {
     marketValue = getwEthUsdRate().times(buyback.tokenAmount.toBigDecimal())
     log.debug('BuybackEvent using wETH, txid: {}', [buyback.id])
   }
   //stablecoins (18 decimals)
-  if (
-    bytesEqualsString(buyback.token, DAI_ERC20) ||
-    bytesEqualsString(buyback.token, FRAX_ERC20) ||
-    bytesEqualsString(buyback.token, MAI_ERC20)
-  ) {
+  if (buyback.token == DAI_ERC20 || buyback.token == FRAX_ERC20 || buyback.token == MAI_ERC20) {
     marketValue = toDecimal(buyback.tokenAmount, 18)
     log.debug('BuybackEvent using Stablecoins, txid: {}', [buyback.id])
   }
@@ -216,9 +194,11 @@ export function loadOrCreateTotalBribeRewardsSingleton(): TotalBribeReward {
   if (total == null) {
     total = new TotalBribeReward('1')
     total.qiBribeRewardsMarketValue = BigDecimal.zero()
-    total.dystopiaBribeRewardsMarketValue = BigDecimal.zero()
-    total.polygonGrantMaticMarketValue = BigDecimal.zero()
-    total.polygonGrantMaticAmount = BigDecimal.zero()
+    // TODO: Once Penrose implements their Bribe rewards, start tracking
+    // total.dystopiaBribeRewardsMarketValue = BigDecimal.zero()
+    // total.penroseBribeRewardsMarketValue = BigDecimal.zero()
+    // total.polygonGrantMaticMarketValue = BigDecimal.zero()
+    // total.polygonGrantMaticAmount = BigDecimal.zero()
   }
 
   return total

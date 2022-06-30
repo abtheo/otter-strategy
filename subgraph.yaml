@@ -8,7 +8,7 @@ dataSources:
     source:
       address: '0xAAc144Dc08cE39Ed92182dd85ded60E5000C9e67'
       abi: StakedOtterClamERC20V2
-      startBlock:  21593527
+      startBlock: 21593527
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -21,10 +21,13 @@ dataSources:
         - APY
         - TreasuryRevenue
         - DystopiaGaugeBalance
+        - Vote
+        - VotePosition
+        - GovernanceMetric
+        - TotalBribeReward
       abis:
         - name: StakedOtterClamERC20V2
           file: ./abis/StakedOtterClamERC20V2.json
-        # -- ProtocolMetric --
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
         - name: OtterBondStakeDepository
@@ -69,7 +72,10 @@ dataSources:
           file: ./abis/PenDystRewards.json
         - name: PenLockerV2
           file: ./abis/PenLockerV2.json
-        # --------------------
+        - name: PenLens
+          file: ./abis/PenLens.json
+        - name: PenrosePartnerRewards
+          file: ./abis/PenrosePartnerRewards.json
       eventHandlers:
         - event: LogRebase(indexed uint256,uint256,uint256)
           handler: handleLogRebase
@@ -83,7 +89,7 @@ dataSources:
     source:
       address: '0xc250e9987a032acac293d838726c511e6e1c029d'
       abi: OtterClamERC20V2
-      startBlock:  26991825 #First burn transfer
+      startBlock: 26991825 #First burn transfer
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -139,7 +145,7 @@ dataSources:
     source:
       address: '0x69f6c4Fa150F9F0b3037612CF8FadDAeDbd46Bb8'
       abi: OtterQiLocker
-      startBlock:  25352622
+      startBlock: 25352622
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -169,7 +175,7 @@ dataSources:
     source:
       address: '0x580A84C73811E1839F75d86d75d88cCa0c241fF4'
       abi: Qi
-      startBlock:  24088468
+      startBlock: 24088468
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -191,45 +197,13 @@ dataSources:
           handler: handleQiTransfer
       file: ./src/Qi.ts
 
-  #Penrose staking rewards
-  # - kind: ethereum/contract
-  #   name: MultiRewards
-  #   network: matic
-  #   source:
-  #     address: '0x4edc2f4368179be77e5e8fba295fff0a82e3df21'
-  #     abi: MultiRewards
-  #     startBlock: 29069971
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #     abis:
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: MultiRewards
-  #         file: ./abis/MultiRewards.json
-  #     eventHandlers:
-  #       - event: RewardPaid(indexed address,indexed address,uint256)
-  #         handler: handleRewardPaid
-  #     file: ./src/MultiRewards.ts
-
   - kind: ethereum/contract
     name: Dyst
     network: matic
     source:
       address: '0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb'
       abi: Dyst
-      startBlock:  28347518
+      startBlock: 28347518
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -337,38 +311,6 @@ dataSources:
           handler: handleBuyback
       file: ./src/OtterBuybacker.ts
 
-  # - kind: ethereum/contract
-  #   name: DystVoter
-  #   network: matic
-  #   source:
-  #     address: '0x649BdF58B09A0Cd4Ac848b42c4B5e1390A72A49A'
-  #     abi: DystVoter
-  #     startBlock: 
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - DystopiaGaugeBalance
-  #     abis:
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystVoter
-  #         file: ./abis/DystVoter.json
-  #     eventHandlers:
-  #       - event: Abstained(uint tokenId, int256 weight)
-  #         handler: handleAbstained
-  #       - event: Voted(address indexed voter, uint tokenId, int256 weight)
-  #         handler: handleVoted
-  #     file: ./src/DystVoter.ts
 
   - kind: ethereum/contract
     name: DystPairFactory

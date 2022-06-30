@@ -18,7 +18,7 @@ Possible LPs:
 5. DYST/MATIC
 */
 export function handlePairCreated(event: PairCreatedEvent): void {
-  if (!DYSTOPIA_TRACKED_PAIRS.includes(event.params.pair.toHexString())) return
+  if (!DYSTOPIA_TRACKED_PAIRS.includes(event.params.pair)) return
 
   log.debug('DYST pair factory created {}', [event.params.pair.toHexString()])
   let context = new DataSourceContext()

@@ -10,11 +10,13 @@ import { OtterQuickSwapInvestment } from '../../generated/StakedOtterClamERC20V2
 import { OtterStaking } from '../../generated/StakedOtterClamERC20V2/OtterStaking'
 import { QiFarm } from '../../generated/StakedOtterClamERC20V2/QiFarm'
 import { veDyst } from '../../generated/StakedOtterClamERC20V2/veDyst'
+import { PenLens } from '../../generated/StakedOtterClamERC20V2/PenLens'
 import { UniswapV2Pair } from '../../generated/StakedOtterClamERC20V2/UniswapV2Pair'
 import { CurveMai3poolContract } from '../../generated/StakedOtterClamERC20V2/CurveMai3poolContract'
 import { PenDystRewards } from '../../generated/StakedOtterClamERC20V2/PenDystRewards'
+import { PenrosePartnerRewards } from '../../generated/StakedOtterClamERC20V2/PenrosePartnerRewards'
 import { PenLockerV2 } from '../../generated/StakedOtterClamERC20V2/PenLockerV2'
-import { ProtocolMetric, Transaction } from '../../generated/schema'
+import { ProtocolMetric, Transaction, VotePosition, Vote, GovernanceMetric } from '../../generated/schema'
 import { StakedOtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
 import {
   CIRCULATING_SUPPLY_CONTRACT,
@@ -77,6 +79,9 @@ import {
   DAO_WALLET_PENROSE_USER_PROXY,
   PEN_DYST_REWARD_PROXY,
   VLPEN_LOCKER,
+  PENROSE_LENS_PROXY,
+  QIDAO_veDYST_ERC721_ID,
+  PEN_DYST_PARTNER_REWARDS,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -95,6 +100,7 @@ import {
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
 import { DystPair } from '../../generated/StakedOtterClamERC20V2/DystPair'
 import { loadOrCreateDystopiaGaugeBalance } from '../DystPair'
+import { loadOrCreateTotalBribeRewardsSingleton } from './TreasuryRevenue'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -152,8 +158,31 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   return protocolMetric as ProtocolMetric
 }
 
+export function loadOrCreateGovernanceMetric(timestamp: BigInt): GovernanceMetric {
+  let dayTimestamp = dayFromTimestamp(timestamp)
+
+  let governanceMetric = GovernanceMetric.load(dayTimestamp)
+  if (governanceMetric == null) {
+    governanceMetric = new GovernanceMetric(dayTimestamp)
+    governanceMetric.timestamp = timestamp
+    governanceMetric.qiDaoVeDystAmt = BigDecimal.zero()
+    governanceMetric.qiDaoVeDystAmt = BigDecimal.zero()
+    governanceMetric.dystTotalSupply = BigDecimal.zero()
+    governanceMetric.veDystTotalSupply = BigDecimal.zero()
+    governanceMetric.penDystTotalSupply = BigDecimal.zero()
+    governanceMetric.vlPenTotalSupply = BigDecimal.zero()
+    governanceMetric.otterClamVlPenTotalOwned = BigDecimal.zero()
+    governanceMetric.otterClamVlPenPercentOwned = BigDecimal.zero()
+    governanceMetric.otterClamVeDystPercentOwned = BigDecimal.zero()
+    governanceMetric.totalQiBribeRewardsMarketValue = BigDecimal.zero()
+
+    governanceMetric.save()
+  }
+  return governanceMetric as GovernanceMetric
+}
+
 function getTotalSupply(): BigDecimal {
-  let clam_contract = OtterClamERC20V2.bind(Address.fromString(CLAM_ERC20))
+  let clam_contract = OtterClamERC20V2.bind(CLAM_ERC20)
   let total_supply = toDecimal(clam_contract.totalSupply(), 9)
   log.debug('Total Supply {}', [total_supply.toString()])
   return total_supply
@@ -162,7 +191,7 @@ function getTotalSupply(): BigDecimal {
 function getCirculatingSupply(transaction: Transaction, total_supply: BigDecimal): BigDecimal {
   let circ_supply = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(CIRCULATING_SUPPLY_CONTRACT_BLOCK))) {
-    let circulatingSupply_contract = ClamCirculatingSupply.bind(Address.fromString(CIRCULATING_SUPPLY_CONTRACT))
+    let circulatingSupply_contract = ClamCirculatingSupply.bind(CIRCULATING_SUPPLY_CONTRACT)
     circ_supply = toDecimal(circulatingSupply_contract.CLAMCirculatingSupply(), 9)
   } else {
     circ_supply = total_supply
@@ -174,7 +203,7 @@ function getCirculatingSupply(transaction: Transaction, total_supply: BigDecimal
 function getSClamSupply(): BigDecimal {
   let sclam_supply = BigDecimal.zero()
 
-  let sclam_contract = StakedOtterClamERC20V2.bind(Address.fromString(SCLAM_ERC20))
+  let sclam_contract = StakedOtterClamERC20V2.bind(SCLAM_ERC20)
   sclam_supply = toDecimal(sclam_contract.circulatingSupply(), 9)
 
   log.debug('sCLAM Supply {}', [sclam_supply.toString()])
@@ -182,8 +211,8 @@ function getSClamSupply(): BigDecimal {
 }
 
 function getMai3poolValue(): BigDecimal {
-  let mai3pool = CurveMai3poolContract.bind(Address.fromString(CURVE_MAI_3POOL_PAIR))
-  let balance = toDecimal(mai3pool.balanceOf(Address.fromString(TREASURY_ADDRESS)), 18)
+  let mai3pool = CurveMai3poolContract.bind(CURVE_MAI_3POOL_PAIR)
+  let balance = toDecimal(mai3pool.balanceOf(TREASURY_ADDRESS), 18)
   let price = toDecimal(mai3pool.get_virtual_price(), 18)
   let value = balance.times(price)
   log.debug('MAI3Pool balance {}, price {}, value {}', [balance.toString(), price.toString(), value.toString()])
@@ -191,9 +220,9 @@ function getMai3poolValue(): BigDecimal {
 }
 
 function getMai3poolInvestmentValue(): BigDecimal {
-  let mai3pool = CurveMai3poolContract.bind(Address.fromString(CURVE_MAI_3POOL_PAIR))
-  let investment = ERC20.bind(Address.fromString(CURVE_MAI_3POOL_INVESTMENT_PAIR))
-  let balance = toDecimal(investment.balanceOf(Address.fromString(TREASURY_ADDRESS)), 18)
+  let mai3pool = CurveMai3poolContract.bind(CURVE_MAI_3POOL_PAIR)
+  let investment = ERC20.bind(CURVE_MAI_3POOL_INVESTMENT_PAIR)
+  let balance = toDecimal(investment.balanceOf(TREASURY_ADDRESS), 18)
   let price = toDecimal(mai3pool.get_virtual_price(), 18)
   let value = balance.times(price)
   log.debug('MAI3Pool investment balance {}, price {}, value {}', [
@@ -205,14 +234,14 @@ function getMai3poolInvestmentValue(): BigDecimal {
 }
 
 function getMaiUsdcValue(): BigDecimal {
-  let pair = UniswapV2Pair.bind(Address.fromString(UNI_MAI_USDC_PAIR))
+  let pair = UniswapV2Pair.bind(UNI_MAI_USDC_PAIR)
 
   let reserves = pair.getReserves()
   let usdc = toDecimal(reserves.value0, 6)
   let mai = toDecimal(reserves.value1, 18)
   log.debug('pair mai {}, usdc {}', [mai.toString(), usdc.toString()])
 
-  let balance = pair.balanceOf(Address.fromString(TREASURY_ADDRESS)).toBigDecimal()
+  let balance = pair.balanceOf(TREASURY_ADDRESS).toBigDecimal()
   let total = pair.totalSupply().toBigDecimal()
   log.debug('pair MAI/USDC LP balance {}, total {}', [balance.toString(), total.toString()])
 
@@ -225,13 +254,13 @@ function getMaiUsdcValue(): BigDecimal {
 }
 
 function getMaiUsdcInvestmentValue(): BigDecimal {
-  let pair = OtterQiDAOInvestment.bind(Address.fromString(UNI_MAI_USDC_QI_INVESTMENT_PAIR))
+  let pair = OtterQiDAOInvestment.bind(UNI_MAI_USDC_QI_INVESTMENT_PAIR)
   let reserves = pair.getReserves()
   let usdc = toDecimal(reserves.value0, 6)
   let mai = toDecimal(reserves.value1, 18)
   log.debug('investment mai {}, usdc {}', [mai.toString(), usdc.toString()])
 
-  let balance = pair.balanceOf(Address.fromString(TREASURY_ADDRESS)).toBigDecimal()
+  let balance = pair.balanceOf(TREASURY_ADDRESS).toBigDecimal()
   let total = pair.totalSupply().toBigDecimal()
   log.debug('investment MAI/USDC LP balance {}, total {}', [balance.toString(), total.toString()])
 
@@ -244,13 +273,13 @@ function getMaiUsdcInvestmentValue(): BigDecimal {
 }
 
 function getQiWmaticMarketValue(): BigDecimal {
-  let pair = UniswapV2Pair.bind(Address.fromString(UNI_QI_WMATIC_PAIR))
+  let pair = UniswapV2Pair.bind(UNI_QI_WMATIC_PAIR)
   let reserves = pair.getReserves()
   let wmatic = toDecimal(reserves.value0, 18)
   let qi = toDecimal(reserves.value1, 18)
   log.debug('pair qi {}, wmatic {}', [qi.toString(), wmatic.toString()])
 
-  let balance = pair.balanceOf(Address.fromString(TREASURY_ADDRESS)).toBigDecimal()
+  let balance = pair.balanceOf(TREASURY_ADDRESS).toBigDecimal()
 
   let total = pair.totalSupply().toBigDecimal()
   log.debug('pair WMATIC/Qi LP balance {}, total {}', [balance.toString(), total.toString()])
@@ -267,15 +296,15 @@ function getQiWmaticMarketValue(): BigDecimal {
 }
 
 function getQiWmaticInvestmentMarketValue(): BigDecimal {
-  let pair = OtterQiDAOInvestment.bind(Address.fromString(UNI_QI_WMATIC_INVESTMENT_PAIR))
+  let pair = OtterQiDAOInvestment.bind(UNI_QI_WMATIC_INVESTMENT_PAIR)
   let reserves = pair.getReserves()
   let wmatic = toDecimal(reserves.value0, 18)
   let qi = toDecimal(reserves.value1, 18)
   log.debug('investment wmatic {}, qi {}', [qi.toString(), wmatic.toString()])
 
-  let balance = pair.balanceOf(Address.fromString(TREASURY_ADDRESS)).toBigDecimal()
-  let farm = QiFarm.bind(Address.fromString(QI_FARM))
-  let deposited = farm.deposited(BigInt.fromU64(4), Address.fromString(OTTER_QI_LOCKER)).toBigDecimal()
+  let balance = pair.balanceOf(TREASURY_ADDRESS).toBigDecimal()
+  let farm = QiFarm.bind(QI_FARM)
+  let deposited = farm.deposited(BigInt.fromU64(4), OTTER_QI_LOCKER).toBigDecimal()
 
   let total = pair.totalSupply().toBigDecimal()
   log.debug('investment WMATIC/Qi LP balance {}, total {}', [balance.toString(), total.toString()])
@@ -292,13 +321,13 @@ function getQiWmaticInvestmentMarketValue(): BigDecimal {
 }
 
 function getPearlWmaticMarketValue(): BigDecimal {
-  let pair = UniswapV2Pair.bind(Address.fromString(UNI_PEARL_WMATIC_PAIR))
+  let pair = UniswapV2Pair.bind(UNI_PEARL_WMATIC_PAIR)
   let reserves = pair.getReserves()
   let wmatic = toDecimal(reserves.value0, 18)
   let pearl = toDecimal(reserves.value1, 18)
   log.debug('pair pearl {}, wmatic {}', [pearl.toString(), wmatic.toString()])
 
-  let balance = pair.balanceOf(Address.fromString(TREASURY_ADDRESS)).toBigDecimal()
+  let balance = pair.balanceOf(TREASURY_ADDRESS).toBigDecimal()
 
   let total = pair.totalSupply().toBigDecimal()
   log.debug('pair WMATIC/PEARL LP balance {}, total {}', [balance.toString(), total.toString()])
@@ -317,8 +346,8 @@ function getPearlWmaticMarketValue(): BigDecimal {
 export function getTreasuryTokenValue(address: Address): BigDecimal {
   let usdPerToken = findPrice(address)
   let token = ERC20.bind(address)
-  let tokenBalance = toDecimal(token.balanceOf(Address.fromString(TREASURY_ADDRESS)), token.decimals()).plus(
-    toDecimal(token.balanceOf(Address.fromString(DAO_WALLET)), token.decimals()),
+  let tokenBalance = toDecimal(token.balanceOf(TREASURY_ADDRESS), token.decimals()).plus(
+    toDecimal(token.balanceOf(DAO_WALLET), token.decimals()),
   )
   let marketValue = tokenBalance.times(usdPerToken)
   return marketValue
@@ -326,36 +355,35 @@ export function getTreasuryTokenValue(address: Address): BigDecimal {
 
 /* Mutates the provided ProtocolMetric by setting the relevant properties*/
 function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: ProtocolMetric): ProtocolMetric {
-  let maiERC20 = ERC20.bind(Address.fromString(MAI_ERC20))
-  let fraxERC20 = ERC20.bind(Address.fromString(FRAX_ERC20))
-  let daiERC20 = ERC20.bind(Address.fromString(DAI_ERC20))
-  let maticERC20 = ERC20.bind(Address.fromString(MATIC_ERC20))
-  let qiERC20 = ERC20.bind(Address.fromString(QI_ERC20))
-  let tetuQiERC20 = ERC20.bind(Address.fromString(TETU_QI_CONTRACT))
+  let maiERC20 = ERC20.bind(MAI_ERC20)
+  let fraxERC20 = ERC20.bind(FRAX_ERC20)
+  let daiERC20 = ERC20.bind(DAI_ERC20)
+  let maticERC20 = ERC20.bind(MATIC_ERC20)
+  let qiERC20 = ERC20.bind(QI_ERC20)
+  let tetuQiERC20 = ERC20.bind(TETU_QI_CONTRACT)
 
-  let xTetuQiERC20 = xTetuQi.bind(Address.fromString(XTETU_QI_CONTRACT))
+  let xTetuQiERC20 = xTetuQi.bind(XTETU_QI_CONTRACT)
 
-  let clamMaiPair = UniswapV2Pair.bind(Address.fromString(UNI_CLAM_MAI_PAIR))
-  let clamFraxPair = UniswapV2Pair.bind(Address.fromString(UNI_CLAM_FRAX_PAIR))
-  let clamWmaticPair = UniswapV2Pair.bind(Address.fromString(UNI_CLAM_WMATIC_PAIR))
+  let clamMaiPair = UniswapV2Pair.bind(UNI_CLAM_MAI_PAIR)
+  let clamFraxPair = UniswapV2Pair.bind(UNI_CLAM_FRAX_PAIR)
+  let clamWmaticPair = UniswapV2Pair.bind(UNI_CLAM_WMATIC_PAIR)
 
-  let treasury_address = Address.fromString(TREASURY_ADDRESS)
-  let maiBalance = maiERC20.balanceOf(treasury_address)
-  let fraxBalance = fraxERC20.balanceOf(treasury_address)
-  let daiBalance = daiERC20.balanceOf(treasury_address)
+  let maiBalance = maiERC20.balanceOf(TREASURY_ADDRESS)
+  let fraxBalance = fraxERC20.balanceOf(TREASURY_ADDRESS)
+  let daiBalance = daiERC20.balanceOf(TREASURY_ADDRESS)
 
-  let wmaticBalance = maticERC20.balanceOf(treasury_address)
+  let wmaticBalance = maticERC20.balanceOf(TREASURY_ADDRESS)
   let wmatic_value = toDecimal(wmaticBalance, 18).times(getwMaticUsdRate())
 
   //CLAM-MAI & Investment to Quickswap
-  let clamMaiBalance = clamMaiPair.balanceOf(treasury_address)
+  let clamMaiBalance = clamMaiPair.balanceOf(TREASURY_ADDRESS)
   let dQuickMarketValue = BigDecimal.zero()
 
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR_BLOCK))) {
-    let pair = OtterQuickSwapInvestment.bind(Address.fromString(UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR))
-    let clamMaiInvestmentBalance = pair.balanceOf(treasury_address)
+    let pair = OtterQuickSwapInvestment.bind(UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR)
+    let clamMaiInvestmentBalance = pair.balanceOf(TREASURY_ADDRESS)
     clamMaiBalance = clamMaiBalance.plus(clamMaiInvestmentBalance)
-    dQuickMarketValue = getTreasuryTokenValue(Address.fromString(DQUICK_ERC20))
+    dQuickMarketValue = getTreasuryTokenValue(DQUICK_ERC20)
   }
 
   let clamMaiTotalLP = toDecimal(clamMaiPair.totalSupply(), 18)
@@ -370,7 +398,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let clamFraxTotalLP = BigDecimal.zero()
   let clamFraxPOL = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_CLAM_FRAX_PAIR_BLOCK))) {
-    clamFraxBalance = clamFraxPair.balanceOf(treasury_address)
+    clamFraxBalance = clamFraxPair.balanceOf(TREASURY_ADDRESS)
     clamFrax_value = getPairUSD(clamFraxBalance, UNI_CLAM_FRAX_PAIR)
     clamFraxTotalLP = toDecimal(clamFraxPair.totalSupply(), 18)
     if (clamFraxTotalLP.gt(BigDecimal.zero()) && clamFraxBalance.gt(BigInt.fromI32(0))) {
@@ -385,7 +413,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let clamWmaticTotalLP = BigDecimal.zero()
   let clamWmaticPOL = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_CLAM_WMATIC_PAIR_BLOCK))) {
-    clamWmatic = clamWmaticPair.balanceOf(treasury_address)
+    clamWmatic = clamWmaticPair.balanceOf(TREASURY_ADDRESS)
     log.debug('clamMaticBalance {}', [clamWmatic.toString()])
 
     clamWmatic_value = getPairWMATIC(clamWmatic, UNI_CLAM_WMATIC_PAIR)
@@ -418,26 +446,19 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let maiUsdcQiInvestmentValueDecimal = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_MAI_USDC_QI_INVESTMENT_PAIR_BLOCK))) {
     maiUsdcQiInvestmentValueDecimal = getMaiUsdcInvestmentValue()
-    qiMarketValue = getQiUsdRate().times(
-      toDecimal(qiERC20.balanceOf(Address.fromString(TREASURY_ADDRESS)), qiERC20.decimals()),
-    )
+    qiMarketValue = getQiUsdRate().times(toDecimal(qiERC20.balanceOf(TREASURY_ADDRESS), qiERC20.decimals()))
   }
 
   let tetuQiMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(TETU_QI_START_BLOCK))) {
     tetuQiMarketValue = tetuQiMarketValue.plus(
-      getQiUsdRate().times(
-        toDecimal(tetuQiERC20.balanceOf(Address.fromString(TREASURY_ADDRESS)), tetuQiERC20.decimals()),
-      ),
+      getQiUsdRate().times(toDecimal(tetuQiERC20.balanceOf(TREASURY_ADDRESS), tetuQiERC20.decimals())),
     )
   }
   if (transaction.blockNumber.gt(BigInt.fromString(XTETU_QI_START_BLOCK))) {
     tetuQiMarketValue = tetuQiMarketValue.plus(
       getQiUsdRate().times(
-        toDecimal(
-          xTetuQiERC20.underlyingBalanceWithInvestmentForHolder(Address.fromString(TREASURY_ADDRESS)),
-          xTetuQiERC20.decimals(),
-        ),
+        toDecimal(xTetuQiERC20.underlyingBalanceWithInvestmentForHolder(TREASURY_ADDRESS), xTetuQiERC20.decimals()),
       ),
     )
   }
@@ -458,7 +479,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let ocQiMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(QCQI_START_BLOCK))) {
-    ocQiMarketValue = getTreasuryTokenValue(Address.fromString(OCQI_CONTRACT))
+    ocQiMarketValue = getTreasuryTokenValue(OCQI_CONTRACT)
   }
 
   //DYSTOPIA & PENROSE
@@ -474,17 +495,17 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let vlPenMarketValue = BigDecimal.zero()
   let penDystMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString('28773233'))) {
-    dystMarketValue = getTreasuryTokenValue(Address.fromString(DYST_ERC20))
+    dystMarketValue = getTreasuryTokenValue(DYST_ERC20)
 
     for (let i = 0; i < DYSTOPIA_TRACKED_PAIRS.length; i++) {
       let pair_address = DYSTOPIA_TRACKED_PAIRS[i]
       //first check if the DAO wallet holds LP tokens directly
-      let dystopiaPair = DystPair.bind(Address.fromString(pair_address))
-      let pairDystBalance = dystopiaPair.try_balanceOf(Address.fromString(DAO_WALLET))
+      let dystopiaPair = DystPair.bind(pair_address)
+      let pairDystBalance = dystopiaPair.try_balanceOf(DAO_WALLET)
       if (pairDystBalance.reverted) continue
       let pairValue = getDystPairUSD(pairDystBalance.value, pair_address)
       //then add the Gauge staked LP balance from Dystopia & Penrose
-      let dystGaugeLp = loadOrCreateDystopiaGaugeBalance(Address.fromString(pair_address))
+      let dystGaugeLp = loadOrCreateDystopiaGaugeBalance(pair_address)
       pairValue = pairValue.plus(getDystPairUSD(dystGaugeLp.balance, pair_address))
 
       //finally, associate with relevant property
@@ -497,28 +518,30 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     }
 
     //plus the locked veDyst inside NFT
-    let veDystContract = veDyst.bind(Address.fromString(DYSTOPIA_veDYST))
+    let veDystContract = veDyst.bind(DYSTOPIA_veDYST)
     veDystMarketValue = toDecimal(veDystContract.balanceOfNFT(BigInt.fromString(DYSTOPIA_veDYST_ERC721_ID)), 18).times(
       getDystUsdRate(),
     )
   }
   if (transaction.blockNumber.gt(BigInt.fromString('29401160'))) {
-    penMarketValue = getTreasuryTokenValue(Address.fromString(PEN_ERC20))
-    let penDyst = ERC20.bind(Address.fromString(PENDYST_ERC20))
-    let penDystStaking = PenDystRewards.bind(Address.fromString(PEN_DYST_REWARD_PROXY))
+    penMarketValue = getTreasuryTokenValue(PEN_ERC20)
+    let penDyst = ERC20.bind(PENDYST_ERC20)
+    let penDystStaking = PenDystRewards.bind(PEN_DYST_REWARD_PROXY)
+    let penDystStaking2 = PenrosePartnerRewards.bind(PEN_DYST_PARTNER_REWARDS)
 
     let penDystAmount = toDecimal(
       penDyst
-        .balanceOf(Address.fromString(DAO_WALLET))
-        .plus(penDyst.balanceOf(Address.fromString(DAO_WALLET_PENROSE_USER_PROXY)))
-        .plus(penDystStaking.balanceOf(Address.fromString(DAO_WALLET_PENROSE_USER_PROXY))),
+        .balanceOf(DAO_WALLET)
+        .plus(penDyst.balanceOf(DAO_WALLET_PENROSE_USER_PROXY))
+        .plus(penDystStaking.balanceOf(DAO_WALLET_PENROSE_USER_PROXY))
+        .plus(penDystStaking2.balanceOf(DAO_WALLET_PENROSE_USER_PROXY)),
       18,
     )
 
     penDystMarketValue = penDystAmount.times(getPenDystUsdRate())
 
-    let vlPenContract = PenLockerV2.bind(Address.fromString(VLPEN_LOCKER))
-    let vlPenAmt = toDecimal(vlPenContract.balanceOf(Address.fromString(DAO_WALLET_PENROSE_USER_PROXY)), 18)
+    let vlPenContract = PenLockerV2.bind(VLPEN_LOCKER)
+    let vlPenAmt = toDecimal(vlPenContract.balanceOf(DAO_WALLET_PENROSE_USER_PROXY), 18)
     vlPenMarketValue = vlPenAmt.times(getPenUsdRate())
     log.debug('Pen MV {};   PenDyst Amount {} MV {};  vlPEN Amt {} MV {}', [
       penMarketValue.toString(),
@@ -597,7 +620,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 }
 
 function getNextCLAMRebase(): BigDecimal {
-  let staking_contract = OtterStaking.bind(Address.fromString(STAKING_CONTRACT))
+  let staking_contract = OtterStaking.bind(STAKING_CONTRACT)
   let distribution_v1 = toDecimal(staking_contract.epoch().value3, 9)
   log.debug('next_distribution v2 {}', [distribution_v1.toString()])
   let next_distribution = distribution_v1
@@ -620,8 +643,8 @@ function getAPY_Rebase(sCLAM: BigDecimal, distributedCLAM: BigDecimal): BigDecim
 }
 
 function getAPY_PearlChest(nextEpochRebase: BigDecimal): BigDecimal[] {
-  let lake = OtterLake.bind(Address.fromString(OTTER_LAKE_ADDRESS))
-  let pearl = OtterPearlERC20.bind(Address.fromString(PEARL_ERC20))
+  let lake = OtterLake.bind(OTTER_LAKE_ADDRESS)
+  let pearl = OtterPearlERC20.bind(PEARL_ERC20)
   let termsCount = lake.termsCount().toI32()
   log.debug('pearl chest termsCount {}', [termsCount.toString()])
   let rebaseRate = Number.parseFloat(nextEpochRebase.toString()) / 100
@@ -749,4 +772,96 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.totalBurnedClamMarketValue = burns.burnedValueUsd
 
   pm.save()
+
+  //Also trigger a Governance Metrics update
+  updateGovernanceMetrics(transaction)
+}
+
+export function updateGovernanceMetrics(transaction: Transaction): void {
+  /*Penrose Votes
+  PenLens.json ABI has been stripped out to contain only the `votePositionsOf` function,
+  because GraphQL cannot parse functions which return nested lists e.g. type[][]
+  Quick Google says this is a long-standing issue https://github.com/graphprotocol/graph-cli/issues/342
+  but there has been activity during June 2022, 
+  so fingers crossed this will be fixed before we need a function of that signature.
+  */
+  if (transaction.blockNumber.lt(BigInt.fromString('29400000'))) return
+
+  let governanceMetric = loadOrCreateGovernanceMetric(transaction.timestamp)
+  let voteSingleton = loadOrCreateVotePositionSingleton()
+  let voteContract = PenLens.bind(PENROSE_LENS_PROXY)
+
+  let tryVoteTuple = voteContract.try_votePositionsOf(DAO_WALLET_PENROSE_USER_PROXY)
+  let currentVotes: string[] = []
+  if (!tryVoteTuple.reverted) {
+    let voteTuple = tryVoteTuple.value
+    for (let i = 0; i < voteTuple.votes.length; i++) {
+      let vote = new Vote(voteTuple.votes[i].poolAddress.toHexString())
+      vote.vote = toDecimal(voteTuple.votes[i].weight, 18)
+      vote.timestamp = transaction.timestamp
+      vote.save()
+
+      log.debug('Penrose vote of {} vlPen for pool {} @ time {}', [
+        vote.vote.toString(),
+        vote.id,
+        transaction.timestamp.toString(),
+      ])
+      currentVotes.push(vote.id)
+    }
+    voteSingleton.votes = currentVotes
+    voteSingleton.save()
+  }
+
+  //Calculate our vlPEN voting power in DYST
+  let penDyst = ERC20.bind(PENDYST_ERC20)
+  let vlPenContract = PenLockerV2.bind(VLPEN_LOCKER)
+  let vlPenAmt = toDecimal(vlPenContract.balanceOf(DAO_WALLET_PENROSE_USER_PROXY), 18)
+
+  let penLockedDyst = toDecimal(penDyst.totalSupply(), 18)
+  let vlPenTotal = ERC20.bind(PEN_ERC20).balanceOf(VLPEN_LOCKER)
+
+  let percentVlPenOwned = vlPenAmt.div(toDecimal(vlPenTotal, 18))
+  let finalDystWeight = percentVlPenOwned.times(penLockedDyst)
+
+  let veDystTotalSupply = toDecimal(veDyst.bind(DYSTOPIA_veDYST).totalSupply(), 18)
+  let percentVeDystWeight = finalDystWeight.div(veDystTotalSupply).times(BigDecimal.fromString('100'))
+  percentVlPenOwned = percentVlPenOwned.times(BigDecimal.fromString('100'))
+
+  //QiDAO veDYST votes
+  let qiDaoVeDystAmt = toDecimal(
+    veDyst.bind(DYSTOPIA_veDYST).balanceOfNFT(BigInt.fromString(QIDAO_veDYST_ERC721_ID)),
+    18,
+  )
+  // funnel chart
+  governanceMetric.dystTotalSupply = toDecimal(ERC20.bind(DYST_ERC20).totalSupply(), 18)
+  governanceMetric.veDystTotalSupply = veDystTotalSupply
+  governanceMetric.penDystTotalSupply = toDecimal(penDyst.totalSupply(), 18)
+  governanceMetric.vlPenTotalSupply = toDecimal(vlPenContract.totalSupply(), 18)
+  governanceMetric.otterClamVlPenTotalOwned = vlPenAmt
+  // funnel chart metrics
+  governanceMetric.otterClamVlPenPercentOwned = percentVlPenOwned
+  governanceMetric.otterClamVeDystPercentOwned = percentVeDystWeight
+
+  // QiDao metrics
+  governanceMetric.qiDaoVeDystAmt = qiDaoVeDystAmt
+  let bribes = loadOrCreateTotalBribeRewardsSingleton()
+  governanceMetric.totalQiBribeRewardsMarketValue = bribes.qiBribeRewardsMarketValue
+
+  log.debug('Governance Metrics for date {}: OtterClam vlPen owned%: {}, OtterClam equivalent veDYST owned%: {}', [
+    transaction.timestamp.toString(),
+    percentVlPenOwned.toString(),
+    percentVeDystWeight.toString(),
+  ])
+
+  governanceMetric.save()
+}
+
+export function loadOrCreateVotePositionSingleton(): VotePosition {
+  let votes = VotePosition.load('1')
+  if (votes == null) {
+    votes = new VotePosition('1')
+    votes.votes = []
+    votes.save()
+  }
+  return votes
 }

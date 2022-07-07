@@ -43,11 +43,11 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
   return treasuryRevenue as TreasuryRevenue
 }
 
-export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
+export function updateTreasuryRevenueHarvest(blockNumber: BigInt, harvest: Harvest): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(harvest.timestamp)
   let qi = toDecimal(harvest.amount, 18)
   let qiMarketValue = getQiUsdRate().times(qi)
-  let clamAmount = qiMarketValue.div(getClamUsdRate())
+  let clamAmount = qiMarketValue.div(getClamUsdRate(blockNumber))
   log.debug('HarvestEvent, txid: {}, qiMarketValue {}, clamAmount {}', [
     harvest.id,
     qiMarketValue.toString(),
@@ -66,11 +66,12 @@ export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
 
   treasuryRevenue.save()
 }
-export function updateTreasuryRevenueQiTransfer(transfer: Transfer): void {
+
+export function updateTreasuryRevenueQiTransfer(blockNumber: BigInt, transfer: Transfer): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
 
   let qiMarketValue = getQiUsdRate().times(toDecimal(transfer.value, 18))
-  let clamAmount = qiMarketValue.div(getClamUsdRate())
+  let clamAmount = qiMarketValue.div(getClamUsdRate(blockNumber))
 
   log.debug('TransferEvent, txid: {}, qiMarketValue {}, clamAmount: {}', [
     transfer.id,
@@ -90,11 +91,11 @@ export function updateTreasuryRevenueQiTransfer(transfer: Transfer): void {
   treasuryRevenue.save()
 }
 
-export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {
+export function updateTreasuryRevenueDystTransfer(blockNumber: BigInt, transfer: Transfer): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
 
   let dystMarketValue = getDystUsdRate().times(toDecimal(transfer.value, 18))
-  let clamAmount = dystMarketValue.div(getClamUsdRate())
+  let clamAmount = dystMarketValue.div(getClamUsdRate(blockNumber))
 
   log.debug('TransferEvent, txid: {}, dystMarketValue {}, clamAmount: {}', [
     transfer.id,
@@ -114,11 +115,11 @@ export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {
   treasuryRevenue.save()
 }
 
-export function updateTreasuryRevenuePenTransfer(transfer: Transfer): void {
+export function updateTreasuryRevenuePenTransfer(blockNumber: BigInt, transfer: Transfer): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
 
   let penMarketValue = getPenUsdRate().times(toDecimal(transfer.value, 18))
-  let clamAmount = penMarketValue.div(getClamUsdRate())
+  let clamAmount = penMarketValue.div(getClamUsdRate(blockNumber))
 
   log.debug('TransferEvent, txid: {}, penMarketValue {}, clamAmount: {}', [
     transfer.id,

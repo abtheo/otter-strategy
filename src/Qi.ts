@@ -33,7 +33,7 @@ export function handleQiTransfer(event: TransferEvent): void {
     entity.save()
 
     //Pass entity to TreasuryRevenue
-    updateTreasuryRevenueQiTransfer(entity)
+    updateTreasuryRevenueQiTransfer(event.block.number, entity)
   }
   if (event.params.from == QI_BRIBE_REWARDS && event.params.to == OTTER_DEPLOYER) {
     log.debug('QiDao Bribe Recieved {} for {} Qi, from: {}, to: {}', [
@@ -52,7 +52,7 @@ export function handleQiTransfer(event: TransferEvent): void {
     entity.save()
 
     //Pass entity to TreasuryRevenue
-    updateTreasuryRevenueQiTransfer(entity)
+    updateTreasuryRevenueQiTransfer(event.block.number, entity)
 
     //Count for QiBribes
     let bribes = loadOrCreateTotalBribeRewardsSingleton()

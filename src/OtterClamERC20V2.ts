@@ -22,7 +22,7 @@ export function handleTransfer(event: TransferEvent): void {
     //Cumulative total for burned CLAM
     let total = loadOrCreateTotalBurnedClamSingleton()
     total.burnedClam = total.burnedClam.plus(burnedClam)
-    total.burnedValueUsd = total.burnedValueUsd.plus(getClamUsdRate().times(burnedClam))
+    total.burnedValueUsd = total.burnedValueUsd.plus(getClamUsdRate(event.block.number).times(burnedClam))
     total.save()
   }
   //Otto Portal minting & Store shell chests
@@ -33,7 +33,7 @@ export function handleTransfer(event: TransferEvent): void {
     saveTransfer(event)
 
     let recievedClam = event.params.value.divDecimal(BigDecimal.fromString('1e9'))
-    let clamMarketValue = recievedClam.times(getClamUsdRate())
+    let clamMarketValue = recievedClam.times(getClamUsdRate(event.block.number))
     log.debug('Ottopia transfered {} CLAM to DAO at block {}, txid {}', [
       recievedClam.toString(),
       event.block.number.toString(),

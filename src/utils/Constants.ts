@@ -14,6 +14,7 @@ export const DAI_ERC20 = Address.fromString('0x8f3cf7ad23cd3cadbd9735aff95802323
 export const MATIC_ERC20 = Address.fromString('0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270')
 export const PEARL_ERC20 = Address.fromString('0x52A7F40BB6e9BD9183071cdBdd3A977D713F2e34')
 export const QI_ERC20 = Address.fromString('0x580A84C73811E1839F75d86d75d88cCa0c241fF4')
+export const QUICK_ERC20 = Address.fromString('0x831753DD7087CaC61aB5644b308642cc1c33Dc13')
 export const DQUICK_ERC20 = Address.fromString('0xf28164A485B0B2C90639E47b0f377b4a438a16B1')
 export const WETH_ERC20 = Address.fromString('0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619')
 export const USDPLUS_ERC20 = Address.fromString('0x236eec6359fb44cce8f97e99387aa7f8cd5cde1f')
@@ -133,3 +134,8 @@ export const PENROSE_LENS_PROXY = Address.fromString('0x1432c3553fdf7fbd593a84b3
 
 export const QIDAO_TREASURY = Address.fromString('0x3feacf904b152b1880bde8bf04ac9eb636fee4d8')
 export const QIDAO_veDYST_ERC721_ID = '4'
+
+export const DYST_ROUTER = Address.fromString('0xbe75dd16d029c6b32b7ad57a0fd9c1c20dd2862e')
+export const QUICKSWAP_ROUTER = Address.fromString('0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff')
+
+export const DYST_POOL_TRANSITION_BLOCK = 30393227

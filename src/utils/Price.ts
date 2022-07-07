@@ -20,6 +20,8 @@ import {
   DQUICK_ERC20,
   QI_ERC20,
   OCQI_CONTRACT,
+  QUICK_ERC20,
+  DYST_POOL_TRANSITION_BLOCK,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { UniswapV2Pair } from '../../generated/StakedOtterClamERC20V2/UniswapV2Pair'
@@ -27,6 +29,16 @@ import { AggregatorV3InterfaceABI } from '../../generated/StakedOtterClamERC20V2
 import { toDecimal } from './Decimals'
 import { DystPair } from '../../generated/Dyst/DystPair'
 import { ERC20 } from '../../generated/StakedOtterClamERC20V2/ERC20'
+import { dyst, quickSwap, Exchange } from './Exchange'
+
+function findTokenPrice(exchange: Exchange, inTokenAddress: Address, outTokenAddress: Address): BigDecimal {
+  let inToken = ERC20.bind(inTokenAddress)
+  let outToken = ERC20.bind(outTokenAddress)
+  let inDecimals = inToken.decimals()
+  let outDecimals = outToken.decimals()
+  let price = exchange.getAmountOut(BigInt.fromI64(<i64>Math.pow(10, inDecimals)), inTokenAddress, outTokenAddress)
+  return toDecimal(price, outDecimals)
+}
 
 let BIG_DECIMAL_1E9 = BigDecimal.fromString('1e9')
 
@@ -37,128 +49,91 @@ export function getwMaticUsdRate(): BigDecimal {
 }
 
 export function getQiUsdRate(): BigDecimal {
-  let lp = UniswapV2Pair.bind(UNI_QI_WMATIC_PAIR)
-  let wmatic = toDecimal(lp.getReserves().value0, 18)
-  let qi = toDecimal(lp.getReserves().value1, 18)
-  let wmaticPerQi = wmatic.div(qi)
+  let wmaticPerQi = findTokenPrice(quickSwap, QI_ERC20, MATIC_ERC20)
   let usdPerQi = wmaticPerQi.times(getwMaticUsdRate())
-  log.debug('wmatic = {}, qi = {}, 1 qi = {} wmatic = {} USD', [
-    wmatic.toString(),
-    qi.toString(),
+
+  log.debug('1 qi = {} wmatic = {} USD', [
     wmaticPerQi.toString(),
     usdPerQi.toString(),
   ])
+
   return usdPerQi
 }
 
-/*Pools on Dystopia do not use Uniswap xy=k formula */
 export function getDystUsdRate(): BigDecimal {
-  let lp = DystPair.bind(DYSTOPIA_PAIR_WMATIC_DYST)
-  let hasMaticAmount = lp.try_getAmountOut(BigInt.fromString('1000000000000000000'), DYST_ERC20)
-  if (hasMaticAmount.reverted) return BigDecimal.zero()
+  let wmaticPerDyst = findTokenPrice(dyst, DYST_ERC20, MATIC_ERC20)
+  let usdVal = wmaticPerDyst.times(getwMaticUsdRate())
 
-  let amountMatic = hasMaticAmount.value.divDecimal(BigDecimal.fromString('1e18'))
-  let usdVal = amountMatic.times(getwMaticUsdRate())
-
-  log.debug('1 DYST = {} MATIC = {} USD', [amountMatic.toString(), usdVal.toString()])
+  log.debug('1 DYST = {} MATIC = {} USD', [wmaticPerDyst.toString(), usdVal.toString()])
 
   return usdVal
 }
 
-/*Pools on Dystopia do not use Uniswap xy=k formula */
 export function getPenUsdRate(): BigDecimal {
-  let lp = DystPair.bind(DYSTOPIA_PAIR_WMATIC_PEN)
-  let hasMaticAmount = lp.try_getAmountOut(BigInt.fromString('1000000000000000000'), PEN_ERC20)
-  if (hasMaticAmount.reverted) return BigDecimal.zero()
+  let wmaticPerPen = findTokenPrice(dyst, PEN_ERC20, MATIC_ERC20)
+  let usdVal = wmaticPerPen.times(getwMaticUsdRate())
 
-  let amountMatic = hasMaticAmount.value.divDecimal(BigDecimal.fromString('1e18'))
-  let usdVal = amountMatic.times(getwMaticUsdRate())
-
-  log.debug('1 PEN = {} MATIC = {} USD', [amountMatic.toString(), usdVal.toString()])
+  log.debug('1 PEN = {} MATIC = {} USD', [wmaticPerPen.toString(), usdVal.toString()])
 
   return usdVal
 }
 
-/*Pools on Dystopia do not use Uniswap xy=k formula */
 export function getPenDystUsdRate(): BigDecimal {
-  let lp = DystPair.bind(DYSTOPIA_PAIR_PENDYST_DYST)
-  let hasDystAmount = lp.try_getAmountOut(BigInt.fromString('1000000000000000000'), PENDYST_ERC20)
-  if (hasDystAmount.reverted) return BigDecimal.zero()
+  let dystPerPen = findTokenPrice(dyst, PENDYST_ERC20, DYST_ERC20)
 
-  let amountDyst = hasDystAmount.value.divDecimal(BigDecimal.fromString('1e18'))
+  log.debug('1 penDYST = {} DYST', [dystPerPen.toString()])
 
-  log.debug('1 penDYST = {} DYST', [amountDyst.toString()])
-
-  return amountDyst.times(getDystUsdRate())
+  return dystPerPen.times(getDystUsdRate())
 }
 
 export function getQuickUsdRate(): BigDecimal {
-  let lp = UniswapV2Pair.bind(UNI_QUICK_WMATIC_PAIR)
-  let reserves = lp.getReserves()
-  let wmatic = toDecimal(reserves.value0, 18)
-  let quick = toDecimal(reserves.value1, 18)
-  let wmaticPerQuick = wmatic.div(quick)
+  let wmaticPerQuick = findTokenPrice(quickSwap, QUICK_ERC20, MATIC_ERC20)
   let usdPerQuick = wmaticPerQuick.times(getwMaticUsdRate())
-  log.debug('wmatic = {}, quick = {}, 1 quick = {} wmatic = {} USD', [
-    wmatic.toString(),
-    quick.toString(),
+
+  log.debug('1 quick = {} wmatic = {} USD', [
     wmaticPerQuick.toString(),
     usdPerQuick.toString(),
   ])
+
   return usdPerQuick
 }
 
+// TODO: we can get eth price from chainlink
 export function getwEthUsdRate(): BigDecimal {
-  let pair = UniswapV2Pair.bind(UNI_WETH_USDC_PAIR)
+  let usdcPerEth = findTokenPrice(quickSwap, WETH_ERC20, USDC_ERC20)
 
-  let reserves = pair.getReserves()
-  let weth = reserves.value1.toBigDecimal()
-  let usdc = reserves.value0.toBigDecimal()
-  log.debug('pair reserve0 {}, reserve1 {}', [weth.toString(), usdc.toString()])
+  log.debug('weth rate {}', [usdcPerEth.toString()])
 
-  if (weth.equals(BigDecimal.zero())) {
-    log.debug('getwethRate div {}', [weth.toString()])
-    return BigDecimal.zero()
-  }
-
-  let wethRate = usdc.div(BigDecimal.fromString('1e6')).div(weth)
-  log.debug('weth rate {}', [wethRate.toString()])
-
-  return wethRate
+  return usdcPerEth
 }
 
-export function getClamUsdRate(): BigDecimal {
-  let pair = UniswapV2Pair.bind(UNI_CLAM_MAI_PAIR)
+export function getClamUsdRate(block: BigInt): BigDecimal {
+  let rate: BigDecimal
 
-  let reserves = pair.getReserves()
-  let clam = reserves.value1.toBigDecimal()
-  let mai = reserves.value0.toBigDecimal()
-  log.debug('pair reserve0 {}, reserve1 {}', [clam.toString(), mai.toString()])
-
-  if (clam.equals(BigDecimal.zero()) || mai.equals(BigDecimal.zero())) {
-    log.debug('getCLAMUSDRate div {}', [clam.toString()])
-    return BigDecimal.zero()
+  if (block.gt(BigInt.fromI32(DYST_POOL_TRANSITION_BLOCK))) {
+    rate = findTokenPrice(dyst, CLAM_ERC20, USDPLUS_ERC20)
+  } else {
+    rate = findTokenPrice(quickSwap, CLAM_ERC20, USDPLUS_ERC20)
   }
 
-  let clamRate = mai.div(clam).div(BIG_DECIMAL_1E9)
-  log.debug('CLAM rate {}', [clamRate.toString()])
+  log.debug('CLAM rate {}', [rate.toString()])
 
-  return clamRate
+  return rate
 }
 
-export function getPairUSD(lp_amount: BigInt, pair_address: Address): BigDecimal {
+export function getPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {
   let pair = UniswapV2Pair.bind(pair_address)
   let total_lp = pair.totalSupply()
   let lp_token_0 = pair.getReserves().value1
   let lp_token_1 = pair.getReserves().value0
   let ownedLP = toDecimal(lp_amount, 18).div(toDecimal(total_lp, 18))
-  let clam_value = toDecimal(lp_token_0, 9).times(getClamUsdRate())
+  let clam_value = toDecimal(lp_token_0, 9).times(getClamUsdRate(blockNumber))
   let total_lp_usd = clam_value.plus(toDecimal(lp_token_1, 18))
 
   return ownedLP.times(total_lp_usd)
 }
 
-export function getDystPairUSD(lp_amount: BigInt, pair_address: Address): BigDecimal {
+export function getDystPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {
   if (lp_amount == BigInt.fromString('0')) return BigDecimal.zero()
   let pair = DystPair.bind(pair_address)
 
@@ -174,15 +149,15 @@ export function getDystPairUSD(lp_amount: BigInt, pair_address: Address): BigDec
   if (ownedLP.gt(BigDecimal.zero()) && total_lp.gt(BigInt.zero())) ownedLP = ownedLP.div(toDecimal(total_lp, 18))
 
   //get total pool usd value
-  let usd_value_token0 = toDecimal(lp_token_0, token0.decimals()).times(findPrice(pair.token0()))
-  let usd_value_token1 = toDecimal(lp_token_1, token1.decimals()).times(findPrice(pair.token1()))
+  let usd_value_token0 = toDecimal(lp_token_0, token0.decimals()).times(findPrice(blockNumber, pair.token0()))
+  let usd_value_token1 = toDecimal(lp_token_1, token1.decimals()).times(findPrice(blockNumber, pair.token1()))
   let total_lp_usd = usd_value_token0.plus(usd_value_token1)
 
   return ownedLP.times(total_lp_usd)
 }
 
-export function findPrice(address: Address): BigDecimal {
-  if (address == CLAM_ERC20) if (address == CLAM_ERC20) return getClamUsdRate()
+export function findPrice(blockNumber: BigInt, address: Address): BigDecimal {
+  if (address == CLAM_ERC20) if (address == CLAM_ERC20) return getClamUsdRate(blockNumber)
   if (address == QI_ERC20 || address == OCQI_CONTRACT) return getQiUsdRate()
   if (address == MATIC_ERC20) return getwMaticUsdRate()
   if (address == DYST_ERC20) return getDystUsdRate()
@@ -196,13 +171,13 @@ export function findPrice(address: Address): BigDecimal {
   return BigDecimal.zero()
 }
 
-export function getPairWMATIC(lp_amount: BigInt, pair_adress: Address): BigDecimal {
+export function getPairWMATIC(blockNumber: BigInt, lp_amount: BigInt, pair_adress: Address): BigDecimal {
   let pair = UniswapV2Pair.bind(pair_adress)
   let total_lp = pair.totalSupply()
   let lp_token_0 = pair.getReserves().value1
   let lp_token_1 = pair.getReserves().value0
   let ownedLP = toDecimal(lp_amount, 18).div(toDecimal(total_lp, 18))
-  let clam_value = toDecimal(lp_token_0, 9).times(getClamUsdRate())
+  let clam_value = toDecimal(lp_token_0, 9).times(getClamUsdRate(blockNumber))
   let matic_value = toDecimal(lp_token_1, 18).times(getwMaticUsdRate())
   let total_lp_usd = clam_value.plus(matic_value)
 

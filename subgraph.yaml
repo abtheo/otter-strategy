@@ -76,6 +76,10 @@ dataSources:
           file: ./abis/PenLens.json
         - name: PenrosePartnerRewards
           file: ./abis/PenrosePartnerRewards.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: LogRebase(indexed uint256,uint256,uint256)
           handler: handleLogRebase
@@ -192,6 +196,10 @@ dataSources:
           file: ./abis/UniswapV2Pair.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleQiTransfer
@@ -223,6 +231,10 @@ dataSources:
           file: ./abis/AggregatorV3InterfaceABI.json
         - name: DystPair
           file: ./abis/DystPair.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleDystTransfer
@@ -252,6 +264,10 @@ dataSources:
           file: ./abis/AggregatorV3InterfaceABI.json
         - name: DystPair
           file: ./abis/DystPair.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handlePenTransfer
@@ -279,6 +295,10 @@ dataSources:
           file: ./abis/UniswapV2Pair.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Buyback(indexed address,uint256,uint256)
           handler: handleDeprecatedBuyback
@@ -306,6 +326,10 @@ dataSources:
           file: ./abis/UniswapV2Pair.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Buyback(indexed address,uint256,uint256)
           handler: handleBuyback

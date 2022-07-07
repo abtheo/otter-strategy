@@ -343,8 +343,8 @@ function getPearlWmaticMarketValue(): BigDecimal {
   return value
 }
 
-export function getTreasuryTokenValue(address: Address): BigDecimal {
-  let usdPerToken = findPrice(address)
+export function getTreasuryTokenValue(blockNumber: BigInt, address: Address): BigDecimal {
+  let usdPerToken = findPrice(blockNumber, address)
   let token = ERC20.bind(address)
   let tokenBalance = toDecimal(token.balanceOf(TREASURY_ADDRESS), token.decimals()).plus(
     toDecimal(token.balanceOf(DAO_WALLET), token.decimals()),
@@ -383,14 +383,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     let pair = OtterQuickSwapInvestment.bind(UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR)
     let clamMaiInvestmentBalance = pair.balanceOf(TREASURY_ADDRESS)
     clamMaiBalance = clamMaiBalance.plus(clamMaiInvestmentBalance)
-    dQuickMarketValue = getTreasuryTokenValue(DQUICK_ERC20)
+    dQuickMarketValue = getTreasuryTokenValue(transaction.blockNumber, DQUICK_ERC20)
   }
 
   let clamMaiTotalLP = toDecimal(clamMaiPair.totalSupply(), 18)
   let clamMaiPOL = toDecimal(clamMaiBalance, 18)
     .div(clamMaiTotalLP)
     .times(BigDecimal.fromString('100'))
-  let clamMai_value = getPairUSD(clamMaiBalance, UNI_CLAM_MAI_PAIR)
+  let clamMai_value = getPairUSD(transaction.blockNumber, clamMaiBalance, UNI_CLAM_MAI_PAIR)
 
   //CLAM-FRAX
   let clamFraxBalance = BigInt.fromI32(0)
@@ -399,7 +399,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let clamFraxPOL = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_CLAM_FRAX_PAIR_BLOCK))) {
     clamFraxBalance = clamFraxPair.balanceOf(TREASURY_ADDRESS)
-    clamFrax_value = getPairUSD(clamFraxBalance, UNI_CLAM_FRAX_PAIR)
+    clamFrax_value = getPairUSD(transaction.blockNumber, clamFraxBalance, UNI_CLAM_FRAX_PAIR)
     clamFraxTotalLP = toDecimal(clamFraxPair.totalSupply(), 18)
     if (clamFraxTotalLP.gt(BigDecimal.zero()) && clamFraxBalance.gt(BigInt.fromI32(0))) {
       clamFraxPOL = toDecimal(clamFraxBalance, 18)
@@ -416,7 +416,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     clamWmatic = clamWmaticPair.balanceOf(TREASURY_ADDRESS)
     log.debug('clamMaticBalance {}', [clamWmatic.toString()])
 
-    clamWmatic_value = getPairWMATIC(clamWmatic, UNI_CLAM_WMATIC_PAIR)
+    clamWmatic_value = getPairWMATIC(transaction.blockNumber, clamWmatic, UNI_CLAM_WMATIC_PAIR)
     log.debug('clamWmatic_value {}', [clamWmatic_value.toString()])
 
     clamWmaticTotalLP = toDecimal(clamWmaticPair.totalSupply(), 18)
@@ -479,7 +479,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let ocQiMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(QCQI_START_BLOCK))) {
-    ocQiMarketValue = getTreasuryTokenValue(OCQI_CONTRACT)
+    ocQiMarketValue = getTreasuryTokenValue(transaction.blockNumber, OCQI_CONTRACT)
   }
 
   //DYSTOPIA & PENROSE
@@ -495,7 +495,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let vlPenMarketValue = BigDecimal.zero()
   let penDystMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString('28773233'))) {
-    dystMarketValue = getTreasuryTokenValue(DYST_ERC20)
+    dystMarketValue = getTreasuryTokenValue(transaction.blockNumber, DYST_ERC20)
 
     for (let i = 0; i < DYSTOPIA_TRACKED_PAIRS.length; i++) {
       let pair_address = DYSTOPIA_TRACKED_PAIRS[i]
@@ -503,10 +503,10 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       let dystopiaPair = DystPair.bind(pair_address)
       let pairDystBalance = dystopiaPair.try_balanceOf(DAO_WALLET)
       if (pairDystBalance.reverted) continue
-      let pairValue = getDystPairUSD(pairDystBalance.value, pair_address)
+      let pairValue = getDystPairUSD(transaction.blockNumber, pairDystBalance.value, pair_address)
       //then add the Gauge staked LP balance from Dystopia & Penrose
       let dystGaugeLp = loadOrCreateDystopiaGaugeBalance(pair_address)
-      pairValue = pairValue.plus(getDystPairUSD(dystGaugeLp.balance, pair_address))
+      pairValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, dystGaugeLp.balance, pair_address))
 
       //finally, associate with relevant property
       if (pair_address == DYSTOPIA_PAIR_WMATIC_DYST) wMaticDystValue = pairValue
@@ -524,7 +524,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     )
   }
   if (transaction.blockNumber.gt(BigInt.fromString('29401160'))) {
-    penMarketValue = getTreasuryTokenValue(PEN_ERC20)
+    penMarketValue = getTreasuryTokenValue(transaction.blockNumber, PEN_ERC20)
     let penDyst = ERC20.bind(PENDYST_ERC20)
     let penDystStaking = PenDystRewards.bind(PEN_DYST_REWARD_PROXY)
     let penDystStaking2 = PenrosePartnerRewards.bind(PEN_DYST_PARTNER_REWARDS)
@@ -749,7 +749,7 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.totalSupply = getTotalSupply()
   pm.clamCirculatingSupply = getCirculatingSupply(transaction, pm.totalSupply)
   pm.sClamCirculatingSupply = getSClamSupply()
-  pm.clamPrice = getClamUsdRate()
+  pm.clamPrice = getClamUsdRate(transaction.blockNumber)
   pm.marketCap = pm.clamCirculatingSupply.times(pm.clamPrice)
   pm.totalValueLocked = pm.sClamCirculatingSupply.times(pm.clamPrice)
 

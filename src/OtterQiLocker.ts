@@ -13,7 +13,7 @@ export function handleHarvest(event: HarvestEvent): void {
   entity.transaction = transaction.id
   entity.timestamp = transaction.timestamp
   entity.amount = event.params.amount
-  updateTreasuryRevenueHarvest(entity)
+  updateTreasuryRevenueHarvest(event.block.number, entity)
   entity.save()
 }
 
@@ -23,6 +23,6 @@ export function handleHarvestStaking(event: HarvestStakingEvent): void {
   entity.transaction = transaction.id
   entity.timestamp = transaction.timestamp
   entity.amount = event.params.amount
-  updateTreasuryRevenueHarvest(entity)
+  updateTreasuryRevenueHarvest(event.block.number, entity)
   entity.save()
 }

@@ -22,6 +22,6 @@ export function handlePenTransfer(event: TransferEvent): void {
     entity.save()
 
     //Pass entity to TreasuryRevenue
-    updateTreasuryRevenuePenTransfer(entity)
+    updateTreasuryRevenuePenTransfer(event.block.number, entity)
   }
 }

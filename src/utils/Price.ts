@@ -127,6 +127,19 @@ export function getwEthUsdRate(): BigDecimal {
   return wethRate
 }
 
+/*Pools on Dystopia do not use Uniswap xy=k formula */
+export function getClamUsdRateFromDyst(): BigDecimal {
+  let lp = DystPair.bind(DYSTOPIA_PAIR_PENDYST_DYST)
+  let hasDystAmount = lp.try_getAmountOut(BigInt.fromString('1000000000000000000'), PENDYST_ERC20)
+  if (hasDystAmount.reverted) return BigDecimal.zero()
+
+  let amountDyst = hasDystAmount.value.divDecimal(BigDecimal.fromString('1e18'))
+
+  log.debug('1 penDYST = {} DYST', [amountDyst.toString()])
+
+  return amountDyst.times(getDystUsdRate())
+}
+
 export function getClamUsdRate(): BigDecimal {
   let pair = UniswapV2Pair.bind(UNI_CLAM_MAI_PAIR)
 

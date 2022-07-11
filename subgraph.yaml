@@ -345,6 +345,31 @@ dataSources:
           handler: handlePairCreated
       file: ./src/DystPairFactory.ts
 
+  - kind: ethereum/contract
+    name: OtterRewardManager
+    network: matic
+    source:
+      address: '0xee8Cad6adAeA8AA07b078603dcc0F466192bCE01'
+      abi: OtterRewardManager
+      startBlock: 27986220
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - PearlBankMetric
+      abis:
+        - name: OtterRewardManager
+          file: ./abis/OtterRewardManager.json
+        - name: PearlBank
+          file: ./abis/PearlBank.json
+        - name: OtterClamERC20V2
+          file: ./abis/OtterClamERC20V2.json
+      eventHandlers:
+        - event: Payout(uint256)
+          handler: handlePayout
+      file: ./src/PearlBank.ts
+
 templates: 
   - kind: ethereum/contract
     name: DystPair

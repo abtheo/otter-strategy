@@ -133,3 +133,5 @@ export const PENROSE_LENS_PROXY = Address.fromString('0x1432c3553fdf7fbd593a84b3
 
 export const QIDAO_TREASURY = Address.fromString('0x3feacf904b152b1880bde8bf04ac9eb636fee4d8')
 export const QIDAO_veDYST_ERC721_ID = '4'
+
+export const PEARL_BANK = Address.fromString('0xee8Cad6adAeA8AA07b078603dcc0F466192bCE01')

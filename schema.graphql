@@ -195,3 +195,26 @@ type NoteToken @entity {
   amount: BigInt!
   updatedAt: BigInt!
 }
+
+type CumulativeValues @entity {
+  id: ID! """ always equal 'CumulativeValues' """
+  rewardPayoutMarketValue: BigDecimal!
+}
+
+type PearlBankMetric @entity {
+  id: ID!
+
+  """
+  reward
+  """
+  payoutMatketValue: BigDecimal!
+  cumulativeRewardPayoutMarketValue: BigDecimal!
+
+  """
+  token supply
+  """
+  stakedCLAMAmount: BigDecimal!
+  clamTotalSupply: BigDecimal!
+
+  timestamp: BigInt!
+}

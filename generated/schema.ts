@@ -1986,3 +1986,139 @@ export class NoteToken extends Entity {
     this.set("updatedAt", Value.fromBigInt(value));
   }
 }
+
+export class CumulativeValues extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set(
+      "rewardPayoutMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save CumulativeValues entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save CumulativeValues entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("CumulativeValues", id.toString(), this);
+    }
+  }
+
+  static load(id: string): CumulativeValues | null {
+    return changetype<CumulativeValues | null>(
+      store.get("CumulativeValues", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get rewardPayoutMarketValue(): BigDecimal {
+    let value = this.get("rewardPayoutMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set rewardPayoutMarketValue(value: BigDecimal) {
+    this.set("rewardPayoutMarketValue", Value.fromBigDecimal(value));
+  }
+}
+
+export class PearlBankMetric extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("payoutMatketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set(
+      "cumulativeRewardPayoutMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set("stakedCLAMAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("clamTotalSupply", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save PearlBankMetric entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save PearlBankMetric entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("PearlBankMetric", id.toString(), this);
+    }
+  }
+
+  static load(id: string): PearlBankMetric | null {
+    return changetype<PearlBankMetric | null>(store.get("PearlBankMetric", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get payoutMatketValue(): BigDecimal {
+    let value = this.get("payoutMatketValue");
+    return value!.toBigDecimal();
+  }
+
+  set payoutMatketValue(value: BigDecimal) {
+    this.set("payoutMatketValue", Value.fromBigDecimal(value));
+  }
+
+  get cumulativeRewardPayoutMarketValue(): BigDecimal {
+    let value = this.get("cumulativeRewardPayoutMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set cumulativeRewardPayoutMarketValue(value: BigDecimal) {
+    this.set("cumulativeRewardPayoutMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get stakedCLAMAmount(): BigDecimal {
+    let value = this.get("stakedCLAMAmount");
+    return value!.toBigDecimal();
+  }
+
+  set stakedCLAMAmount(value: BigDecimal) {
+    this.set("stakedCLAMAmount", Value.fromBigDecimal(value));
+  }
+
+  get clamTotalSupply(): BigDecimal {
+    let value = this.get("clamTotalSupply");
+    return value!.toBigDecimal();
+  }
+
+  set clamTotalSupply(value: BigDecimal) {
+    this.set("clamTotalSupply", Value.fromBigDecimal(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+}

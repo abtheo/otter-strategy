@@ -370,6 +370,31 @@ dataSources:
           handler: handlePayout
       file: ./src/PearlBank.ts
 
+  - kind: ethereum/contract
+    name: PearlBank
+    network: matic
+    source:
+      address: '0xee8Cad6adAeA8AA07b078603dcc0F466192bCE01'
+      abi: PearlBank
+      startBlock: 27986220
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - PearlBankMetric
+      abis:
+        - name: PearlBank
+          file: ./abis/PearlBank.json
+        - name: OtterClamERC20V2
+          file: ./abis/OtterClamERC20V2.json
+      eventHandlers:
+        - event: Stake(indexed address,uint256,uint256)
+          handler: handleStake
+        - event: Withdraw(indexed address,uint256,uint256)
+          handler: handleWithdraw
+      file: ./src/PearlBank.ts
+
 templates: 
   - kind: ethereum/contract
     name: DystPair

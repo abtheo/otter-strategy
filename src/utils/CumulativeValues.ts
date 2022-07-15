@@ -6,6 +6,7 @@ export function loadCumulativeValues(): CumulativeValues {
     if (!values) {
         values = new CumulativeValues('CumulativeValues')
         values.rewardPayoutMarketValue = BigDecimal.zero()
+        values.clamPondDepositedAmount = BigDecimal.zero()
     }
     return values
 }

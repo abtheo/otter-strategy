@@ -349,7 +349,7 @@ dataSources:
     name: OtterRewardManager
     network: matic
     source:
-      address: '0xee8Cad6adAeA8AA07b078603dcc0F466192bCE01'
+      address: '0x306a7c1347F38CAD360a3A31FE0308c33e92c087'
       abi: OtterRewardManager
       startBlock: 27986220
     mapping:
@@ -368,13 +368,13 @@ dataSources:
       eventHandlers:
         - event: Payout(uint256)
           handler: handlePayout
-      file: ./src/PearlBank.ts
+      file: ./src/OtterRewardManager.ts
 
   - kind: ethereum/contract
     name: PearlBank
     network: matic
     source:
-      address: '0xee8Cad6adAeA8AA07b078603dcc0F466192bCE01'
+      address: '0x8787a18F2fcCb87710975CCF71cE931182a505ad'
       abi: PearlBank
       startBlock: 27986220
     mapping:
@@ -394,6 +394,33 @@ dataSources:
         - event: Withdraw(indexed address,uint256,uint256)
           handler: handleWithdraw
       file: ./src/PearlBank.ts
+
+  - kind: ethereum/contract
+    name: ClamPond
+    network: matic
+    source:
+      address: '0xF262da77Bc32D4ED026CC4a110b089113651186C'
+      abi: ClamPond
+      startBlock: 27986220
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - PearlBankMetric
+      abis:
+        - name: ClamPond
+          file: ./abis/ClamPond.json
+        - name: PearlBank
+          file: ./abis/PearlBank.json
+        - name: OtterClamERC20V2
+          file: ./abis/OtterClamERC20V2.json
+      eventHandlers:
+        - event: Deposit(address,uint256)
+          handler: handleDeposit
+        - event: Withdraw(address,uint256)
+          handler: handleWithdraw
+      file: ./src/ClamPond.ts
 
 templates: 
   - kind: ethereum/contract

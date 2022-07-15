@@ -11,6 +11,8 @@ export function loadOrCreatePearlBankMetric(timestamp: BigInt): PearlBankMetric 
         metric = new PearlBankMetric(id)
         metric.payoutMatketValue = BigDecimal.zero()
         metric.cumulativeRewardPayoutMarketValue = BigDecimal.zero()
+        metric.apr = BigDecimal.zero()
+        metric.clamMarketValueWhenPayoutHappens = BigDecimal.zero()
         metric.clamTotalSupply = BigDecimal.zero()
         metric.stakedCLAMAmount = BigDecimal.zero()
     }

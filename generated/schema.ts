@@ -1996,6 +1996,10 @@ export class CumulativeValues extends Entity {
       "rewardPayoutMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
+    this.set(
+      "clamPondDepositedAmount",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
   }
 
   save(): void {
@@ -2034,6 +2038,15 @@ export class CumulativeValues extends Entity {
   set rewardPayoutMarketValue(value: BigDecimal) {
     this.set("rewardPayoutMarketValue", Value.fromBigDecimal(value));
   }
+
+  get clamPondDepositedAmount(): BigDecimal {
+    let value = this.get("clamPondDepositedAmount");
+    return value!.toBigDecimal();
+  }
+
+  set clamPondDepositedAmount(value: BigDecimal) {
+    this.set("clamPondDepositedAmount", Value.fromBigDecimal(value));
+  }
 }
 
 export class PearlBankMetric extends Entity {
@@ -2041,9 +2054,18 @@ export class PearlBankMetric extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
+    this.set("apr", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("payoutMatketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
+      "clamMarketValueWhenPayoutHappens",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
       "cumulativeRewardPayoutMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "clamPondDepositedAmount",
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set("stakedCLAMAmount", Value.fromBigDecimal(BigDecimal.zero()));
@@ -2077,6 +2099,15 @@ export class PearlBankMetric extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get apr(): BigDecimal {
+    let value = this.get("apr");
+    return value!.toBigDecimal();
+  }
+
+  set apr(value: BigDecimal) {
+    this.set("apr", Value.fromBigDecimal(value));
+  }
+
   get payoutMatketValue(): BigDecimal {
     let value = this.get("payoutMatketValue");
     return value!.toBigDecimal();
@@ -2086,6 +2117,15 @@ export class PearlBankMetric extends Entity {
     this.set("payoutMatketValue", Value.fromBigDecimal(value));
   }
 
+  get clamMarketValueWhenPayoutHappens(): BigDecimal {
+    let value = this.get("clamMarketValueWhenPayoutHappens");
+    return value!.toBigDecimal();
+  }
+
+  set clamMarketValueWhenPayoutHappens(value: BigDecimal) {
+    this.set("clamMarketValueWhenPayoutHappens", Value.fromBigDecimal(value));
+  }
+
   get cumulativeRewardPayoutMarketValue(): BigDecimal {
     let value = this.get("cumulativeRewardPayoutMarketValue");
     return value!.toBigDecimal();
@@ -2093,6 +2133,15 @@ export class PearlBankMetric extends Entity {
 
   set cumulativeRewardPayoutMarketValue(value: BigDecimal) {
     this.set("cumulativeRewardPayoutMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get clamPondDepositedAmount(): BigDecimal {
+    let value = this.get("clamPondDepositedAmount");
+    return value!.toBigDecimal();
+  }
+
+  set clamPondDepositedAmount(value: BigDecimal) {
+    this.set("clamPondDepositedAmount", Value.fromBigDecimal(value));
   }
 
   get stakedCLAMAmount(): BigDecimal {

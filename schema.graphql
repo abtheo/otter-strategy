@@ -199,6 +199,7 @@ type NoteToken @entity {
 type CumulativeValues @entity {
   id: ID! """ always equal 'CumulativeValues' """
   rewardPayoutMarketValue: BigDecimal!
+  clamPondDepositedAmount: BigDecimal!
 }
 
 type PearlBankMetric @entity {
@@ -207,8 +208,15 @@ type PearlBankMetric @entity {
   """
   reward
   """
+  apr: BigDecimal!
   payoutMatketValue: BigDecimal!
+  clamMarketValueWhenPayoutHappens: BigDecimal!
   cumulativeRewardPayoutMarketValue: BigDecimal!
+
+  """
+  pond
+  """
+  clamPondDepositedAmount: BigDecimal!
 
   """
   token supply

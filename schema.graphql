@@ -125,15 +125,6 @@ type TreasuryRevenue @entity {
   yieldMarketValue: BigDecimal!
 }
 
-type APY @entity {
-  id: ID!
-  timestamp: BigInt!
-  rebaseReward: BigDecimal!
-  apy: BigDecimal!
-  clamDistributed: BigInt!
-  clamDistributedDecimal: BigDecimal!
-}
-
 type TotalBuybacks @entity {
   id: ID!
   boughtClam: BigDecimal!
@@ -197,7 +188,10 @@ type NoteToken @entity {
 }
 
 type CumulativeValues @entity {
-  id: ID! """ always equal 'CumulativeValues' """
+  id: ID!
+  """
+   always equal 'CumulativeValues'
+  """
   rewardPayoutMarketValue: BigDecimal!
   clamPondDepositedAmount: BigDecimal!
 }

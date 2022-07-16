@@ -120,9 +120,6 @@ type TreasuryRevenue @entity {
   totalRevenueMarketValue: BigDecimal!
   cumulativeBuybackClamAmount: BigDecimal!
   cumulativeBuybackMarketValue: BigDecimal!
-  #TODO: Remove Yields
-  yieldClamAmount: BigDecimal!
-  yieldMarketValue: BigDecimal!
 }
 
 type TotalBuybacks @entity {

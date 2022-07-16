@@ -1,7 +1,15 @@
 import { toDecimal } from './Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { dayFromTimestamp } from './Dates'
-import { TreasuryRevenue, Harvest, Transfer, Buyback, TotalBuybacks, TotalBribeReward } from '../../generated/schema'
+import {
+  TreasuryRevenue,
+  Harvest,
+  Transfer,
+  Buyback,
+  TotalBuybacks,
+  TotalBribeReward,
+  RevenueTracker,
+} from '../../generated/schema'
 import {
   getClamUsdRate,
   getDystUsdRate,
@@ -44,8 +52,6 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
     treasuryRevenue.buybackMarketValue = BigDecimal.zero()
     treasuryRevenue.cumulativeBuybackClamAmount = BigDecimal.zero()
     treasuryRevenue.cumulativeBuybackMarketValue = BigDecimal.zero()
-    treasuryRevenue.yieldClamAmount = BigDecimal.zero()
-    treasuryRevenue.yieldMarketValue = BigDecimal.zero()
 
     let cumulativeBuybacks = loadOrCreateTotalBuybacksSingleton()
     treasuryRevenue.cumulativeBuybackClamAmount = cumulativeBuybacks.boughtClam
@@ -71,9 +77,6 @@ export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
   treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
   treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
 
-  treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
-  treasuryRevenue.yieldMarketValue = treasuryRevenue.yieldMarketValue.plus(qiMarketValue)
-
   treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
   treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
 
@@ -94,9 +97,6 @@ export function updateTreasuryRevenueQiTransfer(transfer: Transfer): void {
   treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
   treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
 
-  treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
-  treasuryRevenue.yieldMarketValue = treasuryRevenue.yieldMarketValue.plus(qiMarketValue)
-
   treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
   treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
 
@@ -108,11 +108,24 @@ Whenever one of the (trackable) Qi contracts is harvested,
 calculate the difference in our Qi position since the last timestep
 */
 export function updateTreasuryRevenueQiChange(harvest: Harvest): void {
-  let treasuryRevenue = loadOrCreateTreasuryRevenue(harvest.timestamp)
-
+  //get all Qi balances
   let qi = ERC20.bind(QI_ERC20).balanceOf(TREASURY_ADDRESS)
-  let ocqi_locker = ERC20.bind(OTTER_QI_LOCKER).balanceOf(TREASURY_ADDRESS)
+  let ocqiLocker = ERC20.bind(OTTER_QI_LOCKER).balanceOf(TREASURY_ADDRESS)
   let qi_matic_lp_tokens = UniswapV2Pair.bind(UNI_QI_WMATIC_PAIR).balanceOf(TREASURY_ADDRESS)
+  let qiTotal = qi.plus(ocqiLocker)
+
+  //set current metrics for next time
+  let revenueTracker = loadOrCreateRevenueTracker(harvest.timestamp)
+  revenueTracker.qiAmount = qiTotal
+  revenueTracker.qiMaticLpTokens = qi_matic_lp_tokens
+  revenueTracker.save()
+
+  //find difference from previous revenue tracker
+  let previousRevenueTracker = loadOrCreateRevenueTracker(harvest.timestamp.minus(BigInt.fromString('86400')))
+  let qiDiff = qiTotal.minus(previousRevenueTracker.qiAmount)
+
+  //update TreasuryRevenue
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(harvest.timestamp)
 }
 
 export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {
@@ -129,9 +142,6 @@ export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {
 
   treasuryRevenue.dystClamAmount = treasuryRevenue.dystClamAmount.plus(clamAmount)
   treasuryRevenue.dystMarketValue = treasuryRevenue.dystMarketValue.plus(dystMarketValue)
-
-  treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
-  treasuryRevenue.yieldMarketValue = treasuryRevenue.yieldMarketValue.plus(dystMarketValue)
 
   treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
   treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(dystMarketValue)
@@ -153,9 +163,6 @@ export function updateTreasuryRevenuePenTransfer(transfer: Transfer): void {
 
   treasuryRevenue.penClamAmount = treasuryRevenue.penClamAmount.plus(clamAmount)
   treasuryRevenue.penMarketValue = treasuryRevenue.penMarketValue.plus(penMarketValue)
-
-  treasuryRevenue.yieldClamAmount = treasuryRevenue.yieldClamAmount.plus(clamAmount)
-  treasuryRevenue.yieldMarketValue = treasuryRevenue.yieldMarketValue.plus(penMarketValue)
 
   treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
   treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(penMarketValue)
@@ -215,14 +222,14 @@ export function loadOrCreateTotalBuybacksSingleton(): TotalBuybacks {
   return total
 }
 
-export function loadOrCreateRevenueTracker(timestamp: BigInt): TotalBuybacks {
+export function loadOrCreateRevenueTracker(timestamp: BigInt): RevenueTracker {
   let ts = dayFromTimestamp(timestamp)
 
-  let total = TotalBuybacks.load(ts)
-  if (total == null) {
-    total = new TotalBuybacks(ts)
-    total.boughtClam = BigDecimal.zero()
-    total.boughtMarketValue = BigDecimal.zero()
+  let revenue = RevenueTracker.load(ts)
+  if (revenue == null) {
+    revenue = new RevenueTracker(ts)
+    revenue.qiAmount = BigInt.zero()
+    revenue.qiMaticLpTokens = BigInt.zero()
   }
-  return total
+  return revenue
 }

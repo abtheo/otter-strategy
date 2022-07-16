@@ -82,26 +82,6 @@ export function updateTreasuryRevenueHarvest(harvest: Harvest): void {
 
   treasuryRevenue.save()
 }
-export function updateTreasuryRevenueQiTransfer(transfer: Transfer): void {
-  let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
-
-  let qiMarketValue = getQiUsdRate().times(toDecimal(transfer.value, 18))
-  let clamAmount = qiMarketValue.div(getClamUsdRate())
-
-  log.debug('TransferEvent, txid: {}, qiMarketValue {}, clamAmount: {}', [
-    transfer.id,
-    qiMarketValue.toString(),
-    clamAmount.toString(),
-  ])
-
-  treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
-  treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
-
-  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
-  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
-
-  treasuryRevenue.save()
-}
 
 /* 
 Whenever one of the (trackable) Qi contracts is harvested,
@@ -126,6 +106,22 @@ export function updateTreasuryRevenueQiChange(harvest: Harvest): void {
 
   //update TreasuryRevenue
   let treasuryRevenue = loadOrCreateTreasuryRevenue(harvest.timestamp)
+  let qiMarketValue = getQiUsdRate().times(toDecimal(qiDiff, 18))
+  let clamAmount = qiMarketValue.div(getClamUsdRate())
+
+  log.debug('Qi harvest event, txid: {}, qiMarketValue {}, clamAmount: {}', [
+    harvest.id,
+    qiMarketValue.toString(),
+    clamAmount.toString(),
+  ])
+
+  treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
+  treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
+
+  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
+  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
+
+  treasuryRevenue.save()
 }
 
 export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {

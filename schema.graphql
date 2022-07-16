@@ -135,14 +135,6 @@ type DystopiaGaugeBalance @entity {
   id: ID! #lp token address
   balance: BigInt!
 }
-
-type TotalBribeReward @entity {
-  id: ID!
-  qiBribeRewardsMarketValue: BigDecimal!
-  # dystopiaBribeRewardsMarketValue: BigDecimal!
-  # penroseBribeRewardsMarketValue: BigDecimal!
-}
-
 type Vote @entity {
   id: ID! #lp token address
   timestamp: BigInt!
@@ -165,8 +157,6 @@ type GovernanceMetric @entity {
   otterClamVlPenTotalOwned: BigDecimal!
   otterClamVlPenPercentOwned: BigDecimal!
   otterClamVeDystPercentOwned: BigDecimal!
-  #Set from TotalBribeReward singleton
-  totalQiBribeRewardsMarketValue: BigDecimal!
 }
 
 type Term @entity {
@@ -190,7 +180,7 @@ type NoteToken @entity {
 type CumulativeValues @entity {
   id: ID!
   """
-   always equal 'CumulativeValues'
+  always equal 'CumulativeValues'
   """
   rewardPayoutMarketValue: BigDecimal!
   clamPondDepositedAmount: BigDecimal!
@@ -219,4 +209,11 @@ type PearlBankMetric @entity {
   clamTotalSupply: BigDecimal!
 
   timestamp: BigInt!
+}
+
+type RevenueTracker @entity {
+  id: ID!
+
+  qiAmount: BigInt!
+  qiMaticLpTokens: BigInt!
 }

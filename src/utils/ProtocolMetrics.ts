@@ -1,23 +1,22 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { ClamCirculatingSupply } from '../../generated/StakedOtterClamERC20V2/ClamCirculatingSupply'
-import { xTetuQi } from '../../generated/StakedOtterClamERC20V2/xTetuQi'
-import { ERC20 } from '../../generated/StakedOtterClamERC20V2/ERC20'
-import { OtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/OtterClamERC20V2'
-import { OtterLake } from '../../generated/StakedOtterClamERC20V2/OtterLake'
-import { OtterPearlERC20 } from '../../generated/StakedOtterClamERC20V2/OtterPearlERC20'
-import { OtterQiDAOInvestment } from '../../generated/StakedOtterClamERC20V2/OtterQiDAOInvestment'
-import { OtterQuickSwapInvestment } from '../../generated/StakedOtterClamERC20V2/OtterQuickSwapInvestment'
-import { OtterStaking } from '../../generated/StakedOtterClamERC20V2/OtterStaking'
-import { QiFarm } from '../../generated/StakedOtterClamERC20V2/QiFarm'
-import { veDyst } from '../../generated/StakedOtterClamERC20V2/veDyst'
-import { PenLens } from '../../generated/StakedOtterClamERC20V2/PenLens'
-import { UniswapV2Pair } from '../../generated/StakedOtterClamERC20V2/UniswapV2Pair'
-import { CurveMai3poolContract } from '../../generated/StakedOtterClamERC20V2/CurveMai3poolContract'
-import { PenDystRewards } from '../../generated/StakedOtterClamERC20V2/PenDystRewards'
-import { PenrosePartnerRewards } from '../../generated/StakedOtterClamERC20V2/PenrosePartnerRewards'
-import { PenLockerV2 } from '../../generated/StakedOtterClamERC20V2/PenLockerV2'
+import { ClamCirculatingSupply } from '../../generated/OtterClamERC20V2/ClamCirculatingSupply'
+import { xTetuQi } from '../../generated/OtterClamERC20V2/xTetuQi'
+import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
+import { OtterClamERC20V2 } from '../../generated/OtterClamERC20V2/OtterClamERC20V2'
+import { OtterLake } from '../../generated/OtterClamERC20V2/OtterLake'
+import { OtterPearlERC20 } from '../../generated/OtterClamERC20V2/OtterPearlERC20'
+import { OtterQiDAOInvestment } from '../../generated/OtterClamERC20V2/OtterQiDAOInvestment'
+import { OtterQuickSwapInvestment } from '../../generated/OtterClamERC20V2/OtterQuickSwapInvestment'
+import { OtterStaking } from '../../generated/OtterClamERC20V2/OtterStaking'
+import { QiFarm } from '../../generated/OtterClamERC20V2/QiFarm'
+import { veDyst } from '../../generated/OtterClamERC20V2/veDyst'
+import { PenLens } from '../../generated/OtterClamERC20V2/PenLens'
+import { UniswapV2Pair } from '../../generated/OtterClamERC20V2/UniswapV2Pair'
+import { CurveMai3poolContract } from '../../generated/OtterClamERC20V2/CurveMai3poolContract'
+import { PenDystRewards } from '../../generated/OtterClamERC20V2/PenDystRewards'
+import { PenrosePartnerRewards } from '../../generated/OtterClamERC20V2/PenrosePartnerRewards'
+import { PenLockerV2 } from '../../generated/OtterClamERC20V2/PenLockerV2'
 import { ProtocolMetric, Transaction, VotePosition, Vote, GovernanceMetric } from '../../generated/schema'
-import { StakedOtterClamERC20V2 } from '../../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
 import {
   CIRCULATING_SUPPLY_CONTRACT,
   CIRCULATING_SUPPLY_CONTRACT_BLOCK,
@@ -98,9 +97,8 @@ import {
   getPenUsdRate,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
-import { DystPair } from '../../generated/StakedOtterClamERC20V2/DystPair'
+import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
 import { loadOrCreateDystopiaGaugeBalance } from '../DystPair'
-import { loadOrCreateTotalBribeRewardsSingleton } from './TreasuryRevenue'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -198,16 +196,6 @@ function getCirculatingSupply(transaction: Transaction, total_supply: BigDecimal
   }
   log.debug('Circulating Supply {}', [total_supply.toString()])
   return circ_supply
-}
-
-function getSClamSupply(): BigDecimal {
-  let sclam_supply = BigDecimal.zero()
-
-  let sclam_contract = StakedOtterClamERC20V2.bind(SCLAM_ERC20)
-  sclam_supply = toDecimal(sclam_contract.circulatingSupply(), 9)
-
-  log.debug('sCLAM Supply {}', [sclam_supply.toString()])
-  return sclam_supply
 }
 
 function getMai3poolValue(): BigDecimal {
@@ -748,23 +736,22 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm = setTreasuryAssetMarketValues(transaction, pm)
   pm.totalSupply = getTotalSupply()
   pm.clamCirculatingSupply = getCirculatingSupply(transaction, pm.totalSupply)
-  pm.sClamCirculatingSupply = getSClamSupply()
   pm.clamPrice = getClamUsdRate()
   pm.marketCap = pm.clamCirculatingSupply.times(pm.clamPrice)
   pm.totalValueLocked = pm.sClamCirculatingSupply.times(pm.clamPrice)
 
   // Rebase rewards, APY, rebase
-  pm.nextDistributedClam = getNextCLAMRebase()
-  let apy_rebase = getAPY_Rebase(pm.sClamCirculatingSupply, pm.nextDistributedClam)
-  pm.currentAPY = apy_rebase[0]
-  pm.nextEpochRebase = apy_rebase[1]
-  if (transaction.blockNumber.gt(BigInt.fromString(PEARL_CHEST_BLOCK))) {
-    let chestAPYs = getAPY_PearlChest(pm.nextEpochRebase)
-    pm.safeHandAPY = chestAPYs[0]
-    pm.furryHandAPY = chestAPYs[1]
-    pm.stoneHandAPY = chestAPYs[2]
-    pm.diamondHandAPY = chestAPYs[3]
-  }
+  // pm.nextDistributedClam = getNextCLAMRebase()
+  // let apy_rebase = getAPY_Rebase(pm.sClamCirculatingSupply, pm.nextDistributedClam)
+  // pm.currentAPY = apy_rebase[0]
+  // pm.nextEpochRebase = apy_rebase[1]
+  // if (transaction.blockNumber.gt(BigInt.fromString(PEARL_CHEST_BLOCK))) {
+  //   let chestAPYs = getAPY_PearlChest(pm.nextEpochRebase)
+  //   pm.safeHandAPY = chestAPYs[0]
+  //   pm.furryHandAPY = chestAPYs[1]
+  //   pm.stoneHandAPY = chestAPYs[2]
+  //   pm.diamondHandAPY = chestAPYs[3]
+  // }
 
   //Total burned CLAM
   let burns = loadOrCreateTotalBurnedClamSingleton()
@@ -844,8 +831,6 @@ export function updateGovernanceMetrics(transaction: Transaction): void {
 
   // QiDao metrics
   governanceMetric.qiDaoVeDystAmt = qiDaoVeDystAmt
-  let bribes = loadOrCreateTotalBribeRewardsSingleton()
-  governanceMetric.totalQiBribeRewardsMarketValue = bribes.qiBribeRewardsMarketValue
 
   log.debug('Governance Metrics for date {}: OtterClam vlPen owned%: {}, OtterClam equivalent veDYST owned%: {}', [
     transaction.timestamp.toString(),

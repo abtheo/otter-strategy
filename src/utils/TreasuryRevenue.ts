@@ -10,7 +10,20 @@ import {
   getwEthUsdRate,
   getwMaticUsdRate,
 } from '../utils/Price'
-import { QI_ERC20, DAI_ERC20, MAI_ERC20, FRAX_ERC20, MATIC_ERC20, WETH_ERC20 } from './Constants'
+import {
+  QI_ERC20,
+  DAI_ERC20,
+  MAI_ERC20,
+  FRAX_ERC20,
+  MATIC_ERC20,
+  WETH_ERC20,
+  TREASURY_ADDRESS,
+  UNI_QI_WMATIC_PAIR,
+  OTTER_QI_LOCKER,
+} from './Constants'
+import { UniswapV2Pair } from '../../generated/OtterClamERC20V2/UniswapV2Pair'
+import { OtterQiLocker } from '../../generated/OtterQiLocker/OtterQiLocker'
+import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
   let ts = dayFromTimestamp(timestamp)
@@ -88,6 +101,18 @@ export function updateTreasuryRevenueQiTransfer(transfer: Transfer): void {
   treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
 
   treasuryRevenue.save()
+}
+
+/* 
+Whenever one of the (trackable) Qi contracts is harvested,
+calculate the difference in our Qi position since the last timestep
+*/
+export function updateTreasuryRevenueQiChange(harvest: Harvest): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(harvest.timestamp)
+
+  let qi = ERC20.bind(QI_ERC20).balanceOf(TREASURY_ADDRESS)
+  let ocqi_locker = ERC20.bind(OTTER_QI_LOCKER).balanceOf(TREASURY_ADDRESS)
+  let qi_matic_lp_tokens = UniswapV2Pair.bind(UNI_QI_WMATIC_PAIR).balanceOf(TREASURY_ADDRESS)
 }
 
 export function updateTreasuryRevenueDystTransfer(transfer: Transfer): void {
@@ -189,17 +214,15 @@ export function loadOrCreateTotalBuybacksSingleton(): TotalBuybacks {
   }
   return total
 }
-export function loadOrCreateTotalBribeRewardsSingleton(): TotalBribeReward {
-  let total = TotalBribeReward.load('1')
-  if (total == null) {
-    total = new TotalBribeReward('1')
-    total.qiBribeRewardsMarketValue = BigDecimal.zero()
-    // TODO: Once Penrose implements their Bribe rewards, start tracking
-    // total.dystopiaBribeRewardsMarketValue = BigDecimal.zero()
-    // total.penroseBribeRewardsMarketValue = BigDecimal.zero()
-    // total.polygonGrantMaticMarketValue = BigDecimal.zero()
-    // total.polygonGrantMaticAmount = BigDecimal.zero()
-  }
 
+export function loadOrCreateRevenueTracker(timestamp: BigInt): TotalBuybacks {
+  let ts = dayFromTimestamp(timestamp)
+
+  let total = TotalBuybacks.load(ts)
+  if (total == null) {
+    total = new TotalBuybacks(ts)
+    total.boughtClam = BigDecimal.zero()
+    total.boughtMarketValue = BigDecimal.zero()
+  }
   return total
 }

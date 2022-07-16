@@ -22,11 +22,11 @@ import {
   OCQI_CONTRACT,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { UniswapV2Pair } from '../../generated/StakedOtterClamERC20V2/UniswapV2Pair'
-import { AggregatorV3InterfaceABI } from '../../generated/StakedOtterClamERC20V2/AggregatorV3InterfaceABI'
+import { UniswapV2Pair } from '../../generated/OtterClamERC20V2/UniswapV2Pair'
+import { AggregatorV3InterfaceABI } from '../../generated/OtterClamERC20V2/AggregatorV3InterfaceABI'
 import { toDecimal } from './Decimals'
 import { DystPair } from '../../generated/Dyst/DystPair'
-import { ERC20 } from '../../generated/StakedOtterClamERC20V2/ERC20'
+import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
 
 let BIG_DECIMAL_1E9 = BigDecimal.fromString('1e9')
 

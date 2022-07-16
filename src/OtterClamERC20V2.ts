@@ -1,13 +1,16 @@
 import { BigDecimal, ethereum } from '@graphprotocol/graph-ts'
-import { Transfer as TransferEvent } from '../generated/StakedOtterClamERC20V2/StakedOtterClamERC20V2'
-import { Transfer, TotalBurnedClam } from '../generated/schema'
+import { Transfer as TransferEvent } from '../generated/OtterClamERC20V2/OtterClamERC20V2'
+import { Transfer, TotalBurnedClam, Transaction } from '../generated/schema'
 import { log } from '@graphprotocol/graph-ts'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { getClamUsdRate } from './utils/Price'
 import { DAO_WALLET, OTTOPIA_STORE, OTTO_PORTAL_MINTING } from './utils/Constants'
 import { loadOrCreateTreasuryRevenue } from './utils/TreasuryRevenue'
+import { updateProtocolMetrics } from './utils/ProtocolMetrics'
 
 export function handleTransfer(event: TransferEvent): void {
+  let transaction = loadOrCreateTransaction(event.transaction, event.block)
+  updateProtocolMetrics(transaction)
   //BURN events
   if (event.params.to.toHexString() == '0x0000000000000000000000000000000000000000') {
     saveTransfer(event)

@@ -1334,90 +1334,6 @@ export class TreasuryRevenue extends Entity {
   }
 }
 
-export class APY extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
-    this.set("rebaseReward", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("apy", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("clamDistributed", Value.fromBigInt(BigInt.zero()));
-    this.set("clamDistributedDecimal", Value.fromBigDecimal(BigDecimal.zero()));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save APY entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save APY entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("APY", id.toString(), this);
-    }
-  }
-
-  static load(id: string): APY | null {
-    return changetype<APY | null>(store.get("APY", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get timestamp(): BigInt {
-    let value = this.get("timestamp");
-    return value!.toBigInt();
-  }
-
-  set timestamp(value: BigInt) {
-    this.set("timestamp", Value.fromBigInt(value));
-  }
-
-  get rebaseReward(): BigDecimal {
-    let value = this.get("rebaseReward");
-    return value!.toBigDecimal();
-  }
-
-  set rebaseReward(value: BigDecimal) {
-    this.set("rebaseReward", Value.fromBigDecimal(value));
-  }
-
-  get apy(): BigDecimal {
-    let value = this.get("apy");
-    return value!.toBigDecimal();
-  }
-
-  set apy(value: BigDecimal) {
-    this.set("apy", Value.fromBigDecimal(value));
-  }
-
-  get clamDistributed(): BigInt {
-    let value = this.get("clamDistributed");
-    return value!.toBigInt();
-  }
-
-  set clamDistributed(value: BigInt) {
-    this.set("clamDistributed", Value.fromBigInt(value));
-  }
-
-  get clamDistributedDecimal(): BigDecimal {
-    let value = this.get("clamDistributedDecimal");
-    return value!.toBigDecimal();
-  }
-
-  set clamDistributedDecimal(value: BigDecimal) {
-    this.set("clamDistributedDecimal", Value.fromBigDecimal(value));
-  }
-}
-
 export class TotalBuybacks extends Entity {
   constructor(id: string) {
     super();
@@ -2169,5 +2085,59 @@ export class PearlBankMetric extends Entity {
 
   set timestamp(value: BigInt) {
     this.set("timestamp", Value.fromBigInt(value));
+  }
+}
+
+export class RevenueTracker extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("qiAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("qiMaticLpTokens", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save RevenueTracker entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save RevenueTracker entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("RevenueTracker", id.toString(), this);
+    }
+  }
+
+  static load(id: string): RevenueTracker | null {
+    return changetype<RevenueTracker | null>(store.get("RevenueTracker", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get qiAmount(): BigInt {
+    let value = this.get("qiAmount");
+    return value!.toBigInt();
+  }
+
+  set qiAmount(value: BigInt) {
+    this.set("qiAmount", Value.fromBigInt(value));
+  }
+
+  get qiMaticLpTokens(): BigInt {
+    let value = this.get("qiMaticLpTokens");
+    return value!.toBigInt();
+  }
+
+  set qiMaticLpTokens(value: BigInt) {
+    this.set("qiMaticLpTokens", Value.fromBigInt(value));
   }
 }

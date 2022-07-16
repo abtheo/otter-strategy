@@ -1,17 +1,17 @@
-import { Transfer as TransferEvent } from '../generated/Qi/Qi'
-import { Address, log } from '@graphprotocol/graph-ts'
-import { Transfer, TotalBribeReward } from '../generated/schema'
-import { loadOrCreateTransaction } from './utils/Transactions'
-import { updateTreasuryRevenueQiTransfer, loadOrCreateTotalBribeRewardsSingleton } from './utils/TreasuryRevenue'
-import {
-  OTTER_DEPLOYER,
-  QI_BRIBE_REWARDS,
-  TREASURY_ADDRESS,
-  UNI_MAI_USDC_QI_INVESTMENT_PAIR,
-  UNI_QI_WMATIC_INVESTMENT_PAIR,
-} from './utils/Constants'
-import { toDecimal } from './utils/Decimals'
-import { getQiUsdRate } from './utils/Price'
+// import { Transfer as TransferEvent } from '../generated/OtterClamERC20V2/Qi'
+// import { Address, log } from '@graphprotocol/graph-ts'
+// import { Transfer, TotalBribeReward } from '../generated/schema'
+// import { loadOrCreateTransaction } from './utils/Transactions'
+// import { updateTreasuryRevenueQiTransfer, loadOrCreateTotalBribeRewardsSingleton } from './utils/TreasuryRevenue'
+// import {
+//   OTTER_DEPLOYER,
+//   QI_BRIBE_REWARDS,
+//   TREASURY_ADDRESS,
+//   UNI_MAI_USDC_QI_INVESTMENT_PAIR,
+//   UNI_QI_WMATIC_INVESTMENT_PAIR,
+// } from './utils/Constants'
+// import { toDecimal } from './utils/Decimals'
+// import { getQiUsdRate } from './utils/Price'
 
 // export function handleQiTransfer(event: TransferEvent): void {
 //   if (

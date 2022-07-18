@@ -2,82 +2,6 @@ specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
-  # - kind: ethereum/contract
-  #   name: OtterClamERC20V2
-  #   network: matic
-  #   source:
-  #     address: '0xc250e9987a032acac293d838726c511e6e1c029d'
-  #     abi: OtterClamERC20V2
-  #     startBlock: 26991825 #First burn transfer
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-      # entities:
-      #   - Transaction
-      #   - ProtocolMetric
-      #   - LogRebase
-      #   - Transfer
-      #   - TreasuryRevenue
-      #   - DystopiaGaugeBalance
-      #   - Vote
-      #   - VotePosition
-      #   - GovernanceMetric
-      #   - TotalBurnedClam
-      # abis:
-      #   - name: OtterQiLocker
-      #     file: ./abis/OtterQiLocker.json
-      #   - name: OtterClamERC20V2
-      #     file: ./abis/OtterClamERC20V2.json
-      #   - name: OtterBondStakeDepository
-      #     file: ./abis/OtterBondStakeDepository.json
-      #   - name: OtterStaking
-      #     file: ./abis/OtterStaking.json
-      #   - name: OtterStakingDistributor
-      #     file: './abis/OtterStakingDistributor.json'
-      #   - name: ClamCirculatingSupply
-      #     file: ./abis/ClamCirculatingSupply.json
-      #   - name: ERC20
-      #     file: ./abis/ERC20.json
-      #   - name: UniswapV2Pair
-      #     file: ./abis/UniswapV2Pair.json
-      #   - name: dQuick
-      #     file: ./abis/dQuick.json
-      #   - name: xTetuQi
-      #     file: ./abis/xTetuQi.json
-      #   - name: OtterQiDAOInvestment
-      #     file: ./abis/OtterQiDAOInvestment.json
-      #   - name: QiFarm
-      #     file: ./abis/QiFarm.json
-      #   - name: OtterQuickSwapInvestment
-      #     file: ./abis/OtterQuickSwapInvestment.json
-      #   - name: AggregatorV3InterfaceABI
-      #     file: ./abis/AggregatorV3InterfaceABI.json
-      #   - name: PearlNote
-      #     file: ./abis/PearlNote.json
-      #   - name: OtterPearlERC20
-      #     file: ./abis/OtterPearlERC20.json
-      #   - name: CurveMai3poolContract
-      #     file: ./abis/CurveMai3poolContract.json        
-      #   - name: Dyst
-      #     file: ./abis/Dyst.json      
-      #   - name: DystPair
-      #     file: ./abis/DystPair.json
-      #   - name: veDyst
-      #     file: ./abis/veDyst.json
-      #   - name: PenDystRewards
-      #     file: ./abis/PenDystRewards.json
-      #   - name: PenLockerV2
-      #     file: ./abis/PenLockerV2.json
-      #   - name: PenLens
-      #     file: ./abis/PenLens.json
-      #   - name: PenrosePartnerRewards
-      #     file: ./abis/PenrosePartnerRewards.json
-      # eventHandlers:
-      #   - event: Transfer(indexed address,indexed address,uint256)
-      #     handler: handleTransfer
-      # file: ./src/OtterClamERC20V2.ts
-
   - kind: ethereum/contract
     name: OtterQiLocker
     network: matic
@@ -151,6 +75,10 @@ dataSources:
           file: ./abis/PenLens.json
         - name: PenrosePartnerRewards
           file: ./abis/PenrosePartnerRewards.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Harvest(uint256)
           handler: handleHarvest
@@ -184,6 +112,10 @@ dataSources:
           file: ./abis/AggregatorV3InterfaceABI.json
         - name: DystPair
           file: ./abis/DystPair.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleDystTransfer
@@ -213,6 +145,10 @@ dataSources:
           file: ./abis/AggregatorV3InterfaceABI.json
         - name: DystPair
           file: ./abis/DystPair.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handlePenTransfer
@@ -240,6 +176,10 @@ dataSources:
           file: ./abis/UniswapV2Pair.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Buyback(indexed address,uint256,uint256)
           handler: handleDeprecatedBuyback
@@ -267,6 +207,10 @@ dataSources:
           file: ./abis/UniswapV2Pair.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Buyback(indexed address,uint256,uint256)
           handler: handleBuyback

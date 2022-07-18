@@ -21,8 +21,6 @@ import {
   CIRCULATING_SUPPLY_CONTRACT_BLOCK,
   CLAM_ERC20,
   DAI_ERC20,
-  DQUICK_ERC20,
-  FRAX_ERC20,
   MAI_ERC20,
   MATIC_ERC20,
   OCQI_CONTRACT,
@@ -35,14 +33,9 @@ import {
   PEARL_CHEST_BLOCK,
   PEARL_ERC20,
   QI_ERC20,
-  SCLAM_ERC20,
   STAKING_CONTRACT,
   TREASURY_ADDRESS,
-  UNI_CLAM_FRAX_PAIR,
-  UNI_CLAM_FRAX_PAIR_BLOCK,
   UNI_CLAM_MAI_PAIR,
-  UNI_CLAM_WMATIC_PAIR,
-  UNI_CLAM_WMATIC_PAIR_BLOCK,
   UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR,
   UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR_BLOCK,
   UNI_MAI_USDC_PAIR,
@@ -80,6 +73,8 @@ import {
   PENROSE_LENS_PROXY,
   QIDAO_veDYST_ERC721_ID,
   PEN_DYST_PARTNER_REWARDS,
+  DYST_START_BLOCK,
+  PEN_START_BLOCK,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -107,38 +102,22 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric = new ProtocolMetric(dayTimestamp)
     protocolMetric.timestamp = timestamp
     protocolMetric.clamCirculatingSupply = BigDecimal.zero()
-    protocolMetric.sClamCirculatingSupply = BigDecimal.zero()
     protocolMetric.totalSupply = BigDecimal.zero()
     protocolMetric.clamPrice = BigDecimal.zero()
     protocolMetric.marketCap = BigDecimal.zero()
     protocolMetric.totalValueLocked = BigDecimal.zero()
-    protocolMetric.treasuryRiskFreeValue = BigDecimal.zero()
     protocolMetric.treasuryMaiUsdcRiskFreeValue = BigDecimal.zero()
     protocolMetric.treasuryMaiUsdcQiInvestmentRiskFreeValue = BigDecimal.zero()
     protocolMetric.treasuryMarketValue = BigDecimal.zero()
-    protocolMetric.nextEpochRebase = BigDecimal.zero()
-    protocolMetric.nextDistributedClam = BigDecimal.zero()
-    protocolMetric.currentAPY = BigDecimal.zero()
-    protocolMetric.safeHandAPY = BigDecimal.zero()
-    protocolMetric.furryHandAPY = BigDecimal.zero()
-    protocolMetric.stoneHandAPY = BigDecimal.zero()
-    protocolMetric.diamondHandAPY = BigDecimal.zero()
-    protocolMetric.treasuryMaiRiskFreeValue = BigDecimal.zero()
     protocolMetric.treasuryMaiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryFraxRiskFreeValue = BigDecimal.zero()
-    protocolMetric.treasuryFraxMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDaiRiskFreeValue = BigDecimal.zero()
     protocolMetric.treasuryWmaticRiskFreeValue = BigDecimal.zero()
     protocolMetric.treasuryWmaticMarketValue = BigDecimal.zero()
     protocolMetric.treasuryQiMarketValue = BigDecimal.zero()
     protocolMetric.treasuryTetuQiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDquickMarketValue = BigDecimal.zero()
     protocolMetric.treasuryQiWmaticMarketValue = BigDecimal.zero()
     protocolMetric.treasuryQiWmaticQiInvestmentMarketValue = BigDecimal.zero()
     protocolMetric.treasuryOtterClamQiMarketValue = BigDecimal.zero()
     protocolMetric.treasuryClamMaiPOL = BigDecimal.zero()
-    protocolMetric.treasuryClamFraxPOL = BigDecimal.zero()
-    protocolMetric.treasuryClamWmaticPOL = BigDecimal.zero()
     protocolMetric.totalBurnedClam = BigDecimal.zero()
     protocolMetric.totalBurnedClamMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = BigDecimal.zero()
@@ -164,11 +143,11 @@ export function loadOrCreateGovernanceMetric(timestamp: BigInt): GovernanceMetri
     governanceMetric.timestamp = timestamp
     governanceMetric.qiDaoVeDystAmt = BigDecimal.zero()
     governanceMetric.qiDaoVeDystAmt = BigDecimal.zero()
-    governanceMetric.dystTotalSupply = BigDecimal.zero()
-    governanceMetric.veDystTotalSupply = BigDecimal.zero()
-    governanceMetric.penDystTotalSupply = BigDecimal.zero()
-    governanceMetric.vlPenTotalSupply = BigDecimal.zero()
-    governanceMetric.otterClamVlPenTotalOwned = BigDecimal.zero()
+    governanceMetric.dystMarketCap = BigDecimal.zero()
+    governanceMetric.veDystMarketCap = BigDecimal.zero()
+    governanceMetric.penDystMarketCap = BigDecimal.zero()
+    governanceMetric.vlPenMarketCap = BigDecimal.zero()
+    governanceMetric.otterClamVlPenMarketCap = BigDecimal.zero()
     governanceMetric.otterClamVlPenPercentOwned = BigDecimal.zero()
     governanceMetric.otterClamVeDystPercentOwned = BigDecimal.zero()
 
@@ -306,31 +285,8 @@ function getQiWmaticInvestmentMarketValue(): BigDecimal {
   return value
 }
 
-function getPearlWmaticMarketValue(): BigDecimal {
-  let pair = UniswapV2Pair.bind(UNI_PEARL_WMATIC_PAIR)
-  let reserves = pair.getReserves()
-  let wmatic = toDecimal(reserves.value0, 18)
-  let pearl = toDecimal(reserves.value1, 18)
-  log.debug('pair pearl {}, wmatic {}', [pearl.toString(), wmatic.toString()])
-
-  let balance = pair.balanceOf(TREASURY_ADDRESS).toBigDecimal()
-
-  let total = pair.totalSupply().toBigDecimal()
-  log.debug('pair WMATIC/PEARL LP balance {}, total {}', [balance.toString(), total.toString()])
-
-  let wmaticPerPearl = wmatic.div(pearl)
-
-  let value = wmatic
-    .plus(wmaticPerPearl.times(pearl))
-    .times(getwMaticUsdRate())
-    .times(balance)
-    .div(total)
-  log.debug('pair WMATIC/PEARL value {}', [value.toString()])
-  return value
-}
-
-export function getTreasuryTokenValue(address: Address): BigDecimal {
-  let usdPerToken = findPrice(address)
+export function getTreasuryTokenValue(blockNumber: BigInt, address: Address): BigDecimal {
+  let usdPerToken = findPrice(blockNumber, address)
   let token = ERC20.bind(address)
   let tokenBalance = toDecimal(token.balanceOf(TREASURY_ADDRESS), token.decimals()).plus(
     toDecimal(token.balanceOf(DAO_WALLET), token.decimals()),
@@ -342,7 +298,6 @@ export function getTreasuryTokenValue(address: Address): BigDecimal {
 /* Mutates the provided ProtocolMetric by setting the relevant properties*/
 function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: ProtocolMetric): ProtocolMetric {
   let maiERC20 = ERC20.bind(MAI_ERC20)
-  let fraxERC20 = ERC20.bind(FRAX_ERC20)
   let daiERC20 = ERC20.bind(DAI_ERC20)
   let maticERC20 = ERC20.bind(MATIC_ERC20)
   let qiERC20 = ERC20.bind(QI_ERC20)
@@ -351,11 +306,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let xTetuQiERC20 = xTetuQi.bind(XTETU_QI_CONTRACT)
 
   let clamMaiPair = UniswapV2Pair.bind(UNI_CLAM_MAI_PAIR)
-  let clamFraxPair = UniswapV2Pair.bind(UNI_CLAM_FRAX_PAIR)
-  let clamWmaticPair = UniswapV2Pair.bind(UNI_CLAM_WMATIC_PAIR)
 
   let maiBalance = maiERC20.balanceOf(TREASURY_ADDRESS)
-  let fraxBalance = fraxERC20.balanceOf(TREASURY_ADDRESS)
   let daiBalance = daiERC20.balanceOf(TREASURY_ADDRESS)
 
   let wmaticBalance = maticERC20.balanceOf(TREASURY_ADDRESS)
@@ -369,49 +321,13 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     let pair = OtterQuickSwapInvestment.bind(UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR)
     let clamMaiInvestmentBalance = pair.balanceOf(TREASURY_ADDRESS)
     clamMaiBalance = clamMaiBalance.plus(clamMaiInvestmentBalance)
-    dQuickMarketValue = getTreasuryTokenValue(DQUICK_ERC20)
   }
 
   let clamMaiTotalLP = toDecimal(clamMaiPair.totalSupply(), 18)
   let clamMaiPOL = toDecimal(clamMaiBalance, 18)
     .div(clamMaiTotalLP)
     .times(BigDecimal.fromString('100'))
-  let clamMai_value = getPairUSD(clamMaiBalance, UNI_CLAM_MAI_PAIR)
-
-  //CLAM-FRAX
-  let clamFraxBalance = BigInt.fromI32(0)
-  let clamFrax_value = BigDecimal.zero()
-  let clamFraxTotalLP = BigDecimal.zero()
-  let clamFraxPOL = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromString(UNI_CLAM_FRAX_PAIR_BLOCK))) {
-    clamFraxBalance = clamFraxPair.balanceOf(TREASURY_ADDRESS)
-    clamFrax_value = getPairUSD(clamFraxBalance, UNI_CLAM_FRAX_PAIR)
-    clamFraxTotalLP = toDecimal(clamFraxPair.totalSupply(), 18)
-    if (clamFraxTotalLP.gt(BigDecimal.zero()) && clamFraxBalance.gt(BigInt.fromI32(0))) {
-      clamFraxPOL = toDecimal(clamFraxBalance, 18)
-        .div(clamFraxTotalLP)
-        .times(BigDecimal.fromString('100'))
-    }
-  }
-
-  let clamWmatic = BigInt.fromI32(0)
-  let clamWmatic_value = BigDecimal.zero()
-  let clamWmaticTotalLP = BigDecimal.zero()
-  let clamWmaticPOL = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromString(UNI_CLAM_WMATIC_PAIR_BLOCK))) {
-    clamWmatic = clamWmaticPair.balanceOf(TREASURY_ADDRESS)
-    log.debug('clamMaticBalance {}', [clamWmatic.toString()])
-
-    clamWmatic_value = getPairWMATIC(clamWmatic, UNI_CLAM_WMATIC_PAIR)
-    log.debug('clamWmatic_value {}', [clamWmatic_value.toString()])
-
-    clamWmaticTotalLP = toDecimal(clamWmaticPair.totalSupply(), 18)
-    if (clamWmaticTotalLP.gt(BigDecimal.zero()) && clamWmatic.gt(BigInt.fromI32(0))) {
-      clamWmaticPOL = toDecimal(clamWmatic, 18)
-        .div(clamWmaticTotalLP)
-        .times(BigDecimal.fromString('100'))
-    }
-  }
+  let clamMai_value = getPairUSD(transaction.blockNumber, clamMaiBalance, UNI_CLAM_MAI_PAIR)
 
   let mai3poolValueDecimal = BigDecimal.zero()
   if (transaction.blockNumber.ge(BigInt.fromString(CURVE_MAI_3POOL_PAIR_BLOCK))) {
@@ -458,14 +374,9 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     qiWmaticQiInvestmentMarketValue = getQiWmaticInvestmentMarketValue()
   }
 
-  let pearlWmaticMarketValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromString(UNI_PEARL_WMATIC_PAIR_BLOCK))) {
-    pearlWmaticMarketValue = getPearlWmaticMarketValue()
-  }
-
   let ocQiMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(QCQI_START_BLOCK))) {
-    ocQiMarketValue = getTreasuryTokenValue(OCQI_CONTRACT)
+    ocQiMarketValue = getTreasuryTokenValue(transaction.blockNumber, OCQI_CONTRACT)
   }
 
   //DYSTOPIA & PENROSE
@@ -480,8 +391,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let penMarketValue = BigDecimal.zero()
   let vlPenMarketValue = BigDecimal.zero()
   let penDystMarketValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromString('28773233'))) {
-    dystMarketValue = getTreasuryTokenValue(DYST_ERC20)
+  if (transaction.blockNumber.gt(BigInt.fromI32(DYST_START_BLOCK))) {
+    dystMarketValue = getTreasuryTokenValue(transaction.blockNumber, DYST_ERC20)
 
     for (let i = 0; i < DYSTOPIA_TRACKED_PAIRS.length; i++) {
       let pair_address = DYSTOPIA_TRACKED_PAIRS[i]
@@ -489,10 +400,10 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       let dystopiaPair = DystPair.bind(pair_address)
       let pairDystBalance = dystopiaPair.try_balanceOf(DAO_WALLET)
       if (pairDystBalance.reverted) continue
-      let pairValue = getDystPairUSD(pairDystBalance.value, pair_address)
+      let pairValue = getDystPairUSD(transaction.blockNumber, pairDystBalance.value, pair_address)
       //then add the Gauge staked LP balance from Dystopia & Penrose
       let dystGaugeLp = loadOrCreateDystopiaGaugeBalance(pair_address)
-      pairValue = pairValue.plus(getDystPairUSD(dystGaugeLp.balance, pair_address))
+      pairValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, dystGaugeLp.balance, pair_address))
 
       //finally, associate with relevant property
       if (pair_address == DYSTOPIA_PAIR_WMATIC_DYST) wMaticDystValue = pairValue
@@ -509,8 +420,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       getDystUsdRate(),
     )
   }
-  if (transaction.blockNumber.gt(BigInt.fromString('29401160'))) {
-    penMarketValue = getTreasuryTokenValue(PEN_ERC20)
+  if (transaction.blockNumber.gt(BigInt.fromI32(PEN_START_BLOCK))) {
+    penMarketValue = getTreasuryTokenValue(transaction.blockNumber, PEN_ERC20)
     let penDyst = ERC20.bind(PENDYST_ERC20)
     let penDystStaking = PenDystRewards.bind(PEN_DYST_REWARD_PROXY)
     let penDystStaking2 = PenrosePartnerRewards.bind(PEN_DYST_PARTNER_REWARDS)
@@ -537,7 +448,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       vlPenMarketValue.toString(),
     ])
   }
-  let stableValue = maiBalance.plus(fraxBalance).plus(daiBalance)
+  let stableValue = maiBalance.plus(daiBalance)
   let stableValueDecimal = toDecimal(stableValue, 18)
     .plus(maiUsdcValueDecimal)
     .plus(maiUsdcQiInvestmentValueDecimal)
@@ -545,11 +456,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(mai3poolInvestmentValueDecimal)
 
   let lpValue = clamMai_value
-    .plus(clamFrax_value)
-    .plus(clamWmatic_value)
     .plus(qiWmaticMarketValue)
     .plus(qiWmaticQiInvestmentMarketValue)
-    .plus(pearlWmaticMarketValue)
     //dystopia
     .plus(wMaticDystValue)
     .plus(clamMaiDystValue)
@@ -578,18 +486,12 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryCurveMai3PoolValue = mai3poolValueDecimal
   protocolMetric.treasuryCurveMai3PoolInvestmentValue = mai3poolInvestmentValueDecimal
   protocolMetric.treasuryMaiMarketValue = clamMai_value.plus(toDecimal(maiBalance, 18))
-  protocolMetric.treasuryFraxMarketValue = clamFrax_value.plus(toDecimal(fraxBalance, 18))
-  protocolMetric.treasuryDaiRiskFreeValue = toDecimal(daiBalance, 18)
-  protocolMetric.treasuryWmaticMarketValue = clamWmatic_value.plus(wmatic_value).plus(pearlWmaticMarketValue)
   protocolMetric.treasuryQiMarketValue = qiMarketValue
-  protocolMetric.treasuryDquickMarketValue = dQuickMarketValue
   protocolMetric.treasuryQiWmaticMarketValue = qiWmaticMarketValue
   protocolMetric.treasuryQiWmaticQiInvestmentMarketValue = qiWmaticQiInvestmentMarketValue
   protocolMetric.treasuryOtterClamQiMarketValue = ocQiMarketValue
   protocolMetric.treasuryTetuQiMarketValue = tetuQiMarketValue
   protocolMetric.treasuryClamMaiPOL = clamMaiPOL
-  protocolMetric.treasuryClamFraxPOL = clamFraxPOL
-  protocolMetric.treasuryClamWmaticPOL = clamWmaticPOL
   protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = wMaticDystValue
   protocolMetric.treasuryDystopiaPairMaiClamMarketValue = clamMaiDystValue
   protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = clamUsdplusDystValue
@@ -621,9 +523,11 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm = setTreasuryAssetMarketValues(transaction, pm)
   pm.totalSupply = getTotalSupply()
   pm.clamCirculatingSupply = getCirculatingSupply(transaction, pm.totalSupply)
-  pm.clamPrice = getClamUsdRate()
+  pm.clamPrice = getClamUsdRate(transaction.blockNumber)
   pm.marketCap = pm.clamCirculatingSupply.times(pm.clamPrice)
-  pm.totalValueLocked = pm.sClamCirculatingSupply.times(pm.clamPrice)
+
+  //TODO: Find values in Pearl Bank &
+  pm.totalValueLocked = pm.clamPrice
 
   //Total burned CLAM
   let burns = loadOrCreateTotalBurnedClamSingleton()
@@ -687,16 +591,13 @@ export function updateGovernanceMetrics(transaction: Transaction): void {
   percentVlPenOwned = percentVlPenOwned.times(BigDecimal.fromString('100'))
 
   //QiDAO veDYST votes
-  let qiDaoVeDystAmt = toDecimal(
-    veDyst.bind(DYSTOPIA_veDYST).balanceOfNFT(BigInt.fromString(QIDAO_veDYST_ERC721_ID)),
-    18,
-  )
+  let qiDaoVeDystAmt = toDecimal(veDyst.bind(DYSTOPIA_veDYST).balanceOfNFT(BigInt.fromI32(QIDAO_veDYST_ERC721_ID)), 18)
   // funnel chart
-  governanceMetric.dystTotalSupply = toDecimal(ERC20.bind(DYST_ERC20).totalSupply(), 18)
-  governanceMetric.veDystTotalSupply = veDystTotalSupply
-  governanceMetric.penDystTotalSupply = toDecimal(penDyst.totalSupply(), 18)
-  governanceMetric.vlPenTotalSupply = toDecimal(vlPenContract.totalSupply(), 18)
-  governanceMetric.otterClamVlPenTotalOwned = vlPenAmt
+  governanceMetric.dystMarketCap = toDecimal(ERC20.bind(DYST_ERC20).totalSupply(), 18).times(getDystUsdRate())
+  governanceMetric.veDystMarketCap = veDystTotalSupply.times(getDystUsdRate())
+  governanceMetric.penDystMarketCap = toDecimal(penDyst.totalSupply(), 18).times(getPenDystUsdRate())
+  governanceMetric.vlPenMarketCap = toDecimal(vlPenContract.totalSupply(), 18).times(getPenUsdRate())
+  governanceMetric.otterClamVlPenMarketCap = vlPenAmt.times(getPenUsdRate())
   // funnel chart metrics
   governanceMetric.otterClamVlPenPercentOwned = percentVlPenOwned
   governanceMetric.otterClamVeDystPercentOwned = percentVeDystWeight

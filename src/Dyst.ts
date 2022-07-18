@@ -24,7 +24,7 @@ export function handleDystTransfer(event: TransferEvent): void {
     entity.value = event.params.value
 
     //Pass entity to TreasuryRevenue
-    updateTreasuryRevenueDystTransfer(entity)
+    updateTreasuryRevenueDystTransfer(event.block.number, entity)
     entity.save()
   }
 }

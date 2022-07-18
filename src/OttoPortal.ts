@@ -19,12 +19,12 @@ export function handleOttoMinted(mint: OttoMinted): void {
   //Cumulative total for burned CLAM
   let burns = loadOrCreateTotalBurnedClamSingleton()
   burns.burnedClam = burns.burnedClam.plus(burnedClam)
-  burns.burnedValueUsd = burns.burnedValueUsd.plus(getClamUsdRate().times(burnedClam))
+  burns.burnedValueUsd = burns.burnedValueUsd.plus(getClamUsdRate(mint.block.number).times(burnedClam))
   burns.save()
 
   //40% of Ottopia CLAM is DAO revenue
   let revenueClam = clamPaid.times(BigDecimal.fromString('0.4'))
-  let clamMarketValue = revenueClam.times(getClamUsdRate())
+  let clamMarketValue = revenueClam.times(getClamUsdRate(mint.block.number))
 
   log.debug('Ottopia transfered {} CLAM to DAO and burned {} CLAM at time {}, txid {}', [
     revenueClam.toString(),

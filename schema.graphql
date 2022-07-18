@@ -41,35 +41,24 @@ type ProtocolMetric @entity {
   id: ID!
   timestamp: BigInt!
   clamCirculatingSupply: BigDecimal!
-  sClamCirculatingSupply: BigDecimal!
   totalSupply: BigDecimal!
   clamPrice: BigDecimal!
   marketCap: BigDecimal!
   totalValueLocked: BigDecimal!
-  treasuryRiskFreeValue: BigDecimal!
   treasuryMarketValue: BigDecimal!
-  nextEpochRebase: BigDecimal!
-  nextDistributedClam: BigDecimal!
   treasuryMaiUsdcRiskFreeValue: BigDecimal!
   treasuryMaiUsdcQiInvestmentRiskFreeValue: BigDecimal!
-  treasuryMaiRiskFreeValue: BigDecimal!
   treasuryMaiMarketValue: BigDecimal!
-  treasuryFraxRiskFreeValue: BigDecimal!
-  treasuryFraxMarketValue: BigDecimal!
-  treasuryDaiRiskFreeValue: BigDecimal!
   treasuryWmaticRiskFreeValue: BigDecimal!
   treasuryWmaticMarketValue: BigDecimal!
   treasuryQiMarketValue: BigDecimal!
   treasuryTetuQiMarketValue: BigDecimal!
   treasuryOtterClamQiMarketValue: BigDecimal!
-  treasuryDquickMarketValue: BigDecimal!
   treasuryQiWmaticMarketValue: BigDecimal!
   treasuryQiWmaticQiInvestmentMarketValue: BigDecimal!
   treasuryCurveMai3PoolValue: BigDecimal!
   treasuryCurveMai3PoolInvestmentValue: BigDecimal!
   treasuryClamMaiPOL: BigDecimal!
-  treasuryClamFraxPOL: BigDecimal!
-  treasuryClamWmaticPOL: BigDecimal!
   totalBurnedClam: BigDecimal!
   totalBurnedClamMarketValue: BigDecimal!
   treasuryDystopiaPairwMaticDystMarketValue: BigDecimal!
@@ -146,7 +135,7 @@ type GovernanceMetric @entity {
   veDystMarketCap: BigDecimal!
   penDystMarketCap: BigDecimal!
   vlPenMarketCap: BigDecimal!
-  otterClamVlPenTotalOwned: BigDecimal!
+  otterClamVlPenMarketCap: BigDecimal!
   otterClamVlPenPercentOwned: BigDecimal!
   otterClamVeDystPercentOwned: BigDecimal!
 }

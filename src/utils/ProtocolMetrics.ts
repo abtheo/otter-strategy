@@ -1,21 +1,20 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { ClamCirculatingSupply } from '../../generated/OtterClamERC20V2/ClamCirculatingSupply'
-import { xTetuQi } from '../../generated/OtterClamERC20V2/xTetuQi'
-import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
-import { OtterClamERC20V2 } from '../../generated/OtterClamERC20V2/OtterClamERC20V2'
-import { OtterLake } from '../../generated/OtterClamERC20V2/OtterLake'
-import { OtterPearlERC20 } from '../../generated/OtterClamERC20V2/OtterPearlERC20'
-import { OtterQiDAOInvestment } from '../../generated/OtterClamERC20V2/OtterQiDAOInvestment'
-import { OtterQuickSwapInvestment } from '../../generated/OtterClamERC20V2/OtterQuickSwapInvestment'
-import { OtterStaking } from '../../generated/OtterClamERC20V2/OtterStaking'
-import { QiFarm } from '../../generated/OtterClamERC20V2/QiFarm'
-import { veDyst } from '../../generated/OtterClamERC20V2/veDyst'
-import { PenLens } from '../../generated/OtterClamERC20V2/PenLens'
-import { UniswapV2Pair } from '../../generated/OtterClamERC20V2/UniswapV2Pair'
-import { CurveMai3poolContract } from '../../generated/OtterClamERC20V2/CurveMai3poolContract'
-import { PenDystRewards } from '../../generated/OtterClamERC20V2/PenDystRewards'
-import { PenrosePartnerRewards } from '../../generated/OtterClamERC20V2/PenrosePartnerRewards'
-import { PenLockerV2 } from '../../generated/OtterClamERC20V2/PenLockerV2'
+import { ClamCirculatingSupply } from '../../generated/OtterQiLocker/ClamCirculatingSupply'
+import { xTetuQi } from '../../generated/OtterQiLocker/xTetuQi'
+import { ERC20 } from '../../generated/OtterQiLocker/ERC20'
+import { OtterClamERC20V2 } from '../../generated/OtterQiLocker/OtterClamERC20V2'
+import { OtterPearlERC20 } from '../../generated/OtterQiLocker/OtterPearlERC20'
+import { OtterQiDAOInvestment } from '../../generated/OtterQiLocker/OtterQiDAOInvestment'
+import { OtterQuickSwapInvestment } from '../../generated/OtterQiLocker/OtterQuickSwapInvestment'
+import { OtterStaking } from '../../generated/OtterQiLocker/OtterStaking'
+import { QiFarm } from '../../generated/OtterQiLocker/QiFarm'
+import { veDyst } from '../../generated/OtterQiLocker/veDyst'
+import { PenLens } from '../../generated/OtterQiLocker/PenLens'
+import { UniswapV2Pair } from '../../generated/OtterQiLocker/UniswapV2Pair'
+import { CurveMai3poolContract } from '../../generated/OtterQiLocker/CurveMai3poolContract'
+import { PenDystRewards } from '../../generated/OtterQiLocker/PenDystRewards'
+import { PenrosePartnerRewards } from '../../generated/OtterQiLocker/PenrosePartnerRewards'
+import { PenLockerV2 } from '../../generated/OtterQiLocker/PenLockerV2'
 import { ProtocolMetric, Transaction, VotePosition, Vote, GovernanceMetric } from '../../generated/schema'
 import {
   CIRCULATING_SUPPLY_CONTRACT,
@@ -96,8 +95,8 @@ import {
   getPenDystUsdRate,
   getPenUsdRate,
 } from './Price'
-import { loadOrCreateTotalBurnedClamSingleton } from '../OtterClamERC20V2'
-import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
+import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
+import { DystPair } from '../../generated/OtterQiLocker/DystPair'
 import { loadOrCreateDystopiaGaugeBalance } from '../DystPair'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
@@ -172,7 +171,6 @@ export function loadOrCreateGovernanceMetric(timestamp: BigInt): GovernanceMetri
     governanceMetric.otterClamVlPenTotalOwned = BigDecimal.zero()
     governanceMetric.otterClamVlPenPercentOwned = BigDecimal.zero()
     governanceMetric.otterClamVeDystPercentOwned = BigDecimal.zero()
-    governanceMetric.totalQiBribeRewardsMarketValue = BigDecimal.zero()
 
     governanceMetric.save()
   }
@@ -616,119 +614,6 @@ function getNextCLAMRebase(): BigDecimal {
   return next_distribution
 }
 
-function getAPY_Rebase(sCLAM: BigDecimal, distributedCLAM: BigDecimal): BigDecimal[] {
-  let nextEpochRebase = distributedCLAM.div(sCLAM).times(BigDecimal.fromString('100'))
-
-  let nextEpochRebase_number = Number.parseFloat(nextEpochRebase.toString())
-  let currentAPY = (Math.pow(nextEpochRebase_number / 100 + 1, 1095) - 1) * 100
-
-  let currentAPYdecimal = BigDecimal.fromString(currentAPY.toString())
-
-  log.debug('next_rebase {}', [nextEpochRebase.toString()])
-  log.debug('current_apy total {}', [currentAPYdecimal.toString()])
-
-  return [currentAPYdecimal, nextEpochRebase]
-}
-
-function getAPY_PearlChest(nextEpochRebase: BigDecimal): BigDecimal[] {
-  let lake = OtterLake.bind(OTTER_LAKE_ADDRESS)
-  let pearl = OtterPearlERC20.bind(PEARL_ERC20)
-  let termsCount = lake.termsCount().toI32()
-  log.debug('pearl chest termsCount {}', [termsCount.toString()])
-  let rebaseRate = Number.parseFloat(nextEpochRebase.toString()) / 100
-  log.debug('pearl chest rebaseRate {}', [rebaseRate.toString()])
-  let epoch = lake.epochs(lake.epoch())
-  let totalNextReward = Number.parseFloat(
-    toDecimal(epoch.value4, 18).toString(), // reward
-  )
-  log.debug('pearl chest totalNextReward {}', [totalNextReward.toString()])
-  let totalBoostPoint = 0.0
-
-  let safeBoostPoint = 0.0
-  let safePearlBalance = 0.0
-  let furryBoostPoint = 0.0
-  let furryPearlBalance = 0.0
-  let stoneBoostPoint = 0.0
-  let stonePearlBalance = 0.0
-  let diamondBoostPoint = 0.0
-  let diamondPearlBalance = 0.0
-
-  for (let i = 0; i < termsCount; i++) {
-    let termAddress = lake.termAddresses(BigInt.fromI32(i))
-    let term = lake.terms(termAddress)
-    let pearlBalance = Number.parseFloat(toDecimal(pearl.balanceOf(term.value0), 18).toString()) // note
-    let boostPoint = (pearlBalance * term.value3) / 100 // multiplier
-    log.debug('pearl chest terms i = {}, boostPoint = {}, lockPeriod = {}, pearlBalance = {}', [
-      i.toString(),
-      boostPoint.toString(),
-      term.value2.toString(),
-      pearlBalance.toString(),
-    ])
-
-    totalBoostPoint += boostPoint
-    if (term.value2.equals(BigInt.fromI32(42))) {
-      // lock days = 14 -> safe hand
-      safeBoostPoint += boostPoint
-      safePearlBalance += pearlBalance
-    }
-    if (term.value2.equals(BigInt.fromI32(84))) {
-      // lock days = 28 -> furry hand
-      furryBoostPoint += boostPoint
-      furryPearlBalance += pearlBalance
-    }
-    if (term.value2.equals(BigInt.fromI32(270))) {
-      // lock days = 90 -> stone hand
-      stoneBoostPoint += boostPoint
-      stonePearlBalance += pearlBalance
-    }
-    if (term.value2.equals(BigInt.fromI32(540))) {
-      // lock days = 189 -> diamond hand
-      diamondBoostPoint += boostPoint
-      diamondPearlBalance += pearlBalance
-    }
-  }
-  log.debug('pearl chest totalBoostPoint = {}', [totalBoostPoint.toString()])
-  log.debug('pearl chest safeBoostPoint = {}, safePearlBalance = {}', [
-    safeBoostPoint.toString(),
-    safePearlBalance.toString(),
-  ])
-  let safeHandAPY =
-    (Math.pow(1 + (safeBoostPoint / totalBoostPoint) * (totalNextReward / safePearlBalance) + rebaseRate, 1095) - 1) *
-    100
-  log.debug('pearl chest safeHandAPY = {}', [safeHandAPY.toString()])
-  log.debug('pearl chest furryBoostPoint = {}, furryPearlBalance = {}', [
-    furryBoostPoint.toString(),
-    furryPearlBalance.toString(),
-  ])
-  let furryHandAPY =
-    (Math.pow(1 + (furryBoostPoint / totalBoostPoint) * (totalNextReward / furryPearlBalance) + rebaseRate, 1095) - 1) *
-    100
-  log.debug('pearl chest furryHandAPY = {}', [furryHandAPY.toString()])
-  log.debug('pearl chest stoneBoostPoint = {}, stonePearlBalance = {}', [
-    stoneBoostPoint.toString(),
-    stonePearlBalance.toString(),
-  ])
-  let stoneHandAPY =
-    (Math.pow(1 + (stoneBoostPoint / totalBoostPoint) * (totalNextReward / stonePearlBalance) + rebaseRate, 1095) - 1) *
-    100
-  log.debug('pearl chest stoneHandAPY = {}', [stoneHandAPY.toString()])
-  log.debug('pearl chest diamonBoostPoint = {}, diamondPearlBalance = {}', [
-    diamondBoostPoint.toString(),
-    diamondPearlBalance.toString(),
-  ])
-  let diamondHandAPY =
-    (Math.pow(1 + (diamondBoostPoint / totalBoostPoint) * (totalNextReward / diamondPearlBalance) + rebaseRate, 1095) -
-      1) *
-    100
-  log.debug('pearl chest diamondHandAPY = {}', [stoneHandAPY.toString()])
-  return [
-    BigDecimal.fromString(safeHandAPY.toString()),
-    BigDecimal.fromString(furryHandAPY.toString()),
-    BigDecimal.fromString(stoneHandAPY.toString()),
-    BigDecimal.fromString(diamondHandAPY.toString()),
-  ]
-}
-
 export function updateProtocolMetrics(transaction: Transaction): void {
   let pm = loadOrCreateProtocolMetric(transaction.timestamp)
 
@@ -739,19 +624,6 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.clamPrice = getClamUsdRate()
   pm.marketCap = pm.clamCirculatingSupply.times(pm.clamPrice)
   pm.totalValueLocked = pm.sClamCirculatingSupply.times(pm.clamPrice)
-
-  // Rebase rewards, APY, rebase
-  // pm.nextDistributedClam = getNextCLAMRebase()
-  // let apy_rebase = getAPY_Rebase(pm.sClamCirculatingSupply, pm.nextDistributedClam)
-  // pm.currentAPY = apy_rebase[0]
-  // pm.nextEpochRebase = apy_rebase[1]
-  // if (transaction.blockNumber.gt(BigInt.fromString(PEARL_CHEST_BLOCK))) {
-  //   let chestAPYs = getAPY_PearlChest(pm.nextEpochRebase)
-  //   pm.safeHandAPY = chestAPYs[0]
-  //   pm.furryHandAPY = chestAPYs[1]
-  //   pm.stoneHandAPY = chestAPYs[2]
-  //   pm.diamondHandAPY = chestAPYs[3]
-  // }
 
   //Total burned CLAM
   let burns = loadOrCreateTotalBurnedClamSingleton()

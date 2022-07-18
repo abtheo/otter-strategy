@@ -10,12 +10,6 @@ import { dataSource } from '@graphprotocol/graph-ts'
 
 /*
 DystPairs are dynamically created from a template in the subgraph.yaml
-Possible LPs:
-1. CLAM/MAI
-2. CLAM/USD+
-3. USDC/MAI
-4. USDC/FRAX
-5. DYST/MATIC
 */
 export function handlePairCreated(event: PairCreatedEvent): void {
   if (!DYSTOPIA_TRACKED_PAIRS.includes(event.params.pair)) return

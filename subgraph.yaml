@@ -3,92 +3,88 @@ schema:
   file: ./schema.graphql
 dataSources:
   # - kind: ethereum/contract
-  #   name: StakedOtterClamERC20V2
+  #   name: OtterClamERC20V2
   #   network: matic
   #   source:
-  #     address: '0xAAc144Dc08cE39Ed92182dd85ded60E5000C9e67'
-  #     abi: StakedOtterClamERC20V2
-  #     startBlock: 21593527
+  #     address: '0xc250e9987a032acac293d838726c511e6e1c029d'
+  #     abi: OtterClamERC20V2
+  #     startBlock: 26991825 #First burn transfer
   #   mapping:
   #     kind: ethereum/events
   #     apiVersion: 0.0.5
   #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - ProtocolMetric
-  #       - LogRebase
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - DystopiaGaugeBalance
-  #       - Vote
-  #       - VotePosition
-  #       - GovernanceMetric
-  #       - TotalBribeReward
-  #     abis:
-  #       - name: StakedOtterClamERC20V2
-  #         file: ./abis/StakedOtterClamERC20V2.json
-  #       - name: OtterClamERC20V2
-  #         file: ./abis/OtterClamERC20V2.json
-  #       - name: OtterBondStakeDepository
-  #         file: ./abis/OtterBondStakeDepository.json
-  #       - name: OtterStaking
-  #         file: ./abis/OtterStaking.json
-  #       - name: OtterStakingDistributor
-  #         file: './abis/OtterStakingDistributor.json'
-  #       - name: ClamCirculatingSupply
-  #         file: ./abis/ClamCirculatingSupply.json
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: dQuick
-  #         file: ./abis/dQuick.json
-  #       - name: xTetuQi
-  #         file: ./abis/xTetuQi.json
-  #       - name: OtterQiDAOInvestment
-  #         file: ./abis/OtterQiDAOInvestment.json
-  #       - name: QiFarm
-  #         file: ./abis/QiFarm.json
-  #       - name: OtterQuickSwapInvestment
-  #         file: ./abis/OtterQuickSwapInvestment.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: OtterLake
-  #         file: ./abis/OtterLake.json
-  #       - name: PearlNote
-  #         file: ./abis/PearlNote.json
-  #       - name: OtterPearlERC20
-  #         file: ./abis/OtterPearlERC20.json
-  #       - name: CurveMai3poolContract
-  #         file: ./abis/CurveMai3poolContract.json        
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json      
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: veDyst
-  #         file: ./abis/veDyst.json
-  #       - name: PenDystRewards
-  #         file: ./abis/PenDystRewards.json
-  #       - name: PenLockerV2
-  #         file: ./abis/PenLockerV2.json
-  #       - name: PenLens
-  #         file: ./abis/PenLens.json
-  #       - name: PenrosePartnerRewards
-  #         file: ./abis/PenrosePartnerRewards.json
-  #     eventHandlers:
-  #       - event: LogRebase(indexed uint256,uint256,uint256)
-  #         handler: handleLogRebase
-  #       - event: Transfer(indexed address,indexed address,uint256)
-  #         handler: handleTransfer
-  #     file: ./src/StakedOtterClamERC20V2.ts
+      # entities:
+      #   - Transaction
+      #   - ProtocolMetric
+      #   - LogRebase
+      #   - Transfer
+      #   - TreasuryRevenue
+      #   - DystopiaGaugeBalance
+      #   - Vote
+      #   - VotePosition
+      #   - GovernanceMetric
+      #   - TotalBurnedClam
+      # abis:
+      #   - name: OtterQiLocker
+      #     file: ./abis/OtterQiLocker.json
+      #   - name: OtterClamERC20V2
+      #     file: ./abis/OtterClamERC20V2.json
+      #   - name: OtterBondStakeDepository
+      #     file: ./abis/OtterBondStakeDepository.json
+      #   - name: OtterStaking
+      #     file: ./abis/OtterStaking.json
+      #   - name: OtterStakingDistributor
+      #     file: './abis/OtterStakingDistributor.json'
+      #   - name: ClamCirculatingSupply
+      #     file: ./abis/ClamCirculatingSupply.json
+      #   - name: ERC20
+      #     file: ./abis/ERC20.json
+      #   - name: UniswapV2Pair
+      #     file: ./abis/UniswapV2Pair.json
+      #   - name: dQuick
+      #     file: ./abis/dQuick.json
+      #   - name: xTetuQi
+      #     file: ./abis/xTetuQi.json
+      #   - name: OtterQiDAOInvestment
+      #     file: ./abis/OtterQiDAOInvestment.json
+      #   - name: QiFarm
+      #     file: ./abis/QiFarm.json
+      #   - name: OtterQuickSwapInvestment
+      #     file: ./abis/OtterQuickSwapInvestment.json
+      #   - name: AggregatorV3InterfaceABI
+      #     file: ./abis/AggregatorV3InterfaceABI.json
+      #   - name: PearlNote
+      #     file: ./abis/PearlNote.json
+      #   - name: OtterPearlERC20
+      #     file: ./abis/OtterPearlERC20.json
+      #   - name: CurveMai3poolContract
+      #     file: ./abis/CurveMai3poolContract.json        
+      #   - name: Dyst
+      #     file: ./abis/Dyst.json      
+      #   - name: DystPair
+      #     file: ./abis/DystPair.json
+      #   - name: veDyst
+      #     file: ./abis/veDyst.json
+      #   - name: PenDystRewards
+      #     file: ./abis/PenDystRewards.json
+      #   - name: PenLockerV2
+      #     file: ./abis/PenLockerV2.json
+      #   - name: PenLens
+      #     file: ./abis/PenLens.json
+      #   - name: PenrosePartnerRewards
+      #     file: ./abis/PenrosePartnerRewards.json
+      # eventHandlers:
+      #   - event: Transfer(indexed address,indexed address,uint256)
+      #     handler: handleTransfer
+      # file: ./src/OtterClamERC20V2.ts
 
   - kind: ethereum/contract
-    name: OtterClamERC20V2
+    name: OtterQiLocker
     network: matic
     source:
-      address: '0xc250e9987a032acac293d838726c511e6e1c029d'
-      abi: OtterClamERC20V2
-      startBlock: 26991825 #First burn transfer
+      address: '0x69f6c4Fa150F9F0b3037612CF8FadDAeDbd46Bb8'
+      abi: OtterQiLocker
+      startBlock: 25352622
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -104,9 +100,11 @@ dataSources:
         - VotePosition
         - GovernanceMetric
         - TotalBurnedClam
+        - Harvest
+        - HarvestStaking
       abis:
-        - name: StakedOtterClamERC20V2
-          file: ./abis/StakedOtterClamERC20V2.json
+        - name: OtterQiLocker
+          file: ./abis/OtterQiLocker.json
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
         - name: OtterBondStakeDepository
@@ -133,8 +131,6 @@ dataSources:
           file: ./abis/OtterQuickSwapInvestment.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
-        - name: OtterLake
-          file: ./abis/OtterLake.json
         - name: PearlNote
           file: ./abis/PearlNote.json
         - name: OtterPearlERC20
@@ -156,98 +152,11 @@ dataSources:
         - name: PenrosePartnerRewards
           file: ./abis/PenrosePartnerRewards.json
       eventHandlers:
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-      file: ./src/OtterClamERC20V2.ts
-
-  - kind: ethereum/contract
-    name: OtterLake
-    network: matic
-    source:
-      address: '0xc67aBdA25D0421FE9Dc1afd64183b179A426a256'
-      abi: OtterLake
-      startBlock: 23553352
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      entities:
-        - Term
-      abis:
-        - name: OtterLake
-          file: ./abis/OtterLake.json
-      eventHandlers:
-        - event: TermAdded(indexed address,uint256,uint256,uint16)
-          handler: handleTermAdded
-        - event: TermUpdated(indexed address,uint8,uint256)
-          handler: handleTermUpdated
-        - event: TermRemoved(indexed address)
-          handler: handleTermRemoved
-        - event: TermDisabled(indexed address)
-          handler: handleTermDisabled
-        - event: Locked(indexed address,indexed address,indexed uint256,uint256)
-          handler: handleLocked
-        - event: Redeemed(indexed address,indexed address,indexed uint256,uint256)
-          handler: handleRedeemed
-      file: ./src/OtterLake.ts
-
-  - kind: ethereum/contract
-    name: OtterQiLocker
-    network: matic
-    source:
-      address: '0x69f6c4Fa150F9F0b3037612CF8FadDAeDbd46Bb8'
-      abi: OtterQiLocker
-      startBlock: 25352622
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      entities:
-        - Transaction
-        - Harvest
-        - HarvestStaking
-        - TreasuryRevenue
-      abis:
-        - name: OtterQiLocker
-          file: ./abis/OtterQiLocker.json
-        - name: UniswapV2Pair
-          file: ./abis/UniswapV2Pair.json
-        - name: AggregatorV3InterfaceABI
-          file: ./abis/AggregatorV3InterfaceABI.json
-      eventHandlers:
         - event: Harvest(uint256)
           handler: handleHarvest
         - event: HarvestStaking(indexed uint256,uint256)
           handler: handleHarvestStaking
       file: ./src/OtterQiLocker.ts
-
-  # - kind: ethereum/contract
-  #   name: Qi
-  #   network: matic
-  #   source:
-  #     address: '0x580A84C73811E1839F75d86d75d88cCa0c241fF4'
-  #     abi: Qi
-  #     startBlock: 24088468
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - TotalBribeReward
-  #     abis:
-  #       - name: Qi
-  #         file: ./abis/Qi.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #     eventHandlers:
-  #       - event: Transfer(indexed address,indexed address,uint256)
-  #         handler: handleQiTransfer
-  #     file: ./src/Qi.ts
 
   - kind: ethereum/contract
     name: Dyst
@@ -473,6 +382,27 @@ dataSources:
         - event: Withdraw(address,uint256)
           handler: handleWithdraw
       file: ./src/ClamPond.ts
+
+  - kind: ethereum/contract
+    name: OttoPortal
+    network: matic
+    source:
+      address: '0xF262da77Bc32D4ED026CC4a110b089113651186C'
+      abi: OttoPortal
+      startBlock: 26102395
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - OttoMinted
+      abis:
+        - name: OttoPortal
+          file: ./abis/OttoPortal.json
+      eventHandlers:
+        - event: OttoMinted(indexed address,indexed address,uint256)
+          handler: handleOttoMinted
+      file: ./src/OttoPortal.ts
 
 templates: 
   - kind: ethereum/contract

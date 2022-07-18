@@ -1,15 +1,7 @@
 import { toDecimal } from './Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { dayFromTimestamp } from './Dates'
-import {
-  TreasuryRevenue,
-  Harvest,
-  Transfer,
-  Buyback,
-  TotalBuybacks,
-  TotalBribeReward,
-  RevenueTracker,
-} from '../../generated/schema'
+import { TreasuryRevenue, Harvest, Transfer, Buyback, TotalBuybacks, RevenueTracker } from '../../generated/schema'
 import {
   getClamUsdRate,
   getDystUsdRate,
@@ -29,9 +21,8 @@ import {
   UNI_QI_WMATIC_PAIR,
   OTTER_QI_LOCKER,
 } from './Constants'
-import { UniswapV2Pair } from '../../generated/OtterClamERC20V2/UniswapV2Pair'
-import { OtterQiLocker } from '../../generated/OtterQiLocker/OtterQiLocker'
-import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
+import { UniswapV2Pair } from '../../generated/OtterQiLocker/UniswapV2Pair'
+import { ERC20 } from '../../generated/OtterQiLocker/ERC20'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
   let ts = dayFromTimestamp(timestamp)
@@ -91,18 +82,28 @@ export function updateTreasuryRevenueQiChange(harvest: Harvest): void {
   //get all Qi balances
   let qi = ERC20.bind(QI_ERC20).balanceOf(TREASURY_ADDRESS)
   let ocqiLocker = ERC20.bind(OTTER_QI_LOCKER).balanceOf(TREASURY_ADDRESS)
-  let qi_matic_lp_tokens = UniswapV2Pair.bind(UNI_QI_WMATIC_PAIR).balanceOf(TREASURY_ADDRESS)
+  let qiMaticLp = UniswapV2Pair.bind(UNI_QI_WMATIC_PAIR)
+  let qiMaticLpTokens = qiMaticLp.balanceOf(TREASURY_ADDRESS)
   let qiTotal = qi.plus(ocqiLocker)
 
   //set current metrics for next time
   let revenueTracker = loadOrCreateRevenueTracker(harvest.timestamp)
   revenueTracker.qiAmount = qiTotal
-  revenueTracker.qiMaticLpTokens = qi_matic_lp_tokens
+  revenueTracker.qiMaticLpTokens = qiMaticLpTokens
   revenueTracker.save()
 
   //find difference from previous revenue tracker
   let previousRevenueTracker = loadOrCreateRevenueTracker(harvest.timestamp.minus(BigInt.fromString('86400')))
   let qiDiff = qiTotal.minus(previousRevenueTracker.qiAmount)
+  //things get weird if we move Qi into the liquidity pool...
+  if (qiMaticLpTokens.gt(previousRevenueTracker.qiMaticLpTokens)) {
+    let newLp = qiMaticLpTokens.minus(previousRevenueTracker.qiMaticLpTokens)
+    let newLpQiAmount = newLp
+      .div(qiMaticLp.totalSupply())
+      .times(qiMaticLp.getReserves().value1)
+      .times(BigInt.fromString('2'))
+    qiDiff.plus(newLpQiAmount)
+  }
 
   //update TreasuryRevenue
   let treasuryRevenue = loadOrCreateTreasuryRevenue(harvest.timestamp)

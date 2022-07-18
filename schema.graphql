@@ -67,11 +67,6 @@ type ProtocolMetric @entity {
   treasuryQiWmaticQiInvestmentMarketValue: BigDecimal!
   treasuryCurveMai3PoolValue: BigDecimal!
   treasuryCurveMai3PoolInvestmentValue: BigDecimal!
-  currentAPY: BigDecimal!
-  safeHandAPY: BigDecimal!
-  furryHandAPY: BigDecimal!
-  stoneHandAPY: BigDecimal!
-  diamondHandAPY: BigDecimal!
   treasuryClamMaiPOL: BigDecimal!
   treasuryClamFraxPOL: BigDecimal!
   treasuryClamWmaticPOL: BigDecimal!
@@ -147,31 +142,13 @@ type GovernanceMetric @entity {
   id: ID!
   timestamp: BigInt!
   qiDaoVeDystAmt: BigDecimal!
-  dystTotalSupply: BigDecimal!
-  veDystTotalSupply: BigDecimal!
-  penDystTotalSupply: BigDecimal!
-  vlPenTotalSupply: BigDecimal!
+  dystMarketCap: BigDecimal!
+  veDystMarketCap: BigDecimal!
+  penDystMarketCap: BigDecimal!
+  vlPenMarketCap: BigDecimal!
   otterClamVlPenTotalOwned: BigDecimal!
   otterClamVlPenPercentOwned: BigDecimal!
   otterClamVeDystPercentOwned: BigDecimal!
-}
-
-type Term @entity {
-  id: ID!
-  note: Bytes!
-  minLockAmount: BigInt!
-  lockPeriod: BigInt!
-  multiplier: Int!
-  enabled: Boolean!
-}
-
-type NoteToken @entity {
-  id: ID!
-  tokenId: BigInt!
-  note: Bytes!
-  user: Bytes!
-  amount: BigInt!
-  updatedAt: BigInt!
 }
 
 type CumulativeValues @entity {
@@ -210,7 +187,6 @@ type PearlBankMetric @entity {
 
 type RevenueTracker @entity {
   id: ID!
-
   qiAmount: BigInt!
   qiMaticLpTokens: BigInt!
 }

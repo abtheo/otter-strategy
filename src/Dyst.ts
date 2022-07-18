@@ -1,4 +1,4 @@
-import { Transfer as TransferEvent } from '../generated/OtterClamERC20V2/OtterClamERC20V2'
+import { Transfer as TransferEvent } from '../generated/Dyst/Dyst'
 import { Address, log } from '@graphprotocol/graph-ts'
 import { Transfer } from '../generated/schema'
 import { loadOrCreateTransaction } from './utils/Transactions'

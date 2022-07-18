@@ -11,12 +11,6 @@ Therefore we need to track withdraws and Transfers made by the DAO wallet
 in a cumulative counter.
 
 DystPairs are dynamically created from a template in the subgraph.yaml
-Possible LPs:
-1. CLAM/MAI
-2. CLAM/USD+
-3. USDC/MAI
-4. USDC/FRAX
-5. DYST/MATIC
 */
 export function handleTransfer(event: TransferEvent): void {
   //only track DAO txs

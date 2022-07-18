@@ -178,3 +178,11 @@ type RevenueTracker @entity {
   qiAmount: BigInt!
   qiMaticLpTokens: BigInt!
 }
+
+type BuyProduct @entity {
+  id: ID!
+  product_id: BigInt!
+  price: BigDecimal!
+  amount: BigInt!
+  totalClam: BigDecimal!
+}

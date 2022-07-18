@@ -387,10 +387,6 @@ export class ProtocolMetric extends Entity {
     this.set("totalValueLocked", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("treasuryMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
-      "treasuryMaiUsdcRiskFreeValue",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
-    this.set(
       "treasuryMaiUsdcQiInvestmentRiskFreeValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
@@ -564,15 +560,6 @@ export class ProtocolMetric extends Entity {
 
   set treasuryMarketValue(value: BigDecimal) {
     this.set("treasuryMarketValue", Value.fromBigDecimal(value));
-  }
-
-  get treasuryMaiUsdcRiskFreeValue(): BigDecimal {
-    let value = this.get("treasuryMaiUsdcRiskFreeValue");
-    return value!.toBigDecimal();
-  }
-
-  set treasuryMaiUsdcRiskFreeValue(value: BigDecimal) {
-    this.set("treasuryMaiUsdcRiskFreeValue", Value.fromBigDecimal(value));
   }
 
   get treasuryMaiUsdcQiInvestmentRiskFreeValue(): BigDecimal {
@@ -1714,5 +1701,79 @@ export class RevenueTracker extends Entity {
 
   set qiMaticLpTokens(value: BigInt) {
     this.set("qiMaticLpTokens", Value.fromBigInt(value));
+  }
+}
+
+export class BuyProduct extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("product_id", Value.fromBigInt(BigInt.zero()));
+    this.set("price", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("totalClam", Value.fromBigDecimal(BigDecimal.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save BuyProduct entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save BuyProduct entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("BuyProduct", id.toString(), this);
+    }
+  }
+
+  static load(id: string): BuyProduct | null {
+    return changetype<BuyProduct | null>(store.get("BuyProduct", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get product_id(): BigInt {
+    let value = this.get("product_id");
+    return value!.toBigInt();
+  }
+
+  set product_id(value: BigInt) {
+    this.set("product_id", Value.fromBigInt(value));
+  }
+
+  get price(): BigDecimal {
+    let value = this.get("price");
+    return value!.toBigDecimal();
+  }
+
+  set price(value: BigDecimal) {
+    this.set("price", Value.fromBigDecimal(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get totalClam(): BigDecimal {
+    let value = this.get("totalClam");
+    return value!.toBigDecimal();
+  }
+
+  set totalClam(value: BigDecimal) {
+    this.set("totalClam", Value.fromBigDecimal(value));
   }
 }

@@ -1,34 +1,31 @@
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { OttoMinted } from '../generated/OttoPortal/OttoPortal'
+import { BuyProduct as BuyProductEvent } from '../generated/OttopiaStore/OttopiaStore'
 import { loadOrCreateTotalBurnedClamSingleton } from './utils/Burned'
+import { toDecimal } from './utils/Decimals'
 import { getClamUsdRate } from './utils/Price'
-import { updateProtocolMetrics } from './utils/ProtocolMetrics'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { loadOrCreateTreasuryRevenue } from './utils/TreasuryRevenue'
 import { BuyProduct } from '../generated/schema'
 
-export function handleOttoMinted(mint: OttoMinted): void {
-  let transaction = loadOrCreateTransaction(mint.transaction, mint.block)
-  updateProtocolMetrics(transaction)
+export function handleBuyProduct(buy: BuyProductEvent): void {
+  //Save the buy transaction
+  let transaction = loadOrCreateTransaction(buy.transaction, buy.block)
+  let entity = new BuyProduct(transaction.id)
+  entity.product_id = buy.params.id
+  entity.price = toDecimal(buy.params.price, 9)
+  entity.amount = buy.params.amount
 
-  let clamPerPortal = BigDecimal.fromString('50')
-  let clamPaid = mint.params.quantity.toBigDecimal().times(clamPerPortal)
+  let clamPaid = toDecimal(buy.params.amount.times(buy.params.price), 9)
+  entity.totalClam = clamPaid
 
-  //track the Buy event for NFT sales feed
-  let buy = new BuyProduct(transaction.id)
-  buy.price = clamPerPortal
-  buy.product_id = BigInt.fromI32('-1')
-  buy.totalClam = clamPaid
-  buy.amount = mint.params.quantity
-  buy.save()
-
+  entity.save()
   //10% of Ottopia CLAM is burned
   let burnedClam = clamPaid.times(BigDecimal.fromString('0.1'))
 
   //Cumulative total for burned CLAM
   let burns = loadOrCreateTotalBurnedClamSingleton()
   burns.burnedClam = burns.burnedClam.plus(burnedClam)
-  burns.burnedValueUsd = burns.burnedValueUsd.plus(getClamUsdRate(mint.block.number).times(burnedClam))
+  burns.burnedValueUsd = burns.burnedValueUsd.plus(getClamUsdRate(buy.block.number).times(burnedClam))
   burns.save()
 
   //40% of Ottopia CLAM is DAO revenue

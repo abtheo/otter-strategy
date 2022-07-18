@@ -37,6 +37,11 @@ function findTokenPrice(exchange: Exchange, inTokenAddress: Address, outTokenAdd
   let inDecimals = inToken.decimals()
   let outDecimals = outToken.decimals()
   let price = exchange.getAmountOut(BigInt.fromI64(<i64>Math.pow(10, inDecimals)), inTokenAddress, outTokenAddress)
+  log.debug('Exchange rate for {} to {} is {}', [
+    inTokenAddress.toHexString(),
+    outTokenAddress.toHexString(),
+    price.toString(),
+  ])
   return toDecimal(price, outDecimals)
 }
 
@@ -152,17 +157,4 @@ export function findPrice(blockNumber: BigInt, address: Address): BigDecimal {
 
   log.warning('Attempted to find price of unknown token address {}', [address.toHexString()])
   return BigDecimal.zero()
-}
-
-export function getPairWMATIC(blockNumber: BigInt, lp_amount: BigInt, pair_adress: Address): BigDecimal {
-  let pair = UniswapV2Pair.bind(pair_adress)
-  let total_lp = pair.totalSupply()
-  let lp_token_0 = pair.getReserves().value1
-  let lp_token_1 = pair.getReserves().value0
-  let ownedLP = toDecimal(lp_amount, 18).div(toDecimal(total_lp, 18))
-  let clam_value = toDecimal(lp_token_0, 9).times(getClamUsdRate(blockNumber))
-  let matic_value = toDecimal(lp_token_1, 18).times(getwMaticUsdRate())
-  let total_lp_usd = clam_value.plus(matic_value)
-
-  return ownedLP.times(total_lp_usd)
 }

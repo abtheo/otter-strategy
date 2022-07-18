@@ -17,7 +17,7 @@ export function handleOttoMinted(mint: OttoMinted): void {
   //track the Buy event for NFT sales feed
   let buy = new BuyProduct(transaction.id)
   buy.price = clamPerPortal
-  buy.product_id = BigInt.fromI32('-1')
+  buy.product_id = BigInt.fromI32(-1)
   buy.totalClam = clamPaid
   buy.amount = mint.params.quantity
   buy.save()
@@ -32,10 +32,11 @@ export function handleOttoMinted(mint: OttoMinted): void {
   burns.save()
 
   //40% of Ottopia CLAM is DAO revenue
-  let revenueClam = clamPaid.times(BigDecimal.fromString('0.4'))
+  //50% is Prize Pool
+  let revenueClam = clamPaid.times(BigDecimal.fromString('0.9'))
   let clamMarketValue = revenueClam.times(getClamUsdRate(mint.block.number))
 
-  log.debug('Ottopia transfered {} CLAM to DAO and burned {} CLAM at time {}, txid {}', [
+  log.debug('Ottopia transfered {} CLAM to DAO+PrizePool and burned {} CLAM at time {}, txid {}', [
     revenueClam.toString(),
     burnedClam.toString(),
     mint.block.timestamp.toString(),

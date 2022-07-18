@@ -81,7 +81,6 @@ import { toDecimal } from './Decimals'
 import {
   getClamUsdRate,
   getPairUSD,
-  getPairWMATIC,
   getwMaticUsdRate,
   getDystUsdRate,
   getDystPairUSD,
@@ -316,12 +315,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let clamMaiBalance = clamMaiPair.balanceOf(TREASURY_ADDRESS)
   let dQuickMarketValue = BigDecimal.zero()
 
-  if (transaction.blockNumber.gt(BigInt.fromString(UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR_BLOCK))) {
-    let pair = OtterQuickSwapInvestment.bind(UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR)
-    let clamMaiInvestmentBalance = pair.balanceOf(TREASURY_ADDRESS)
-    clamMaiBalance = clamMaiBalance.plus(clamMaiInvestmentBalance)
-  }
-
   let clamMaiTotalLP = toDecimal(clamMaiPair.totalSupply(), 18)
   let clamMaiPOL = toDecimal(clamMaiBalance, 18)
     .div(clamMaiTotalLP)
@@ -518,7 +511,7 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.clamPrice = getClamUsdRate(transaction.blockNumber)
   pm.marketCap = pm.clamCirculatingSupply.times(pm.clamPrice)
 
-  //TODO: Find values in Pearl Bank &
+  //TODO: Find values in Pearl Bank & Clam Pond
   pm.totalValueLocked = pm.clamPrice
 
   //Total burned CLAM

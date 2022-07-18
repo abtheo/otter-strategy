@@ -29,17 +29,18 @@ export function handleBuyProduct(buy: BuyProductEvent): void {
   burns.save()
 
   //40% of Ottopia CLAM is DAO revenue
-  let revenueClam = clamPaid.times(BigDecimal.fromString('0.4'))
-  let clamMarketValue = revenueClam.times(getClamUsdRate(mint.block.number))
+  //50% is Prize Pool
+  let revenueClam = clamPaid.times(BigDecimal.fromString('0.9'))
+  let clamMarketValue = revenueClam.times(getClamUsdRate(buy.block.number))
 
-  log.debug('Ottopia transfered {} CLAM to DAO and burned {} CLAM at time {}, txid {}', [
+  log.debug('Ottopia transfered {} CLAM to DAO+PrizePool and burned {} CLAM at time {}, txid {}', [
     revenueClam.toString(),
     burnedClam.toString(),
-    mint.block.timestamp.toString(),
-    mint.transaction.hash.toHexString(),
+    buy.block.timestamp.toString(),
+    buy.transaction.hash.toHexString(),
   ])
 
-  let revenue = loadOrCreateTreasuryRevenue(mint.block.timestamp)
+  let revenue = loadOrCreateTreasuryRevenue(buy.block.timestamp)
 
   revenue.ottopiaClamAmount = revenue.ottopiaClamAmount.plus(revenueClam)
   revenue.ottopiaMarketValue = revenue.ottopiaMarketValue.plus(clamMarketValue)

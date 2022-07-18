@@ -6,6 +6,7 @@ import { updateTreasuryRevenueQiChange } from './utils/TreasuryRevenue'
 import { Harvest } from '../generated/schema'
 
 import { loadOrCreateTransaction } from './utils/Transactions'
+import { updateProtocolMetrics } from './utils/ProtocolMetrics'
 
 export function handleHarvest(event: HarvestEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
@@ -14,6 +15,7 @@ export function handleHarvest(event: HarvestEvent): void {
   entity.timestamp = transaction.timestamp
   entity.amount = event.params.amount
   updateTreasuryRevenueQiChange(event.block.number, entity)
+  updateProtocolMetrics(transaction)
   entity.save()
 }
 
@@ -24,5 +26,6 @@ export function handleHarvestStaking(event: HarvestStakingEvent): void {
   entity.timestamp = transaction.timestamp
   entity.amount = event.params.amount
   updateTreasuryRevenueQiChange(event.block.number, entity)
+  updateProtocolMetrics(transaction)
   entity.save()
 }

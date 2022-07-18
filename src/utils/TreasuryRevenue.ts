@@ -20,9 +20,11 @@ import {
   TREASURY_ADDRESS,
   UNI_QI_WMATIC_PAIR,
   OTTER_QI_LOCKER,
+  OCQI_CONTRACT,
 } from './Constants'
 import { UniswapV2Pair } from '../../generated/OtterQiLocker/UniswapV2Pair'
 import { ERC20 } from '../../generated/OtterQiLocker/ERC20'
+import { updateProtocolMetrics } from './ProtocolMetrics'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
   let ts = dayFromTimestamp(timestamp)
@@ -61,7 +63,7 @@ export function updateTreasuryRevenueQiChange(blockNumber: BigInt, harvest: Harv
   //get Qi balances
   let maybe_qi = ERC20.bind(QI_ERC20).try_balanceOf(TREASURY_ADDRESS)
   let qi = maybe_qi.reverted ? BigInt.zero() : maybe_qi.value
-  let maybe_ocqiLocker = ERC20.bind(OTTER_QI_LOCKER).try_balanceOf(TREASURY_ADDRESS)
+  let maybe_ocqiLocker = ERC20.bind(OCQI_CONTRACT).try_balanceOf(TREASURY_ADDRESS)
   let ocqiLocker = maybe_ocqiLocker.reverted ? BigInt.zero() : maybe_ocqiLocker.value
   let qiTotal = qi.plus(ocqiLocker)
 
@@ -91,6 +93,7 @@ export function updateTreasuryRevenueQiChange(blockNumber: BigInt, harvest: Harv
       .div(qiMaticLp.totalSupply())
       .times(qiMaticLp.getReserves().value1)
       .times(BigInt.fromString('2'))
+    log.debug('MATIC-Qi LP added', [])
     qiDiff.plus(newLpQiAmount)
   }
 

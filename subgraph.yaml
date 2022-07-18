@@ -125,9 +125,9 @@ dataSources:
     name: OttopiaStore
     network: matic
     source:
-      address: '0xF262da77Bc32D4ED026CC4a110b089113651186C'
+      address: '0xc1b43121e0946adef2ad169d6cb994064e275085'
       abi: OttopiaStore
-      startBlock: 26102395
+      startBlock: 27752376
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -158,81 +158,81 @@ dataSources:
           handler: handleBuyProduct
       file: ./src/OttopiaStore.ts
 
-  - kind: ethereum/contract
-    name: Dyst
-    network: matic
-    source:
-      address: '0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb'
-      abi: Dyst
-      startBlock: 28347518
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      entities:
-        - Transaction
-        - Transfer
-        - TreasuryRevenue
-      abis:
-        - name: Dyst
-          file: ./abis/Dyst.json
-        #====== getPrice() required contracts======
-        - name: ERC20
-          file: ./abis/ERC20.json
-        - name: UniswapV2Pair
-          file: ./abis/UniswapV2Pair.json
-        - name: AggregatorV3InterfaceABI
-          file: ./abis/AggregatorV3InterfaceABI.json
-        - name: DystPair
-          file: ./abis/DystPair.json
-        - name: DystPairFactory
-          file: ./abis/DystPairFactory.json
-        - name: DystRouter
-          file: ./abis/DystRouter.json
-        - name: UniswapV2Router02
-          file: ./abis/UniswapV2Router02.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleDystTransfer
-      file: ./src/Dyst.ts
+  # - kind: ethereum/contract
+  #   name: Dyst
+  #   network: matic
+  #   source:
+  #     address: '0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb'
+  #     abi: Dyst
+  #     startBlock: 28347518
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.5
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - Transaction
+  #       - Transfer
+  #       - TreasuryRevenue
+  #     abis:
+  #       - name: Dyst
+  #         file: ./abis/Dyst.json
+  #       #====== getPrice() required contracts======
+  #       - name: ERC20
+  #         file: ./abis/ERC20.json
+  #       - name: UniswapV2Pair
+  #         file: ./abis/UniswapV2Pair.json
+  #       - name: AggregatorV3InterfaceABI
+  #         file: ./abis/AggregatorV3InterfaceABI.json
+  #       - name: DystPair
+  #         file: ./abis/DystPair.json
+  #       - name: DystPairFactory
+  #         file: ./abis/DystPairFactory.json
+  #       - name: DystRouter
+  #         file: ./abis/DystRouter.json
+  #       - name: UniswapV2Router02
+  #         file: ./abis/UniswapV2Router02.json
+  #     eventHandlers:
+  #       - event: Transfer(indexed address,indexed address,uint256)
+  #         handler: handleDystTransfer
+  #     file: ./src/Dyst.ts
 
-  - kind: ethereum/contract
-    name: Pen
-    network: matic
-    source:
-      address: '0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb'
-      abi: Pen
-      startBlock: 28829513
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      entities:
-        - Transaction
-        - Transfer
-        - TreasuryRevenue
-      abis:
-        - name: Pen
-          file: ./abis/Pen.json
-        #====== getPrice() required contracts======
-        - name: ERC20
-          file: ./abis/ERC20.json
-        - name: UniswapV2Pair
-          file: ./abis/UniswapV2Pair.json
-        - name: AggregatorV3InterfaceABI
-          file: ./abis/AggregatorV3InterfaceABI.json
-        - name: DystPair
-          file: ./abis/DystPair.json
-        - name: DystPairFactory
-          file: ./abis/DystPairFactory.json
-        - name: DystRouter
-          file: ./abis/DystRouter.json
-        - name: UniswapV2Router02
-          file: ./abis/UniswapV2Router02.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handlePenTransfer
-      file: ./src/Pen.ts
+  # - kind: ethereum/contract
+  #   name: Pen
+  #   network: matic
+  #   source:
+  #     address: '0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb'
+  #     abi: Pen
+  #     startBlock: 28829513
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.5
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - Transaction
+  #       - Transfer
+  #       - TreasuryRevenue
+  #     abis:
+  #       - name: Pen
+  #         file: ./abis/Pen.json
+  #       #====== getPrice() required contracts======
+  #       - name: ERC20
+  #         file: ./abis/ERC20.json
+  #       - name: UniswapV2Pair
+  #         file: ./abis/UniswapV2Pair.json
+  #       - name: AggregatorV3InterfaceABI
+  #         file: ./abis/AggregatorV3InterfaceABI.json
+  #       - name: DystPair
+  #         file: ./abis/DystPair.json
+  #       - name: DystPairFactory
+  #         file: ./abis/DystPairFactory.json
+  #       - name: DystRouter
+  #         file: ./abis/DystRouter.json
+  #       - name: UniswapV2Router02
+  #         file: ./abis/UniswapV2Router02.json
+  #     eventHandlers:
+  #       - event: Transfer(indexed address,indexed address,uint256)
+  #         handler: handlePenTransfer
+  #     file: ./src/Pen.ts
 
   - kind: ethereum/contract
     name: DeprecatedOtterBuybacker

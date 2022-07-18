@@ -6,6 +6,7 @@ import { CLAM_ERC20, PEARL_BANK } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
 import { loadCumulativeValues } from './utils/CumulativeValues'
 import { getClamUsdRate } from './utils/Price'
+import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
 export function handlePayout(payout: Payout): void {
   let clam = OtterClamERC20V2.bind(CLAM_ERC20)
@@ -14,6 +15,9 @@ export function handlePayout(payout: Payout): void {
   let cumulativeValues = loadCumulativeValues()
   let metric = loadOrCreatePearlBankMetric(payout.block.timestamp)
   let clamPrice = getClamUsdRate(payout.block.number)
+
+  let maybe_totalStaked = pearlBank.try_totalStaked()
+  let totalStaked = maybe_totalStaked.reverted ? BigInt.zero() : maybe_totalStaked.value
   let stakedMarketValue = clamPrice.times(toDecimal(pearlBank.totalStaked()))
 
   // update cumulative values

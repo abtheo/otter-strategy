@@ -374,6 +374,55 @@ export class Buyback extends Entity {
   }
 }
 
+export class TotalBribeReward extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set(
+      "qiBribeRewardsMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save TotalBribeReward entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save TotalBribeReward entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("TotalBribeReward", id.toString(), this);
+    }
+  }
+
+  static load(id: string): TotalBribeReward | null {
+    return changetype<TotalBribeReward | null>(
+      store.get("TotalBribeReward", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get qiBribeRewardsMarketValue(): BigDecimal {
+    let value = this.get("qiBribeRewardsMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set qiBribeRewardsMarketValue(value: BigDecimal) {
+    this.set("qiBribeRewardsMarketValue", Value.fromBigDecimal(value));
+  }
+}
+
 export class ProtocolMetric extends Entity {
   constructor(id: string) {
     super();

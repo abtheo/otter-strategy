@@ -173,12 +173,6 @@ type PearlBankMetric @entity {
   timestamp: BigInt!
 }
 
-type RevenueTracker @entity {
-  id: ID!
-  qiAmount: BigInt!
-  qiMaticLpTokens: BigInt!
-}
-
 type BuyProduct @entity {
   id: ID!
   product_id: BigInt!

@@ -55,55 +55,35 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
   return treasuryRevenue as TreasuryRevenue
 }
 
-/* 
-Whenever one of the (trackable) Qi contracts is harvested,
-calculate the difference in our Qi position since the last timestep
-*/
-export function updateTreasuryRevenueQiChange(blockNumber: BigInt, harvest: Harvest): void {
-  //get Qi balances
-  let maybe_qi = ERC20.bind(QI_ERC20).try_balanceOf(TREASURY_ADDRESS)
-  let qi = maybe_qi.reverted ? BigInt.zero() : maybe_qi.value
-  let maybe_ocqiLocker = ERC20.bind(OCQI_CONTRACT).try_balanceOf(TREASURY_ADDRESS)
-  let ocqiLocker = maybe_ocqiLocker.reverted ? BigInt.zero() : maybe_ocqiLocker.value
-  let qiTotal = qi.plus(ocqiLocker)
-
-  //get qi-MATIC LP balance
-  let qiMaticLp = UniswapV2Pair.bind(UNI_QI_WMATIC_PAIR)
-  let maybe_qiMaticLpTokens = qiMaticLp.try_balanceOf(TREASURY_ADDRESS)
-  let qiMaticLpTokens = maybe_qiMaticLpTokens.reverted ? BigInt.zero() : maybe_qiMaticLpTokens.value
-
-  log.info('Total for qi contracts: {} QI + {} QI-MATIC LP', [
-    toDecimal(qiTotal, 18).toString(),
-    toDecimal(qiMaticLpTokens, 18).toString(),
+export function updateTreasuryRevenueHarvest(block: BigInt, harvest: Harvest): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(harvest.timestamp)
+  let qi = toDecimal(harvest.amount, 18)
+  let qiMarketValue = getQiUsdRate().times(qi)
+  let clamAmount = qiMarketValue.div(getClamUsdRate(block))
+  log.debug('HarvestEvent, txid: {}, qiMarketValue {}, clamAmount {}', [
+    harvest.id,
+    qiMarketValue.toString(),
+    clamAmount.toString(),
   ])
 
-  //set current metrics for next time
-  let revenueTracker = loadOrCreateRevenueTracker(harvest.timestamp)
-  revenueTracker.qiAmount = qiTotal
-  revenueTracker.qiMaticLpTokens = qiMaticLpTokens
-  revenueTracker.save()
+  //Aggregate over day with +=
+  treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
+  treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
 
-  //find difference from previous revenue tracker
-  let previousRevenueTracker = loadOrCreateRevenueTracker(harvest.timestamp.minus(BigInt.fromString('86400')))
-  let qiDiff = qiTotal.minus(previousRevenueTracker.qiAmount)
-  //if we have new LP tokens, assume we sold Qi into Matic and paired it
-  if (qiMaticLpTokens.gt(previousRevenueTracker.qiMaticLpTokens)) {
-    let newLp = qiMaticLpTokens.minus(previousRevenueTracker.qiMaticLpTokens)
-    let newLpQiAmount = newLp
-      .div(qiMaticLp.totalSupply())
-      .times(qiMaticLp.getReserves().value1)
-      .times(BigInt.fromString('2'))
-    log.debug('MATIC-Qi LP added', [])
-    qiDiff.plus(newLpQiAmount)
-  }
+  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
+  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
 
-  //update TreasuryRevenue
-  let treasuryRevenue = loadOrCreateTreasuryRevenue(harvest.timestamp)
-  let qiMarketValue = getQiUsdRate().times(toDecimal(qiDiff, 18))
-  let clamAmount = qiMarketValue.div(getClamUsdRate(blockNumber))
+  treasuryRevenue.save()
+}
 
-  log.debug('Qi harvest event, txid: {}, qiMarketValue {}, clamAmount: {}', [
-    harvest.id,
+export function updateTreasuryRevenueQiTransfer(block: BigInt, transfer: Transfer): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
+
+  let qiMarketValue = getQiUsdRate().times(toDecimal(transfer.value, 18))
+  let clamAmount = qiMarketValue.div(getClamUsdRate(block))
+
+  log.debug('TransferEvent, txid: {}, qiMarketValue {}, clamAmount: {}', [
+    transfer.id,
     qiMarketValue.toString(),
     clamAmount.toString(),
   ])

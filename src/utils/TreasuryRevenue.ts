@@ -58,12 +58,22 @@ Whenever one of the (trackable) Qi contracts is harvested,
 calculate the difference in our Qi position since the last timestep
 */
 export function updateTreasuryRevenueQiChange(blockNumber: BigInt, harvest: Harvest): void {
-  //get all Qi balances
-  let qi = ERC20.bind(QI_ERC20).balanceOf(TREASURY_ADDRESS)
-  let ocqiLocker = ERC20.bind(OTTER_QI_LOCKER).balanceOf(TREASURY_ADDRESS)
-  let qiMaticLp = UniswapV2Pair.bind(UNI_QI_WMATIC_PAIR)
-  let qiMaticLpTokens = qiMaticLp.balanceOf(TREASURY_ADDRESS)
+  //get Qi balances
+  let maybe_qi = ERC20.bind(QI_ERC20).try_balanceOf(TREASURY_ADDRESS)
+  let qi = maybe_qi.reverted ? BigInt.zero() : maybe_qi.value
+  let maybe_ocqiLocker = ERC20.bind(OTTER_QI_LOCKER).try_balanceOf(TREASURY_ADDRESS)
+  let ocqiLocker = maybe_ocqiLocker.reverted ? BigInt.zero() : maybe_ocqiLocker.value
   let qiTotal = qi.plus(ocqiLocker)
+
+  //get qi-MATIC LP balance
+  let qiMaticLp = UniswapV2Pair.bind(UNI_QI_WMATIC_PAIR)
+  let maybe_qiMaticLpTokens = qiMaticLp.try_balanceOf(TREASURY_ADDRESS)
+  let qiMaticLpTokens = maybe_qiMaticLpTokens.reverted ? BigInt.zero() : maybe_qiMaticLpTokens.value
+
+  log.info('Total for qi contracts: {} QI + {} QI-MATIC LP', [
+    toDecimal(qiTotal, 18).toString(),
+    toDecimal(qiMaticLpTokens, 18).toString(),
+  ])
 
   //set current metrics for next time
   let revenueTracker = loadOrCreateRevenueTracker(harvest.timestamp)
@@ -74,7 +84,7 @@ export function updateTreasuryRevenueQiChange(blockNumber: BigInt, harvest: Harv
   //find difference from previous revenue tracker
   let previousRevenueTracker = loadOrCreateRevenueTracker(harvest.timestamp.minus(BigInt.fromString('86400')))
   let qiDiff = qiTotal.minus(previousRevenueTracker.qiAmount)
-  //things get weird if we move Qi into the liquidity pool...
+  //if we have new LP tokens, assume we sold Qi into Matic and paired it
   if (qiMaticLpTokens.gt(previousRevenueTracker.qiMaticLpTokens)) {
     let newLp = qiMaticLpTokens.minus(previousRevenueTracker.qiMaticLpTokens)
     let newLpQiAmount = newLp

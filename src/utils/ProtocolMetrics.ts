@@ -106,7 +106,6 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.clamPrice = BigDecimal.zero()
     protocolMetric.marketCap = BigDecimal.zero()
     protocolMetric.totalValueLocked = BigDecimal.zero()
-    protocolMetric.treasuryMaiUsdcRiskFreeValue = BigDecimal.zero()
     protocolMetric.treasuryMaiUsdcQiInvestmentRiskFreeValue = BigDecimal.zero()
     protocolMetric.treasuryMarketValue = BigDecimal.zero()
     protocolMetric.treasuryMaiMarketValue = BigDecimal.zero()
@@ -339,11 +338,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     mai3poolInvestmentValueDecimal = getMai3poolInvestmentValue()
   }
 
-  let maiUsdcValueDecimal = BigDecimal.zero()
-  if (transaction.blockNumber.ge(BigInt.fromString(UNI_MAI_USDC_PAIR_BLOCK))) {
-    maiUsdcValueDecimal = getMaiUsdcValue()
-  }
-
   let qiMarketValue = BigDecimal.zero()
   let maiUsdcQiInvestmentValueDecimal = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_MAI_USDC_QI_INVESTMENT_PAIR_BLOCK))) {
@@ -450,7 +444,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   }
   let stableValue = maiBalance.plus(daiBalance)
   let stableValueDecimal = toDecimal(stableValue, 18)
-    .plus(maiUsdcValueDecimal)
     .plus(maiUsdcQiInvestmentValueDecimal)
     .plus(mai3poolValueDecimal)
     .plus(mai3poolInvestmentValueDecimal)
@@ -481,7 +474,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   //Attach results and return
   protocolMetric.treasuryMarketValue = mv
-  protocolMetric.treasuryMaiUsdcRiskFreeValue = maiUsdcValueDecimal
   protocolMetric.treasuryMaiUsdcQiInvestmentRiskFreeValue = maiUsdcQiInvestmentValueDecimal
   protocolMetric.treasuryCurveMai3PoolValue = mai3poolValueDecimal
   protocolMetric.treasuryCurveMai3PoolInvestmentValue = mai3poolInvestmentValueDecimal

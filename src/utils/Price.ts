@@ -40,8 +40,6 @@ function findTokenPrice(exchange: Exchange, inTokenAddress: Address, outTokenAdd
   return toDecimal(price, outDecimals)
 }
 
-let BIG_DECIMAL_1E9 = BigDecimal.fromString('1e9')
-
 export function getwMaticUsdRate(): BigDecimal {
   let pair = AggregatorV3InterfaceABI.bind(USDC_MATIC_AGGREGATOR)
   let wmaticPrice = pair.latestRoundData()
@@ -142,7 +140,7 @@ export function getDystPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_addr
 }
 
 export function findPrice(blockNumber: BigInt, address: Address): BigDecimal {
-  if (address == CLAM_ERC20) if (address == CLAM_ERC20) return getClamUsdRate(blockNumber)
+  if (address == CLAM_ERC20) return getClamUsdRate(blockNumber)
   if (address == QI_ERC20 || address == OCQI_CONTRACT) return getQiUsdRate()
   if (address == MATIC_ERC20) return getwMaticUsdRate()
   if (address == DYST_ERC20) return getDystUsdRate()

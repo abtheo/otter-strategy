@@ -39,22 +39,12 @@ dataSources:
           file: './abis/OtterStakingDistributor.json'
         - name: ClamCirculatingSupply
           file: ./abis/ClamCirculatingSupply.json
-        - name: ERC20
-          file: ./abis/ERC20.json
-        - name: UniswapV2Pair
-          file: ./abis/UniswapV2Pair.json
-        - name: dQuick
-          file: ./abis/dQuick.json
         - name: xTetuQi
           file: ./abis/xTetuQi.json
         - name: OtterQiDAOInvestment
           file: ./abis/OtterQiDAOInvestment.json
         - name: QiFarm
           file: ./abis/QiFarm.json
-        - name: OtterQuickSwapInvestment
-          file: ./abis/OtterQuickSwapInvestment.json
-        - name: AggregatorV3InterfaceABI
-          file: ./abis/AggregatorV3InterfaceABI.json
         - name: PearlNote
           file: ./abis/PearlNote.json
         - name: OtterPearlERC20
@@ -63,8 +53,6 @@ dataSources:
           file: ./abis/CurveMai3poolContract.json        
         - name: Dyst
           file: ./abis/Dyst.json      
-        - name: DystPair
-          file: ./abis/DystPair.json
         - name: veDyst
           file: ./abis/veDyst.json
         - name: PenDystRewards
@@ -75,6 +63,17 @@ dataSources:
           file: ./abis/PenLens.json
         - name: PenrosePartnerRewards
           file: ./abis/PenrosePartnerRewards.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
         - name: DystRouter
           file: ./abis/DystRouter.json
         - name: UniswapV2Router02
@@ -104,14 +103,17 @@ dataSources:
       abis:
         - name: Dyst
           file: ./abis/Dyst.json
-        - name: Pen
-          file: ./abis/Pen.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
         - name: UniswapV2Pair
           file: ./abis/UniswapV2Pair.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
         - name: DystPair
           file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
         - name: DystRouter
           file: ./abis/DystRouter.json
         - name: UniswapV2Router02
@@ -139,12 +141,17 @@ dataSources:
       abis:
         - name: Pen
           file: ./abis/Pen.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
         - name: UniswapV2Pair
           file: ./abis/UniswapV2Pair.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
         - name: DystPair
           file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
         - name: DystRouter
           file: ./abis/DystRouter.json
         - name: UniswapV2Router02
@@ -172,10 +179,17 @@ dataSources:
       abis:
         - name: DeprecatedOtterBuybacker
           file: ./abis/DeprecatedOtterBuybacker.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
         - name: UniswapV2Pair
           file: ./abis/UniswapV2Pair.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
         - name: DystRouter
           file: ./abis/DystRouter.json
         - name: UniswapV2Router02
@@ -203,10 +217,17 @@ dataSources:
       abis:
         - name: OtterBuybacker
           file: ./abis/OtterBuybacker.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
         - name: UniswapV2Pair
           file: ./abis/UniswapV2Pair.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
         - name: DystRouter
           file: ./abis/DystRouter.json
         - name: UniswapV2Router02
@@ -235,16 +256,21 @@ dataSources:
       abis:
         - name: Dyst
           file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
         - name: UniswapV2Pair
           file: ./abis/UniswapV2Pair.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
         - name: DystPair
           file: ./abis/DystPair.json
-        - name: DystVoter
-          file: ./abis/DystVoter.json
         - name: DystPairFactory
           file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: PairCreated(indexed address,indexed address,bool,address,uint256)
           handler: handlePairCreated
@@ -270,6 +296,21 @@ dataSources:
           file: ./abis/PearlBank.json
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Payout(uint256)
           handler: handlePayout
@@ -293,6 +334,21 @@ dataSources:
           file: ./abis/PearlBank.json
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Stake(indexed address,uint256,uint256)
           handler: handleStake
@@ -320,6 +376,21 @@ dataSources:
           file: ./abis/PearlBank.json
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Deposit(address,uint256)
           handler: handleDeposit
@@ -343,6 +414,21 @@ dataSources:
       abis:
         - name: OttoPortal
           file: ./abis/OttoPortal.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: OttoMinted(indexed address,indexed address,uint256)
           handler: handleOttoMinted
@@ -365,14 +451,21 @@ templates:
       abis:
         - name: Dyst
           file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
         - name: UniswapV2Pair
           file: ./abis/UniswapV2Pair.json
         - name: AggregatorV3InterfaceABI
           file: ./abis/AggregatorV3InterfaceABI.json
         - name: DystPair
           file: ./abis/DystPair.json
-        - name: DystVoter
-          file: ./abis/DystVoter.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer

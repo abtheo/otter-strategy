@@ -2,7 +2,7 @@ import { Address, log, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
 import { Transfer, DystopiaGaugeBalance } from '../generated/schema'
 import { Transfer as TransferEvent } from '../generated/OtterQiLocker/DystPair'
 import { loadOrCreateTransaction } from './utils/Transactions'
-import { DAO_WALLET, DAO_WALLET_PENROSE_USER_PROXY, DYSTOPIA_TRACKED_GAUGES, PENROSE_PROXY } from './utils/Constants'
+import { DAO_WALLET, DAO_WALLET_PENROSE_USER_PROXY, PENROSE_PROXY } from './utils/Constants'
 import { dataSource } from '@graphprotocol/graph-ts'
 
 /*
@@ -32,9 +32,7 @@ export function handleTransfer(event: TransferEvent): void {
   let dystLp = loadOrCreateDystopiaGaugeBalance(Address.fromString(pair))
   if (
     event.params.from == DAO_WALLET &&
-    (DYSTOPIA_TRACKED_GAUGES.includes(event.params.to) ||
-      event.params.to == DAO_WALLET_PENROSE_USER_PROXY ||
-      event.params.to == PENROSE_PROXY)
+    (event.params.to == DAO_WALLET_PENROSE_USER_PROXY || event.params.to == PENROSE_PROXY)
   ) {
     //deposit
     dystLp.balance = dystLp.balance.plus(event.params.value)
@@ -42,9 +40,7 @@ export function handleTransfer(event: TransferEvent): void {
   }
   if (
     event.params.to == DAO_WALLET &&
-    (DYSTOPIA_TRACKED_GAUGES.includes(event.params.from) ||
-      event.params.from == DAO_WALLET_PENROSE_USER_PROXY ||
-      event.params.from == PENROSE_PROXY)
+    (event.params.from == DAO_WALLET_PENROSE_USER_PROXY || event.params.from == PENROSE_PROXY)
   ) {
     //withdraw
     dystLp.balance = dystLp.balance.minus(event.params.value)

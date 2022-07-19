@@ -98,14 +98,7 @@ export const DYSTOPIA_PAIR_MAI_USDC = Address.fromString('0x5a31f830225936ca2854
 export const DYSTOPIA_PAIR_FRAX_USDC = Address.fromString('0x53227c83a98ba1035fed912da6ce26a0c11c7c66')
 export const DYSTOPIA_PAIR_WMATIC_PEN = Address.fromString('0x2c5ba816da67ce34029fc4a9cc7545d207abf945')
 export const DYSTOPIA_PAIR_PENDYST_DYST = Address.fromString('0x370c7feb6fcd9f0804b477e3c807392e59327764')
-export const DYSTOPIA_PAIR_QI_TETUQI = Address.fromString('0x370c7feb6fcd9f0804b477e3c807392e59327764')
-
-export const DYSTOPIA_GAUGE_MAI_CLAM = Address.fromString('0xd5c00c0e58f489ac428e5ce24f26a94bd8bfe923')
-export const DYSTOPIA_GAUGE_USDPLUS_CLAM = Address.fromString('0xbe72608f9d161a77ece96da403c24ce176fba9e3')
-export const DYSTOPIA_GAUGE_WMATIC_DYST = Address.fromString('0xbe9d5356915f6f20be701341966a5b57808c866e')
-export const DYSTOPIA_GAUGE_MAI_USDC = Address.fromString('0x9d4d5885ae53ca9420d40a3dae3d2b826ec75128')
-export const DYSTOPIA_GAUGE_FRAX_USDC = Address.fromString('0x768e8639c1be413832af4bff0c42284b2d799689')
-export const DYSTOPIA_GAUGE_WMATIC_PEN = Address.fromString('0x77a93d0a4acc6cc8eff33b51c268807d086d0c95')
+export const DYSTOPIA_PAIR_QI_TETUQI = Address.fromString('0x42c0cc5f1827C5d908392654389E5D93da426378')
 
 export const DYSTOPIA_TRACKED_PAIRS = [
   DYSTOPIA_PAIR_MAI_CLAM,
@@ -115,15 +108,6 @@ export const DYSTOPIA_TRACKED_PAIRS = [
   DYSTOPIA_PAIR_FRAX_USDC,
   DYSTOPIA_PAIR_WMATIC_PEN,
 ]
-export const DYSTOPIA_TRACKED_GAUGES = [
-  DYSTOPIA_GAUGE_MAI_CLAM,
-  DYSTOPIA_GAUGE_USDPLUS_CLAM,
-  DYSTOPIA_GAUGE_WMATIC_DYST,
-  DYSTOPIA_GAUGE_MAI_USDC,
-  DYSTOPIA_GAUGE_FRAX_USDC,
-  DYSTOPIA_GAUGE_WMATIC_PEN,
-]
-
 export const PENROSE_PROXY = Address.fromString('0xc9ae7dac956f82074437c6d40f67d6a5abf3e34b')
 export const DAO_WALLET_PENROSE_USER_PROXY = Address.fromString('0x3c56307bdbc8a59e85542cc795aa31c628748c62')
 export const PEN_DYST_REWARDS = Address.fromString('0x68c08ac637fcac8e63060aaca89dba4c32fdd912')

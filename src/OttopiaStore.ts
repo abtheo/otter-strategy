@@ -35,7 +35,7 @@ export function handleBuyProduct(buy: BuyProductEvent): void {
 
   log.debug('Ottopia transfered {} CLAM to DAO+PrizePool and burned {} CLAM at time {}, txid {}', [
     revenueClam.toString(),
-    '0'.toString(),
+    burnedClam.toString(),
     buy.block.timestamp.toString(),
     buy.transaction.hash.toHexString(),
   ])

@@ -74,6 +74,7 @@ import {
   PEN_DYST_PARTNER_REWARDS,
   DYST_START_BLOCK,
   PEN_START_BLOCK,
+  DYSTOPIA_PAIR_QI_TETUQI,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -116,6 +117,7 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.treasuryClamMaiPOL = BigDecimal.zero()
     protocolMetric.totalBurnedClam = BigDecimal.zero()
     protocolMetric.totalBurnedClamMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDystopiaPairQiTetuQimMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairMaiClamMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairMaiUsdcMarketValue = BigDecimal.zero()
@@ -345,6 +347,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   }
 
   //DYSTOPIA & PENROSE
+  let qiTetuQiValue = BigDecimal.zero()
   let wMaticDystValue = BigDecimal.zero()
   let clamMaiDystValue = BigDecimal.zero()
   let clamUsdplusDystValue = BigDecimal.zero()
@@ -377,6 +380,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       if (pair_address == DYSTOPIA_PAIR_MAI_USDC) usdcMaiDystValue = pairValue
       if (pair_address == DYSTOPIA_PAIR_FRAX_USDC) usdcFraxDystValue = pairValue
       if (pair_address == DYSTOPIA_PAIR_WMATIC_PEN) wMaticPenValue = pairValue
+      if (pair_address == DYSTOPIA_PAIR_QI_TETUQI) qiTetuQiValue = pairValue
     }
 
     //plus the locked veDyst inside NFT
@@ -423,6 +427,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(qiWmaticMarketValue)
     .plus(qiWmaticQiInvestmentMarketValue)
     //dystopia
+    .plus(qiTetuQiValue)
     .plus(wMaticDystValue)
     .plus(clamMaiDystValue)
     .plus(clamUsdplusDystValue)
@@ -455,6 +460,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryOtterClamQiMarketValue = ocQiMarketValue
   protocolMetric.treasuryTetuQiMarketValue = tetuQiMarketValue
   protocolMetric.treasuryClamMaiPOL = clamMaiPOL
+  protocolMetric.treasuryDystopiaPairQiTetuQimMarketValue = qiTetuQiValue
   protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = wMaticDystValue
   protocolMetric.treasuryDystopiaPairMaiClamMarketValue = clamMaiDystValue
   protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = clamUsdplusDystValue

@@ -59,6 +59,7 @@ type ProtocolMetric @entity {
   treasuryClamMaiPOL: BigDecimal!
   totalBurnedClam: BigDecimal!
   totalBurnedClamMarketValue: BigDecimal!
+  treasuryDystopiaPairQiTetuQimMarketValue: BigDecimal!
   treasuryDystopiaPairwMaticDystMarketValue: BigDecimal!
   treasuryDystopiaPairMaiClamMarketValue: BigDecimal!
   treasuryDystopiaPairUSDPLUSClamMarketValue: BigDecimal!

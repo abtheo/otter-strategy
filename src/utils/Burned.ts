@@ -7,6 +7,7 @@ export function loadOrCreateTotalBurnedClamSingleton(): TotalBurnedClam {
     total = new TotalBurnedClam('1')
     total.burnedClam = BigDecimal.zero()
     total.burnedValueUsd = BigDecimal.zero()
+    total.pearlBankTotal = BigDecimal.zero()
   }
   return total
 }

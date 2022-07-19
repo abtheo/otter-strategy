@@ -37,11 +37,6 @@ function findTokenPrice(exchange: Exchange, inTokenAddress: Address, outTokenAdd
   let inDecimals = inToken.decimals()
   let outDecimals = outToken.decimals()
   let price = exchange.getAmountOut(BigInt.fromI64(<i64>Math.pow(10, inDecimals)), inTokenAddress, outTokenAddress)
-  log.debug('Exchange rate for {} to {} is {}', [
-    inTokenAddress.toHexString(),
-    outTokenAddress.toHexString(),
-    price.toString(),
-  ])
   return toDecimal(price, outDecimals)
 }
 

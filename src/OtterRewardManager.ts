@@ -18,7 +18,7 @@ export function handlePayout(payout: Payout): void {
 
   let maybe_totalStaked = pearlBank.try_totalStaked()
   let totalStaked = maybe_totalStaked.reverted ? BigInt.zero() : maybe_totalStaked.value
-  let stakedMarketValue = clamPrice.times(toDecimal(pearlBank.totalStaked()))
+  let stakedMarketValue = clamPrice.times(toDecimal(totalStaked, 9))
 
   // update cumulative values
   cumulativeValues.rewardPayoutMarketValue = cumulativeValues.rewardPayoutMarketValue.plus(metric.payoutMatketValue)
@@ -30,7 +30,7 @@ export function handlePayout(payout: Payout): void {
   metric.clamMarketValueWhenPayoutHappens = clamPrice
 
   metric.clamTotalSupply = toDecimal(clam.totalSupply(), 9)
-  metric.stakedCLAMAmount = toDecimal(pearlBank.totalStaked(), 9)
+  metric.stakedCLAMAmount = toDecimal(totalStaked, 9)
 
   // persist
   cumulativeValues.save()

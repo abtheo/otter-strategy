@@ -98,6 +98,7 @@ export const DYSTOPIA_PAIR_MAI_USDC = Address.fromString('0x5a31f830225936ca2854
 export const DYSTOPIA_PAIR_FRAX_USDC = Address.fromString('0x53227c83a98ba1035fed912da6ce26a0c11c7c66')
 export const DYSTOPIA_PAIR_WMATIC_PEN = Address.fromString('0x2c5ba816da67ce34029fc4a9cc7545d207abf945')
 export const DYSTOPIA_PAIR_PENDYST_DYST = Address.fromString('0x370c7feb6fcd9f0804b477e3c807392e59327764')
+export const DYSTOPIA_PAIR_QI_TETUQI = Address.fromString('0x370c7feb6fcd9f0804b477e3c807392e59327764')
 
 export const DYSTOPIA_GAUGE_MAI_CLAM = Address.fromString('0xd5c00c0e58f489ac428e5ce24f26a94bd8bfe923')
 export const DYSTOPIA_GAUGE_USDPLUS_CLAM = Address.fromString('0xbe72608f9d161a77ece96da403c24ce176fba9e3')
@@ -142,3 +143,5 @@ export const QUICKSWAP_ROUTER = Address.fromString('0xa5E0829CaCEd8fFDD4De3c4369
 export const DYST_POOL_TRANSITION_BLOCK = 30393227
 export const DYST_START_BLOCK = 28773233
 export const PEN_START_BLOCK = 29401160
+
+export const CLAM_PLUS = Address.fromString('0xF2A8705D327534E334d09BC28e5C97b5c356Aa01')

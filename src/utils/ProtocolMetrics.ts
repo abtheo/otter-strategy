@@ -108,7 +108,6 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.treasuryMaiUsdcQiInvestmentRiskFreeValue = BigDecimal.zero()
     protocolMetric.treasuryMarketValue = BigDecimal.zero()
     protocolMetric.treasuryMaiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryWmaticRiskFreeValue = BigDecimal.zero()
     protocolMetric.treasuryWmaticMarketValue = BigDecimal.zero()
     protocolMetric.treasuryQiMarketValue = BigDecimal.zero()
     protocolMetric.treasuryTetuQiMarketValue = BigDecimal.zero()
@@ -193,26 +192,6 @@ function getMai3poolInvestmentValue(): BigDecimal {
     price.toString(),
     value.toString(),
   ])
-  return value
-}
-
-function getMaiUsdcValue(): BigDecimal {
-  let pair = UniswapV2Pair.bind(UNI_MAI_USDC_PAIR)
-
-  let reserves = pair.getReserves()
-  let usdc = toDecimal(reserves.value0, 6)
-  let mai = toDecimal(reserves.value1, 18)
-  log.debug('pair mai {}, usdc {}', [mai.toString(), usdc.toString()])
-
-  let balance = pair.balanceOf(TREASURY_ADDRESS).toBigDecimal()
-  let total = pair.totalSupply().toBigDecimal()
-  log.debug('pair MAI/USDC LP balance {}, total {}', [balance.toString(), total.toString()])
-
-  let value = usdc
-    .plus(mai)
-    .times(balance)
-    .div(total)
-  log.debug('pair MAI/USDC value {}', [value.toString()])
   return value
 }
 

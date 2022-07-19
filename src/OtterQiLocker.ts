@@ -2,7 +2,7 @@ import {
   Harvest as HarvestEvent,
   HarvestStaking as HarvestStakingEvent,
 } from '../generated/OtterQiLocker/OtterQiLocker'
-import { updateTreasuryRevenueHarvest, updateTreasuryRevenueQiChange } from './utils/TreasuryRevenue'
+import { updateTreasuryRevenueHarvest } from './utils/TreasuryRevenue'
 import { Harvest } from '../generated/schema'
 
 import { loadOrCreateTransaction } from './utils/Transactions'

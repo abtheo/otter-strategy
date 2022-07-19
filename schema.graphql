@@ -48,7 +48,6 @@ type ProtocolMetric @entity {
   treasuryMarketValue: BigDecimal!
   treasuryMaiUsdcQiInvestmentRiskFreeValue: BigDecimal!
   treasuryMaiMarketValue: BigDecimal!
-  treasuryWmaticRiskFreeValue: BigDecimal!
   treasuryWmaticMarketValue: BigDecimal!
   treasuryQiMarketValue: BigDecimal!
   treasuryTetuQiMarketValue: BigDecimal!
@@ -101,14 +100,6 @@ type TreasuryRevenue @entity {
   buybackMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
-  cumulativeBuybackClamAmount: BigDecimal!
-  cumulativeBuybackMarketValue: BigDecimal!
-}
-
-type TotalBuybacks @entity {
-  id: ID!
-  boughtClam: BigDecimal!
-  boughtMarketValue: BigDecimal!
 }
 
 type DystopiaGaugeBalance @entity {

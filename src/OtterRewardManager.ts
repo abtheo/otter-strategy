@@ -12,15 +12,16 @@ export function handlePayout(payout: Payout): void {
   let clam = OtterClamERC20V2.bind(CLAM_ERC20)
   let pearlBank = PearlBank.bind(PEARL_BANK)
 
-  let cumulativeValues = loadCumulativeValues()
-  let metric = loadOrCreatePearlBankMetric(payout.block.timestamp)
   let clamPrice = getClamUsdRate(payout.block.number)
 
   let maybe_totalStaked = pearlBank.try_totalStaked()
+  if (maybe_totalStaked.reverted) return
   let totalStaked = maybe_totalStaked.reverted ? BigInt.zero() : maybe_totalStaked.value
   let stakedMarketValue = clamPrice.times(toDecimal(totalStaked, 9))
 
   // update cumulative values
+  let cumulativeValues = loadCumulativeValues()
+  let metric = loadOrCreatePearlBankMetric(payout.block.timestamp)
   cumulativeValues.rewardPayoutMarketValue = cumulativeValues.rewardPayoutMarketValue.plus(metric.payoutMatketValue)
 
   // update metrics

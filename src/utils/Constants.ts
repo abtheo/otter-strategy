@@ -130,7 +130,7 @@ export const PEN_DYST_REWARDS = Address.fromString('0x68c08ac637fcac8e63060aaca8
 export const PEN_DYST_REWARD_PROXY = Address.fromString('0x62f9b938323fb68379b9ac1641012f9bee339c69')
 export const PEN_DYST_PARTNER_REWARDS = Address.fromString('0x5DD340DD4142D093c1926282CD56B0D4690dEB11')
 
-export const PENROSE_GAUGE_MAI_CLAM = Address.fromString('0x4edc2f4368179be77e5e8fba295fff0a82e3df21')
+export const PENROSE_REWARDS_GAUGE = Address.fromString('0x4edc2f4368179be77e5e8fba295fff0a82e3df21')
 export const PENROSE_LENS_PROXY = Address.fromString('0x1432c3553fdf7fbd593a84b3a4d380c643cbf7a2')
 
 export const QIDAO_TREASURY = Address.fromString('0x3feacf904b152b1880bde8bf04ac9eb636fee4d8')

@@ -944,8 +944,6 @@ export class TreasuryRevenue extends Entity {
     this.set("penMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("buybackClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("buybackMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("totalRevenueClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalRevenueMarketValue",
@@ -1058,24 +1056,6 @@ export class TreasuryRevenue extends Entity {
 
   set ottopiaMarketValue(value: BigDecimal) {
     this.set("ottopiaMarketValue", Value.fromBigDecimal(value));
-  }
-
-  get buybackClamAmount(): BigDecimal {
-    let value = this.get("buybackClamAmount");
-    return value!.toBigDecimal();
-  }
-
-  set buybackClamAmount(value: BigDecimal) {
-    this.set("buybackClamAmount", Value.fromBigDecimal(value));
-  }
-
-  get buybackMarketValue(): BigDecimal {
-    let value = this.get("buybackMarketValue");
-    return value!.toBigDecimal();
-  }
-
-  set buybackMarketValue(value: BigDecimal) {
-    this.set("buybackMarketValue", Value.fromBigDecimal(value));
   }
 
   get totalRevenueClamAmount(): BigDecimal {

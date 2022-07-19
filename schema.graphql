@@ -76,6 +76,7 @@ type TotalBurnedClam @entity {
   id: ID!
   burnedClam: BigDecimal!
   burnedValueUsd: BigDecimal!
+  pearlBankTotal: BigDecimal!
 }
 
 type Harvest @entity {
@@ -96,8 +97,6 @@ type TreasuryRevenue @entity {
   penMarketValue: BigDecimal!
   ottopiaClamAmount: BigDecimal!
   ottopiaMarketValue: BigDecimal!
-  buybackClamAmount: BigDecimal!
-  buybackMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
 }

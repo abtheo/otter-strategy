@@ -20,8 +20,6 @@ export function handleWithdraw(withdraw: Withdraw): void {
   let cumulativeValues = loadCumulativeValues()
   let metric = loadOrCreatePearlBankMetric(withdraw.block.timestamp)
 
-  withdraw.params.amount
-
   cumulativeValues.clamPondDepositedAmount = cumulativeValues.clamPondDepositedAmount.minus(
     toDecimal(withdraw.params.amount, 6),
   )

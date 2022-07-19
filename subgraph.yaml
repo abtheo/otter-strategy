@@ -449,13 +449,12 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - PearlBankMetric
+        - TotalBurnedClam
       abis:
         - name: PearlBank
           file: ./abis/PearlBank.json
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
-        - name: ClamPlus
-          file: ./abis/ClamPlus.json
         #====== getPrice() required contracts======
         - name: ERC20
           file: ./abis/ERC20.json
@@ -491,6 +490,7 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - PearlBankMetric
+        - TotalBurnedClam
       abis:
         - name: ClamPond
           file: ./abis/ClamPond.json
@@ -498,6 +498,8 @@ dataSources:
           file: ./abis/PearlBank.json
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
+        - name: ClamPlus
+          file: ./abis/ClamPlus.json
         #====== getPrice() required contracts======
         - name: ERC20
           file: ./abis/ERC20.json

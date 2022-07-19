@@ -27,7 +27,7 @@ import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { UniswapV2Pair } from '../../generated/OtterQiLocker/UniswapV2Pair'
 import { AggregatorV3InterfaceABI } from '../../generated/OtterQiLocker/AggregatorV3InterfaceABI'
 import { toDecimal } from './Decimals'
-import { DystPair } from '../../generated/Dyst/DystPair'
+import { DystPair } from '../../generated/OtterQiLocker/DystPair'
 import { ERC20 } from '../../generated/OtterQiLocker/ERC20'
 import { dyst, quickSwap, Exchange } from './Exchange'
 

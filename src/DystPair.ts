@@ -1,6 +1,6 @@
 import { Address, log, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
 import { Transfer, DystopiaGaugeBalance } from '../generated/schema'
-import { Transfer as TransferEvent } from '../generated/Dyst/DystPair'
+import { Transfer as TransferEvent } from '../generated/OtterQiLocker/DystPair'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { DAO_WALLET, DAO_WALLET_PENROSE_USER_PROXY, DYSTOPIA_TRACKED_GAUGES, PENROSE_PROXY } from './utils/Constants'
 import { dataSource } from '@graphprotocol/graph-ts'

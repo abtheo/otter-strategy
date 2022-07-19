@@ -76,7 +76,7 @@ type TotalBurnedClam @entity {
   id: ID!
   burnedClam: BigDecimal!
   burnedValueUsd: BigDecimal!
-  pearlBankTotal: BigDecimal!
+  clamPondTotal: BigDecimal!
 }
 
 type Harvest @entity {

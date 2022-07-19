@@ -1,5 +1,5 @@
 import { Address, BigInt, log } from '@graphprotocol/graph-ts'
-import { UniswapV2Router02 } from '../../../generated/Dyst/UniswapV2Router02'
+import { UniswapV2Router02 } from '../../../generated/OtterQiLocker/UniswapV2Router02'
 import { Exchange } from './exchange'
 
 export class UniExchange implements Exchange {

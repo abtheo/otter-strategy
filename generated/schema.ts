@@ -809,7 +809,7 @@ export class TotalBurnedClam extends Entity {
 
     this.set("burnedClam", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("burnedValueUsd", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("pearlBankTotal", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("clamPondTotal", Value.fromBigDecimal(BigDecimal.zero()));
   }
 
   save(): void {
@@ -856,13 +856,13 @@ export class TotalBurnedClam extends Entity {
     this.set("burnedValueUsd", Value.fromBigDecimal(value));
   }
 
-  get pearlBankTotal(): BigDecimal {
-    let value = this.get("pearlBankTotal");
+  get clamPondTotal(): BigDecimal {
+    let value = this.get("clamPondTotal");
     return value!.toBigDecimal();
   }
 
-  set pearlBankTotal(value: BigDecimal) {
-    this.set("pearlBankTotal", Value.fromBigDecimal(value));
+  set clamPondTotal(value: BigDecimal) {
+    this.set("clamPondTotal", Value.fromBigDecimal(value));
   }
 }
 

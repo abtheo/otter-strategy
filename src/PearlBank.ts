@@ -1,5 +1,4 @@
 import { OtterClamERC20V2 } from '../generated/PearlBank/OtterClamERC20V2'
-import { ClamPlus } from '../generated/PearlBank/ClamPlus'
 import { PearlBank, Stake, Withdraw } from '../generated/PearlBank/PearlBank'
 import { loadOrCreatePearlBankMetric } from './utils/PearlBankMetric'
 import { CLAM_ERC20, CLAM_PLUS, PEARL_BANK } from './utils/Constants'
@@ -27,17 +26,10 @@ export function handleWithdraw(withdraw: Withdraw): void {
   metric.clamTotalSupply = toDecimal(clam.totalSupply(), 9)
   metric.stakedCLAMAmount = toDecimal(pearlBank.totalStaked(), 9)
 
-  //add to burns if early withdrawal
+  //Cumulative total for burned CLAM
   let burns = loadOrCreateTotalBurnedClamSingleton()
-  let currentPearlBankBurn = toDecimal(ClamPlus.bind(CLAM_PLUS).totalBurn(), 9)
-  let burnDiff = currentPearlBankBurn.minus(burns.pearlBankTotal)
-  log.debug('Burned CLAM change from {} to {}, diff {}', [
-    burns.pearlBankTotal.toString(),
-    currentPearlBankBurn.toString(),
-    burnDiff.toString(),
-  ])
-
-  burns.burnedClam = burns.burnedClam.plus(burnDiff)
-  burns.burnedValueUsd = burns.burnedValueUsd.plus(burnDiff.times(getClamUsdRate(withdraw.block.number)))
-  burns.pearlBankTotal = currentPearlBankBurn
+  let burnedClam = toDecimal(withdraw.params.fee, 9)
+  burns.burnedClam = burns.burnedClam.plus(burnedClam)
+  burns.burnedValueUsd = burns.burnedValueUsd.plus(getClamUsdRate(withdraw.block.number).times(burnedClam))
+  burns.save()
 }

@@ -36,7 +36,7 @@ export function handleOttoMinted(mint: OttoMinted): void {
   let revenueClam = clamPaid.times(BigDecimal.fromString('0.9'))
   let clamMarketValue = revenueClam.times(getClamUsdRate(mint.block.number))
 
-  log.debug('Ottopia transfered {} CLAM to DAO+PrizePool and burned {} CLAM at time {}, txid {}', [
+  log.debug('Ottopia Portal mint transfered {} CLAM to DAO+PrizePool and burned {} CLAM at time {}, txid {}', [
     revenueClam.toString(),
     burnedClam.toString(),
     mint.block.timestamp.toString(),

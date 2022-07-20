@@ -91,7 +91,7 @@ dataSources:
     name: OttoPortal
     network: matic
     source:
-      address: '0xF262da77Bc32D4ED026CC4a110b089113651186C'
+      address: '0xCb8Ba0c08e746CA6fa79fe535580f89A8eC082C2'
       abi: OttoPortal
       startBlock: 26102395
     mapping:

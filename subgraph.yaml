@@ -101,6 +101,9 @@ dataSources:
       entities:
         - OttoMinted
         - TotalBurnedClam
+        - BuyProduct
+        - Transaction
+        - TreasuryRevenue
       abis:
         - name: OttoPortal
           file: ./abis/OttoPortal.json
@@ -139,6 +142,7 @@ dataSources:
         - BuyProduct
         - Transaction
         - TotalBurnedClam
+        - TreasuryRevenue
       abis:
         - name: OttopiaStore
           file: ./abis/OttopiaStore.json
@@ -415,44 +419,44 @@ dataSources:
           handler: handleRewardPaid
       file: ./src/PenroseMultiRewards.ts
   
-  - kind: ethereum/contract
-    name: Qi
-    network: matic
-    source:
-      address: '0x580A84C73811E1839F75d86d75d88cCa0c241fF4'
-      abi: Qi
-      startBlock: 26888468
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      entities:
-        - Transaction
-        - Transfer
-        - TreasuryRevenue
-        - TotalBribeReward
-      abis:
-        - name: Qi
-          file: ./abis/Qi.json
-        #====== getPrice() required contracts======
-        - name: ERC20
-          file: ./abis/ERC20.json
-        - name: UniswapV2Pair
-          file: ./abis/UniswapV2Pair.json
-        - name: AggregatorV3InterfaceABI
-          file: ./abis/AggregatorV3InterfaceABI.json
-        - name: DystPair
-          file: ./abis/DystPair.json
-        - name: DystPairFactory
-          file: ./abis/DystPairFactory.json
-        - name: DystRouter
-          file: ./abis/DystRouter.json
-        - name: UniswapV2Router02
-          file: ./abis/UniswapV2Router02.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleQiTransfer
-      file: ./src/Qi.ts
+  # - kind: ethereum/contract
+  #   name: Qi
+  #   network: matic
+  #   source:
+  #     address: '0x580A84C73811E1839F75d86d75d88cCa0c241fF4'
+  #     abi: Qi
+  #     startBlock: 26888468
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.5
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - Transaction
+  #       - Transfer
+  #       - TreasuryRevenue
+  #       - TotalBribeReward
+  #     abis:
+  #       - name: Qi
+  #         file: ./abis/Qi.json
+  #       #====== getPrice() required contracts======
+  #       - name: ERC20
+  #         file: ./abis/ERC20.json
+  #       - name: UniswapV2Pair
+  #         file: ./abis/UniswapV2Pair.json
+  #       - name: AggregatorV3InterfaceABI
+  #         file: ./abis/AggregatorV3InterfaceABI.json
+  #       - name: DystPair
+  #         file: ./abis/DystPair.json
+  #       - name: DystPairFactory
+  #         file: ./abis/DystPairFactory.json
+  #       - name: DystRouter
+  #         file: ./abis/DystRouter.json
+  #       - name: UniswapV2Router02
+  #         file: ./abis/UniswapV2Router02.json
+  #     eventHandlers:
+  #       - event: Transfer(indexed address,indexed address,uint256)
+  #         handler: handleQiTransfer
+  #     file: ./src/Qi.ts
 
   - kind: ethereum/contract
     name: OtterRewardManager
@@ -468,6 +472,7 @@ dataSources:
       entities:
         - Transaction
         - PearlBankMetric
+        - CumulativeValues
       abis:
         - name: OtterRewardManager
           file: ./abis/OtterRewardManager.json
@@ -580,40 +585,3 @@ dataSources:
         - event: Withdraw(address,uint256)
           handler: handleWithdraw
       file: ./src/ClamPond.ts
-
-# templates: 
-#   - kind: ethereum/contract
-#     name: DystPair
-#     network: matic
-#     source:
-#       abi: DystPair
-#     mapping:
-#       kind: ethereum/events
-#       apiVersion: 0.0.5
-#       language: wasm/assemblyscript
-#       entities:
-#         - Transaction
-#         - Transfer
-#         - DystopiaGaugeBalance
-#       abis:
-#         - name: Dyst
-#           file: ./abis/Dyst.json
-#         #====== getPrice() required contracts======
-#         - name: ERC20
-#           file: ./abis/ERC20.json
-#         - name: UniswapV2Pair
-#           file: ./abis/UniswapV2Pair.json
-#         - name: AggregatorV3InterfaceABI
-#           file: ./abis/AggregatorV3InterfaceABI.json
-#         - name: DystPair
-#           file: ./abis/DystPair.json
-#         - name: DystPairFactory
-#           file: ./abis/DystPairFactory.json
-#         - name: DystRouter
-#           file: ./abis/DystRouter.json
-#         - name: UniswapV2Router02
-#           file: ./abis/UniswapV2Router02.json
-#       eventHandlers:
-#         - event: Transfer(indexed address,indexed address,uint256)
-#           handler: handleTransfer
-#       file: ./src/DystPair.ts

@@ -427,7 +427,7 @@ export class ProtocolMetric extends Entity {
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
-      "treasuryDystopiaPairQiTetuQimMarketValue",
+      "treasuryDystopiaPairQiTetuQiMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
@@ -688,14 +688,14 @@ export class ProtocolMetric extends Entity {
     this.set("totalBurnedClamMarketValue", Value.fromBigDecimal(value));
   }
 
-  get treasuryDystopiaPairQiTetuQimMarketValue(): BigDecimal {
-    let value = this.get("treasuryDystopiaPairQiTetuQimMarketValue");
+  get treasuryDystopiaPairQiTetuQiMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystopiaPairQiTetuQiMarketValue");
     return value!.toBigDecimal();
   }
 
-  set treasuryDystopiaPairQiTetuQimMarketValue(value: BigDecimal) {
+  set treasuryDystopiaPairQiTetuQiMarketValue(value: BigDecimal) {
     this.set(
-      "treasuryDystopiaPairQiTetuQimMarketValue",
+      "treasuryDystopiaPairQiTetuQiMarketValue",
       Value.fromBigDecimal(value)
     );
   }
@@ -1110,52 +1110,6 @@ export class TreasuryRevenue extends Entity {
 
   set totalRevenueMarketValue(value: BigDecimal) {
     this.set("totalRevenueMarketValue", Value.fromBigDecimal(value));
-  }
-}
-
-export class DystopiaGaugeBalance extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("balance", Value.fromBigInt(BigInt.zero()));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save DystopiaGaugeBalance entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save DystopiaGaugeBalance entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("DystopiaGaugeBalance", id.toString(), this);
-    }
-  }
-
-  static load(id: string): DystopiaGaugeBalance | null {
-    return changetype<DystopiaGaugeBalance | null>(
-      store.get("DystopiaGaugeBalance", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get balance(): BigInt {
-    let value = this.get("balance");
-    return value!.toBigInt();
-  }
-
-  set balance(value: BigInt) {
-    this.set("balance", Value.fromBigInt(value));
   }
 }
 

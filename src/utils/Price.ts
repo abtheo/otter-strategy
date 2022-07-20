@@ -22,6 +22,7 @@ import {
   OCQI_CONTRACT,
   QUICK_ERC20,
   DYST_POOL_TRANSITION_BLOCK,
+  TETU_QI_ERC20,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { UniswapV2Pair } from '../../generated/OtterQiLocker/UniswapV2Pair'
@@ -53,6 +54,20 @@ export function getQiUsdRate(): BigDecimal {
   log.debug('1 qi = {} wmatic = {} USD', [wmaticPerQi.toString(), usdPerQi.toString()])
 
   return usdPerQi
+}
+export function getTetuQiUsdRate(): BigDecimal {
+  let qiPerTetuQi = findTokenPrice(dyst, TETU_QI_ERC20, QI_ERC20)
+
+  let wmaticPerQi = findTokenPrice(quickSwap, QI_ERC20, MATIC_ERC20)
+  let usdPerTetuQi = qiPerTetuQi.times(wmaticPerQi).times(getwMaticUsdRate())
+
+  log.debug('1 tetuQi = {} qi = {} wmatic = {} USD', [
+    qiPerTetuQi.toString(),
+    wmaticPerQi.toString(),
+    usdPerTetuQi.toString(),
+  ])
+
+  return usdPerTetuQi
 }
 
 export function getDystUsdRate(): BigDecimal {
@@ -142,10 +157,12 @@ export function getDystPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_addr
 export function findPrice(blockNumber: BigInt, address: Address): BigDecimal {
   if (address == CLAM_ERC20) return getClamUsdRate(blockNumber)
   if (address == QI_ERC20 || address == OCQI_CONTRACT) return getQiUsdRate()
+  if (address == TETU_QI_ERC20) return getTetuQiUsdRate()
   if (address == MATIC_ERC20) return getwMaticUsdRate()
   if (address == DYST_ERC20) return getDystUsdRate()
   if (address == PEN_ERC20) return getPenUsdRate()
   if (address == WETH_ERC20) return getwEthUsdRate()
+  if (address == PENDYST_ERC20) return getPenDystUsdRate()
 
   if (address == FRAX_ERC20 || address == MAI_ERC20 || address == USDPLUS_ERC20 || address == USDC_ERC20)
     //TODO: Find real price

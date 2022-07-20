@@ -1,8 +1,8 @@
 import { Transfer as TransferEvent } from '../generated/OtterQiLocker/ERC20'
-import { Address, log } from '@graphprotocol/graph-ts'
+import { log } from '@graphprotocol/graph-ts'
 import { Transfer } from '../generated/schema'
 import { loadOrCreateTransaction } from './utils/Transactions'
-import { updateTreasuryRevenueHarvest, updateTreasuryRevenueQiTransfer } from './utils/TreasuryRevenue'
+import { updateTreasuryRevenueQiTransfer } from './utils/TreasuryRevenue'
 import {
   OTTER_DEPLOYER,
   QI_BRIBE_REWARDS,
@@ -11,7 +11,6 @@ import {
   UNI_QI_WMATIC_INVESTMENT_PAIR,
 } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
-import { getQiUsdRate } from './utils/Price'
 
 export function handleQiTransfer(event: TransferEvent): void {
   if (

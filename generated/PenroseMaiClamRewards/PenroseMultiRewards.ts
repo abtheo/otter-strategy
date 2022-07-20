@@ -10,28 +10,6 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
-export class OperatorStatus extends ethereum.Event {
-  get params(): OperatorStatus__Params {
-    return new OperatorStatus__Params(this);
-  }
-}
-
-export class OperatorStatus__Params {
-  _event: OperatorStatus;
-
-  constructor(event: OperatorStatus) {
-    this._event = event;
-  }
-
-  get candidate(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get status(): boolean {
-    return this._event.parameters[1].value.toBoolean();
-  }
-}
-
 export class OwnerChanged extends ethereum.Event {
   get params(): OwnerChanged__Params {
     return new OwnerChanged__Params(this);
@@ -69,28 +47,6 @@ export class OwnerNominated__Params {
 
   get newOwner(): Address {
     return this._event.parameters[0].value.toAddress();
-  }
-}
-
-export class PartnerStatus extends ethereum.Event {
-  get params(): PartnerStatus__Params {
-    return new PartnerStatus__Params(this);
-  }
-}
-
-export class PartnerStatus__Params {
-  _event: PartnerStatus;
-
-  constructor(event: PartnerStatus) {
-    this._event = event;
-  }
-
-  get candidate(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get status(): boolean {
-    return this._event.parameters[1].value.toBoolean();
   }
 }
 
@@ -244,7 +200,7 @@ export class Withdrawn__Params {
   }
 }
 
-export class PenrosePartnerRewards__rewardDataResult {
+export class PenroseMultiRewards__rewardDataResult {
   value0: Address;
   value1: BigInt;
   value2: BigInt;
@@ -280,9 +236,9 @@ export class PenrosePartnerRewards__rewardDataResult {
   }
 }
 
-export class PenrosePartnerRewards extends ethereum.SmartContract {
-  static bind(address: Address): PenrosePartnerRewards {
-    return new PenrosePartnerRewards("PenrosePartnerRewards", address);
+export class PenroseMultiRewards extends ethereum.SmartContract {
+  static bind(address: Address): PenroseMultiRewards {
+    return new PenroseMultiRewards("PenroseMultiRewards", address);
   }
 
   balanceOf(account: Address): BigInt {
@@ -353,25 +309,6 @@ export class PenrosePartnerRewards extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  isPartner(param0: Address): boolean {
-    let result = super.call("isPartner", "isPartner(address):(bool)", [
-      ethereum.Value.fromAddress(param0)
-    ]);
-
-    return result[0].toBoolean();
-  }
-
-  try_isPartner(param0: Address): ethereum.CallResult<boolean> {
-    let result = super.tryCall("isPartner", "isPartner(address):(bool)", [
-      ethereum.Value.fromAddress(param0)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
   lastPauseTime(): BigInt {
     let result = super.call("lastPauseTime", "lastPauseTime():(uint256)", []);
 
@@ -416,29 +353,6 @@ export class PenrosePartnerRewards extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  legacyRewardTokens(param0: BigInt): Address {
-    let result = super.call(
-      "legacyRewardTokens",
-      "legacyRewardTokens(uint256):(address)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_legacyRewardTokens(param0: BigInt): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "legacyRewardTokens",
-      "legacyRewardTokens(uint256):(address)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   nominatedOwner(): Address {
     let result = super.call("nominatedOwner", "nominatedOwner():(address)", []);
 
@@ -456,25 +370,6 @@ export class PenrosePartnerRewards extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  operator(param0: Address): boolean {
-    let result = super.call("operator", "operator(address):(bool)", [
-      ethereum.Value.fromAddress(param0)
-    ]);
-
-    return result[0].toBoolean();
-  }
-
-  try_operator(param0: Address): ethereum.CallResult<boolean> {
-    let result = super.tryCall("operator", "operator(address):(bool)", [
-      ethereum.Value.fromAddress(param0)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   owner(): Address {
@@ -507,37 +402,14 @@ export class PenrosePartnerRewards extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  proxyStorageInitialized(): boolean {
-    let result = super.call(
-      "proxyStorageInitialized",
-      "proxyStorageInitialized():(bool)",
-      []
-    );
-
-    return result[0].toBoolean();
-  }
-
-  try_proxyStorageInitialized(): ethereum.CallResult<boolean> {
-    let result = super.tryCall(
-      "proxyStorageInitialized",
-      "proxyStorageInitialized():(bool)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
-  rewardData(param0: Address): PenrosePartnerRewards__rewardDataResult {
+  rewardData(param0: Address): PenroseMultiRewards__rewardDataResult {
     let result = super.call(
       "rewardData",
       "rewardData(address):(address,uint256,uint256,uint256,uint256,uint256)",
       [ethereum.Value.fromAddress(param0)]
     );
 
-    return new PenrosePartnerRewards__rewardDataResult(
+    return new PenroseMultiRewards__rewardDataResult(
       result[0].toAddress(),
       result[1].toBigInt(),
       result[2].toBigInt(),
@@ -549,7 +421,7 @@ export class PenrosePartnerRewards extends ethereum.SmartContract {
 
   try_rewardData(
     param0: Address
-  ): ethereum.CallResult<PenrosePartnerRewards__rewardDataResult> {
+  ): ethereum.CallResult<PenroseMultiRewards__rewardDataResult> {
     let result = super.tryCall(
       "rewardData",
       "rewardData(address):(address,uint256,uint256,uint256,uint256,uint256)",
@@ -560,7 +432,7 @@ export class PenrosePartnerRewards extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new PenrosePartnerRewards__rewardDataResult(
+      new PenroseMultiRewards__rewardDataResult(
         value[0].toAddress(),
         value[1].toBigInt(),
         value[2].toBigInt(),
@@ -867,20 +739,20 @@ export class GetRewardCall__Outputs {
   }
 }
 
-export class InitializeProxyStorageCall extends ethereum.Call {
-  get inputs(): InitializeProxyStorageCall__Inputs {
-    return new InitializeProxyStorageCall__Inputs(this);
+export class InitializeCall extends ethereum.Call {
+  get inputs(): InitializeCall__Inputs {
+    return new InitializeCall__Inputs(this);
   }
 
-  get outputs(): InitializeProxyStorageCall__Outputs {
-    return new InitializeProxyStorageCall__Outputs(this);
+  get outputs(): InitializeCall__Outputs {
+    return new InitializeCall__Outputs(this);
   }
 }
 
-export class InitializeProxyStorageCall__Inputs {
-  _call: InitializeProxyStorageCall;
+export class InitializeCall__Inputs {
+  _call: InitializeCall;
 
-  constructor(call: InitializeProxyStorageCall) {
+  constructor(call: InitializeCall) {
     this._call = call;
   }
 
@@ -893,10 +765,10 @@ export class InitializeProxyStorageCall__Inputs {
   }
 }
 
-export class InitializeProxyStorageCall__Outputs {
-  _call: InitializeProxyStorageCall;
+export class InitializeCall__Outputs {
+  _call: InitializeCall;
 
-  constructor(call: InitializeProxyStorageCall) {
+  constructor(call: InitializeCall) {
     this._call = call;
   }
 }
@@ -995,74 +867,6 @@ export class RecoverERC20Call__Outputs {
   _call: RecoverERC20Call;
 
   constructor(call: RecoverERC20Call) {
-    this._call = call;
-  }
-}
-
-export class SetOperatorCall extends ethereum.Call {
-  get inputs(): SetOperatorCall__Inputs {
-    return new SetOperatorCall__Inputs(this);
-  }
-
-  get outputs(): SetOperatorCall__Outputs {
-    return new SetOperatorCall__Outputs(this);
-  }
-}
-
-export class SetOperatorCall__Inputs {
-  _call: SetOperatorCall;
-
-  constructor(call: SetOperatorCall) {
-    this._call = call;
-  }
-
-  get candidate(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get status(): boolean {
-    return this._call.inputValues[1].value.toBoolean();
-  }
-}
-
-export class SetOperatorCall__Outputs {
-  _call: SetOperatorCall;
-
-  constructor(call: SetOperatorCall) {
-    this._call = call;
-  }
-}
-
-export class SetPartnerCall extends ethereum.Call {
-  get inputs(): SetPartnerCall__Inputs {
-    return new SetPartnerCall__Inputs(this);
-  }
-
-  get outputs(): SetPartnerCall__Outputs {
-    return new SetPartnerCall__Outputs(this);
-  }
-}
-
-export class SetPartnerCall__Inputs {
-  _call: SetPartnerCall;
-
-  constructor(call: SetPartnerCall) {
-    this._call = call;
-  }
-
-  get candidate(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get status(): boolean {
-    return this._call.inputValues[1].value.toBoolean();
-  }
-}
-
-export class SetPartnerCall__Outputs {
-  _call: SetPartnerCall;
-
-  constructor(call: SetPartnerCall) {
     this._call = call;
   }
 }

@@ -59,7 +59,7 @@ type ProtocolMetric @entity {
   treasuryClamMaiPOL: BigDecimal!
   totalBurnedClam: BigDecimal!
   totalBurnedClamMarketValue: BigDecimal!
-  treasuryDystopiaPairQiTetuQimMarketValue: BigDecimal!
+  treasuryDystopiaPairQiTetuQiMarketValue: BigDecimal!
   treasuryDystopiaPairwMaticDystMarketValue: BigDecimal!
   treasuryDystopiaPairMaiClamMarketValue: BigDecimal!
   treasuryDystopiaPairUSDPLUSClamMarketValue: BigDecimal!
@@ -104,10 +104,6 @@ type TreasuryRevenue @entity {
   totalRevenueMarketValue: BigDecimal!
 }
 
-type DystopiaGaugeBalance @entity {
-  id: ID! #lp token address
-  balance: BigInt!
-}
 type Vote @entity {
   id: ID! #lp token address
   timestamp: BigInt!

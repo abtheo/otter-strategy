@@ -24,7 +24,6 @@ import {
   MATIC_ERC20,
   OCQI_CONTRACT,
   QCQI_START_BLOCK,
-  TETU_QI_CONTRACT,
   TETU_QI_START_BLOCK,
   XTETU_QI_CONTRACT,
   XTETU_QI_START_BLOCK,
@@ -75,6 +74,7 @@ import {
   DYST_START_BLOCK,
   PEN_START_BLOCK,
   DYSTOPIA_PAIR_QI_TETUQI,
+  TETU_QI_ERC20,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -88,10 +88,11 @@ import {
   getQiUsdRate,
   getPenDystUsdRate,
   getPenUsdRate,
+  getTetuQiUsdRate,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
 import { DystPair } from '../../generated/OtterQiLocker/DystPair'
-import { loadOrCreateDystopiaGaugeBalance } from '../DystPair'
+import { PenroseMultiRewards } from '../../generated/PenroseMultiRewards/PenroseMultiRewards'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -117,7 +118,7 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.treasuryClamMaiPOL = BigDecimal.zero()
     protocolMetric.totalBurnedClam = BigDecimal.zero()
     protocolMetric.totalBurnedClamMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairQiTetuQimMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDystopiaPairQiTetuQiMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairMaiClamMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairMaiUsdcMarketValue = BigDecimal.zero()
@@ -279,7 +280,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let daiERC20 = ERC20.bind(DAI_ERC20)
   let maticERC20 = ERC20.bind(MATIC_ERC20)
   let qiERC20 = ERC20.bind(QI_ERC20)
-  let tetuQiERC20 = ERC20.bind(TETU_QI_CONTRACT)
+  let tetuQiERC20 = ERC20.bind(TETU_QI_ERC20)
 
   let xTetuQiERC20 = xTetuQi.bind(XTETU_QI_CONTRACT)
 
@@ -321,12 +322,12 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let tetuQiMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(TETU_QI_START_BLOCK))) {
     tetuQiMarketValue = tetuQiMarketValue.plus(
-      getQiUsdRate().times(toDecimal(tetuQiERC20.balanceOf(TREASURY_ADDRESS), tetuQiERC20.decimals())),
+      getTetuQiUsdRate().times(toDecimal(tetuQiERC20.balanceOf(TREASURY_ADDRESS), tetuQiERC20.decimals())),
     )
   }
   if (transaction.blockNumber.gt(BigInt.fromString(XTETU_QI_START_BLOCK))) {
     tetuQiMarketValue = tetuQiMarketValue.plus(
-      getQiUsdRate().times(
+      getTetuQiUsdRate().times(
         toDecimal(xTetuQiERC20.underlyingBalanceWithInvestmentForHolder(TREASURY_ADDRESS), xTetuQiERC20.decimals()),
       ),
     )
@@ -369,9 +370,12 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       let pairDystBalance = dystopiaPair.try_balanceOf(DAO_WALLET)
       if (pairDystBalance.reverted) continue
       let pairValue = getDystPairUSD(transaction.blockNumber, pairDystBalance.value, pair_address)
-      //then add the Gauge staked LP balance from Dystopia & Penrose
-      let dystGaugeLp = loadOrCreateDystopiaGaugeBalance(pair_address)
-      pairValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, dystGaugeLp.balance, pair_address))
+      //then add the Gauge staked LP balance from Penrose
+      // let dystGaugeLp = loadOrCreateDystopiaGaugeBalance(pair_address)
+
+      let penroseRewards = PenroseMultiRewards.bind(pair_address).try_balanceOf(DAO_WALLET_PENROSE_USER_PROXY)
+      let penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
+      pairValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
 
       //finally, associate with relevant property
       if (pair_address == DYSTOPIA_PAIR_WMATIC_DYST) wMaticDystValue = pairValue
@@ -460,7 +464,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryOtterClamQiMarketValue = ocQiMarketValue
   protocolMetric.treasuryTetuQiMarketValue = tetuQiMarketValue
   protocolMetric.treasuryClamMaiPOL = clamMaiPOL
-  protocolMetric.treasuryDystopiaPairQiTetuQimMarketValue = qiTetuQiValue
+  protocolMetric.treasuryDystopiaPairQiTetuQiMarketValue = qiTetuQiValue
   protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = wMaticDystValue
   protocolMetric.treasuryDystopiaPairMaiClamMarketValue = clamMaiDystValue
   protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = clamUsdplusDystValue

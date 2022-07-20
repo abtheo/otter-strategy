@@ -22,11 +22,11 @@ export const USDC_ERC20 = Address.fromString('0x2791bca1f2de4661ed88a30c99a7a944
 export const PEN_ERC20 = Address.fromString('0x9008d70a5282a936552593f410abcbce2f891a97')
 export const PENDYST_ERC20 = Address.fromString('0x5b0522391d0a5a37fd117fe4c43e8876fb4e91e6')
 export const DYST_ERC20 = Address.fromString('0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb')
+export const TETU_QI_ERC20 = Address.fromString('0x4cd44ced63d9a6fef595f6ad3f7ced13fceac768')
 
 export const OCQI_CONTRACT = Address.fromString('0x0906ee253B2cD6737A3CD3838490Cb0b90fD68be')
 export const QCQI_START_BLOCK = '25443072'
 
-export const TETU_QI_CONTRACT = Address.fromString('0x4cd44ced63d9a6fef595f6ad3f7ced13fceac768')
 export const TETU_QI_START_BLOCK = '26184969'
 export const XTETU_QI_CONTRACT = Address.fromString('0x8f1505C8F3B45Cb839D09c607939095a4195738e')
 export const XTETU_QI_START_BLOCK = '26184969'

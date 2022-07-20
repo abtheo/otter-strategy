@@ -1,7 +1,7 @@
 import { OtterClamERC20V2 } from '../generated/PearlBank/OtterClamERC20V2'
 import { PearlBank, Stake, Withdraw } from '../generated/PearlBank/PearlBank'
 import { loadOrCreatePearlBankMetric } from './utils/PearlBankMetric'
-import { CLAM_ERC20, CLAM_PLUS, PEARL_BANK } from './utils/Constants'
+import { CLAM_ERC20, PEARL_BANK } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
 import { loadOrCreateTotalBurnedClamSingleton } from './utils/Burned'
 import { getClamUsdRate } from './utils/Price'

@@ -1,7 +1,7 @@
 import { toDecimal } from './Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { dayFromTimestamp } from './Dates'
-import { TreasuryRevenue, Harvest, Transfer } from '../../generated/schema'
+import { TreasuryRevenue, Harvest, Transfer, Transaction } from '../../generated/schema'
 import { getClamUsdRate, getDystUsdRate, getPenUsdRate, getQiUsdRate } from '../utils/Price'
 import { RewardPaid } from '../../generated/PenroseMultiRewards/PenroseMultiRewards'
 
@@ -66,15 +66,14 @@ export function updateTreasuryRevenueQiTransfer(block: BigInt, transfer: Transfe
 
   treasuryRevenue.save()
 }
+export function updateTreasuryRevenueDystRewardPaid(transaction: Transaction, amount: BigInt): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(transaction.timestamp)
 
-export function updateTreasuryRevenueDystTransfer(blockNumber: BigInt, transfer: Transfer): void {
-  let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
-
-  let dystMarketValue = getDystUsdRate().times(toDecimal(transfer.value, 18))
-  let clamAmount = dystMarketValue.div(getClamUsdRate(blockNumber))
+  let dystMarketValue = getDystUsdRate().times(toDecimal(amount, 18))
+  let clamAmount = dystMarketValue.div(getClamUsdRate(transaction.blockNumber))
 
   log.debug('TransferEvent, txid: {}, dystMarketValue {}, clamAmount: {}', [
-    transfer.id,
+    transaction.id,
     dystMarketValue.toString(),
     clamAmount.toString(),
   ])
@@ -88,14 +87,15 @@ export function updateTreasuryRevenueDystTransfer(blockNumber: BigInt, transfer:
   treasuryRevenue.save()
 }
 
-export function updateTreasuryRevenuePenTransfer(blockNumber: BigInt, transfer: Transfer): void {
-  let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
+export function updateTreasuryRevenuePenRewardPaid(transaction: Transaction, amount: BigInt): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(transaction.timestamp)
 
-  let penMarketValue = getPenUsdRate().times(toDecimal(transfer.value, 18))
-  let clamAmount = penMarketValue.div(getClamUsdRate(blockNumber))
+  let penMarketValue = getPenUsdRate().times(toDecimal(amount, 18))
+  let clamAmount = penMarketValue.div(getClamUsdRate(transaction.blockNumber))
 
-  log.debug('TransferEvent, txid: {}, penMarketValue {}, clamAmount: {}', [
-    transfer.id,
+  log.debug('TransferEvent, txid: {}, penAmt {}, penMarketValue {}, clamAmount: {}', [
+    transaction.id,
+    amount.toString(),
     penMarketValue.toString(),
     clamAmount.toString(),
   ])

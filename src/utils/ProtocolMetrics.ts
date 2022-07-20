@@ -92,7 +92,7 @@ import {
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
 import { DystPair } from '../../generated/OtterQiLocker/DystPair'
-import { PenroseMultiRewards } from '../../generated/PenroseMultiRewards/PenroseMultiRewards'
+import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)

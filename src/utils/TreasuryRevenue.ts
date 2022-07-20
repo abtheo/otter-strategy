@@ -3,7 +3,7 @@ import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { dayFromTimestamp } from './Dates'
 import { TreasuryRevenue, Harvest, Transfer, Transaction } from '../../generated/schema'
 import { getClamUsdRate, getDystUsdRate, getPenDystUsdRate, getPenUsdRate, getQiUsdRate } from '../utils/Price'
-import { RewardPaid } from '../../generated/PenroseMultiRewards/PenroseMultiRewards'
+import { RewardPaid } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
   let ts = dayFromTimestamp(timestamp)

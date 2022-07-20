@@ -1,4 +1,4 @@
-import { RewardPaid } from '../generated/PenroseMultiRewards/PenroseMultiRewards'
+import { RewardPaid } from '../generated/PenrosePartnerRewards/PenroseMultiRewards'
 import { DAO_WALLET_PENROSE_USER_PROXY, DYST_ERC20, PENDYST_ERC20, PEN_ERC20 } from './utils/Constants'
 import {
   updateTreasuryRevenueDystRewardPaid,

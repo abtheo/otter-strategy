@@ -1,7 +1,11 @@
 import { Transfer } from '../generated/schema'
 import { RewardAdded, RewardPaid } from '../generated/PenroseMultiRewards/PenroseMultiRewards'
-import { DAO_WALLET_PENROSE_USER_PROXY, DYST_ERC20, PEN_ERC20 } from './utils/Constants'
-import { updateTreasuryRevenueDystRewardPaid, updateTreasuryRevenuePenRewardPaid } from './utils/TreasuryRevenue'
+import { DAO_WALLET_PENROSE_USER_PROXY, DYST_ERC20, PENDYST_ERC20, PEN_ERC20 } from './utils/Constants'
+import {
+  updateTreasuryRevenueDystRewardPaid,
+  updateTreasuryRevenuePenDystRewardPaid,
+  updateTreasuryRevenuePenRewardPaid,
+} from './utils/TreasuryRevenue'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { log } from '@graphprotocol/graph-ts'
 
@@ -22,5 +26,9 @@ export function handleRewardPaid(event: RewardPaid): void {
   if (event.params.rewardsToken == PEN_ERC20) {
     log.warning('PEN REVENUE {}', [event.params.reward.toString()])
     updateTreasuryRevenuePenRewardPaid(transaction, event.params.reward)
+  }
+  if (event.params.rewardsToken == PENDYST_ERC20) {
+    log.warning('PENDYST REVENUE {}', [event.params.reward.toString()])
+    updateTreasuryRevenuePenDystRewardPaid(transaction, event.params.reward)
   }
 }

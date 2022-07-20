@@ -2,7 +2,7 @@ import { toDecimal } from './Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { dayFromTimestamp } from './Dates'
 import { TreasuryRevenue, Harvest, Transfer, Transaction } from '../../generated/schema'
-import { getClamUsdRate, getDystUsdRate, getPenUsdRate, getQiUsdRate } from '../utils/Price'
+import { getClamUsdRate, getDystUsdRate, getPenDystUsdRate, getPenUsdRate, getQiUsdRate } from '../utils/Price'
 import { RewardPaid } from '../../generated/PenroseMultiRewards/PenroseMultiRewards'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
@@ -105,6 +105,27 @@ export function updateTreasuryRevenuePenRewardPaid(transaction: Transaction, amo
 
   treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
   treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(penMarketValue)
+
+  treasuryRevenue.save()
+}
+export function updateTreasuryRevenuePenDystRewardPaid(transaction: Transaction, amount: BigInt): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(transaction.timestamp)
+
+  let penDystMarketValue = getPenDystUsdRate().times(toDecimal(amount, 18))
+  let clamAmount = penDystMarketValue.div(getClamUsdRate(transaction.blockNumber))
+
+  log.debug('TransferEvent, txid: {}, penAmt {}, penMarketValue {}, clamAmount: {}', [
+    transaction.id,
+    amount.toString(),
+    penDystMarketValue.toString(),
+    clamAmount.toString(),
+  ])
+
+  treasuryRevenue.penDystClamAmount = treasuryRevenue.penClamAmount.plus(clamAmount)
+  treasuryRevenue.penDystMarketValue = treasuryRevenue.penMarketValue.plus(penDystMarketValue)
+
+  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
+  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(penDystMarketValue)
 
   treasuryRevenue.save()
 }

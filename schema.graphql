@@ -96,6 +96,8 @@ type TreasuryRevenue @entity {
   dystMarketValue: BigDecimal!
   penClamAmount: BigDecimal!
   penMarketValue: BigDecimal!
+  penDystClamAmount: BigDecimal!
+  penDystMarketValue: BigDecimal!
   ottopiaClamAmount: BigDecimal!
   ottopiaMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!

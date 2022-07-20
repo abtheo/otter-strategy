@@ -958,6 +958,8 @@ export class TreasuryRevenue extends Entity {
     this.set("dystMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("penClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("penMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("penDystClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("penDystMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("totalRevenueClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
@@ -1054,6 +1056,24 @@ export class TreasuryRevenue extends Entity {
 
   set penMarketValue(value: BigDecimal) {
     this.set("penMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get penDystClamAmount(): BigDecimal {
+    let value = this.get("penDystClamAmount");
+    return value!.toBigDecimal();
+  }
+
+  set penDystClamAmount(value: BigDecimal) {
+    this.set("penDystClamAmount", Value.fromBigDecimal(value));
+  }
+
+  get penDystMarketValue(): BigDecimal {
+    let value = this.get("penDystMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set penDystMarketValue(value: BigDecimal) {
+    this.set("penDystMarketValue", Value.fromBigDecimal(value));
   }
 
   get ottopiaClamAmount(): BigDecimal {

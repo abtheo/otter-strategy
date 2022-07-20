@@ -235,10 +235,10 @@ dataSources:
   #     file: ./src/Pen.ts
 
   - kind: ethereum/contract
-    name: PenroseMultiRewards
+    name: PenroseMaiClamRewards
     network: matic
     source: 
-      address: '0x4edc2f4368179be77e5e8fba295fff0a82e3df21' #'0x4eDc2f4368179BE77E5e8fbA295FfF0A82E3DF21'
+      address: '0x4edc2f4368179be77e5e8fba295fff0a82e3df21' 
       abi: PenroseMultiRewards
       startBlock: 29069971
     mapping:
@@ -277,10 +277,10 @@ dataSources:
       file: ./src/PenroseMultiRewards.ts
   
   - kind: ethereum/contract
-    name: PenroseMultiRewards2
+    name: PenroseMaticDystRewards
     network: matic
     source: 
-      address: '0xbb1bF0980a61Fc5dAf981B33543Fb54c8E04DFa0'
+      address: '0xbb1bF0980a61Fc5dAf981B33543Fb54c8E04DFa0' #wMATIC-DYST
       abi: PenroseMultiRewards
       startBlock: 29069971
     mapping:
@@ -319,7 +319,7 @@ dataSources:
       file: ./src/PenroseMultiRewards.ts
   
   - kind: ethereum/contract
-    name: VLPen
+    name: PenroseVlPenRewards
     network: matic
     source: 
       address: '0x55CA76E0341ccD35c2E3F34CbF767C6102aea70f'
@@ -359,7 +359,7 @@ dataSources:
         - event: RewardPaid(indexed address,indexed address,uint256)
           handler: handleRewardPaid
       file: ./src/PenroseMultiRewards.ts
-  
+
   - kind: ethereum/contract
     name: PenroseClamUsdPlusRewards
     network: matic
@@ -401,13 +401,13 @@ dataSources:
         - event: RewardPaid(indexed address,indexed address,uint256)
           handler: handleRewardPaid
       file: ./src/PenroseMultiRewards.ts
-
+      
   - kind: ethereum/contract
-    name: PenrosePartnerRewards
+    name: PenroseQiTetuQiRewards
     network: matic
-    source:
-      address: '0x5DD340DD4142D093c1926282CD56B0D4690dEB11' #'0x5DD340DD4142D093c1926282CD56B0D4690dEB11'
-      abi: PenrosePartnerRewards
+    source: 
+      address: '0x249C0236B0F597EdCE0BF989fdf2EDbB1799FfA8'
+      abi: PenroseMultiRewards
       startBlock: 29069971
     mapping:
       kind: ethereum/events
@@ -418,8 +418,8 @@ dataSources:
         - Transfer
         - TreasuryRevenue
       abis:
-        - name: PenrosePartnerRewards
-          file: ./abis/PenrosePartnerRewards.json
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
         - name: Pen
           file: ./abis/Pen.json
         - name: Dyst
@@ -442,7 +442,50 @@ dataSources:
       eventHandlers:
         - event: RewardPaid(indexed address,indexed address,uint256)
           handler: handleRewardPaid
-      file: ./src/PenrosePartnerRewards.ts
+      file: ./src/PenroseMultiRewards.ts
+
+
+  - kind: ethereum/contract
+    name: PenrosePartnerRewards
+    network: matic
+    source:
+      address: '0x5DD340DD4142D093c1926282CD56B0D4690dEB11' 
+      abi: PenroseMultiRewards
+      startBlock: 29069971
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+      abis:
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        - name: Pen
+          file: ./abis/Pen.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+      eventHandlers:
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/PenroseMultiRewards.ts
   
   # - kind: ethereum/contract
   #   name: Qi

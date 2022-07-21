@@ -121,7 +121,7 @@ export const PENROSE_LENS_PROXY = Address.fromString('0x1432c3553fdf7fbd593a84b3
 export const QIDAO_TREASURY = Address.fromString('0x3feacf904b152b1880bde8bf04ac9eb636fee4d8')
 export const QIDAO_veDYST_ERC721_ID = 4
 
-export const PEARL_BANK = Address.fromString('0xee8Cad6adAeA8AA07b078603dcc0F466192bCE01')
+export const PEARL_BANK = Address.fromString('0x845eb7730a8d37e8d190fb8bb9c582038331b48a')
 export const DYST_ROUTER = Address.fromString('0xbe75dd16d029c6b32b7ad57a0fd9c1c20dd2862e')
 export const QUICKSWAP_ROUTER = Address.fromString('0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff')
 

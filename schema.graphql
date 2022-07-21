@@ -136,7 +136,6 @@ type CumulativeValues @entity {
   always equal 'CumulativeValues'
   """
   rewardPayoutMarketValue: BigDecimal!
-  clamPondDepositedAmount: BigDecimal!
 }
 
 type PearlBankMetric @entity {
@@ -150,17 +149,18 @@ type PearlBankMetric @entity {
   clamMarketValueWhenPayoutHappens: BigDecimal!
   cumulativeRewardPayoutMarketValue: BigDecimal!
 
-  """
-  pond
-  """
-  clamPondDepositedAmount: BigDecimal!
+  clamPondDepositedClamAmount: BigDecimal!
+  pearlBankDepositedClamAmount: BigDecimal!
+
+  clamPondDepositedUsdValue: BigDecimal!
+  pearlBankDepositedUsdValue: BigDecimal!
+
+  totalClamStaked: BigDecimal!
+  totalClamStakedUsdValue: BigDecimal!
 
   """
   token supply
   """
-  stakedCLAMAmount: BigDecimal!
-  clamTotalSupply: BigDecimal!
-
   timestamp: BigInt!
 }
 

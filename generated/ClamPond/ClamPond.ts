@@ -284,6 +284,10 @@ export class Withdraw__Params {
   get amount(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
+
+  get fee(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
 }
 
 export class ClamPond extends ethereum.SmartContract {

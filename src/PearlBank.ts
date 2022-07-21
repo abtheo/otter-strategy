@@ -12,12 +12,11 @@ export function handleStake(stake: Stake): void {
   let pearlBank = PearlBank.bind(PEARL_BANK)
   let try_staked = pearlBank.try_totalStaked()
   if (try_staked.reverted) return
-  let staked = try_staked.value
+  let staked = toDecimal(try_staked.value, 9)
 
   let metric = loadOrCreatePearlBankMetric(stake.block.timestamp)
-  metric.clamTotalSupply = toDecimal(clam.totalSupply(), 6)
-  metric.stakedCLAMAmount = toDecimal(staked)
-
+  metric.pearlBankDepositedClamAmount = staked
+  metric.pearlBankDepositedUsdValue = staked.times(getClamUsdRate(stake.block.number))
   metric.save()
 }
 
@@ -26,11 +25,13 @@ export function handleWithdraw(withdraw: Withdraw): void {
   let pearlBank = PearlBank.bind(PEARL_BANK)
   let try_staked = pearlBank.try_totalStaked()
   if (try_staked.reverted) return
-  let staked = try_staked.value
+  let staked = toDecimal(try_staked.value, 9)
 
   let metric = loadOrCreatePearlBankMetric(withdraw.block.timestamp)
-  metric.clamTotalSupply = toDecimal(clam.totalSupply(), 9)
-  metric.stakedCLAMAmount = toDecimal(staked, 9)
+  metric.pearlBankDepositedClamAmount = staked
+  metric.pearlBankDepositedUsdValue = staked.times(getClamUsdRate(withdraw.block.number))
+  metric.totalClamStaked = staked.plus(metric.clamPondDepositedClamAmount)
+  metric.save()
 
   //Cumulative total for burned CLAM
   let burns = loadOrCreateTotalBurnedClamSingleton()

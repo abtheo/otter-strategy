@@ -381,6 +381,21 @@ export class OtterRewardManager extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  ocUsdPlus(): Address {
+    let result = super.call("ocUsdPlus", "ocUsdPlus():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_ocUsdPlus(): ethereum.CallResult<Address> {
+    let result = super.tryCall("ocUsdPlus", "ocUsdPlus():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   paused(): boolean {
     let result = super.call("paused", "paused():(bool)", []);
 
@@ -514,25 +529,6 @@ export class OtterRewardManager extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  usdPlusMarket(): Address {
-    let result = super.call("usdPlusMarket", "usdPlusMarket():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_usdPlusMarket(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "usdPlusMarket",
-      "usdPlusMarket():(address)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   usdc(): Address {
     let result = super.call("usdc", "usdc():(address)", []);
 
@@ -541,21 +537,6 @@ export class OtterRewardManager extends ethereum.SmartContract {
 
   try_usdc(): ethereum.CallResult<Address> {
     let result = super.tryCall("usdc", "usdc():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  wUSDPlus(): Address {
-    let result = super.call("wUSDPlus", "wUSDPlus():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_wUSDPlus(): ethereum.CallResult<Address> {
-    let result = super.tryCall("wUSDPlus", "wUSDPlus():(address)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -623,24 +604,16 @@ export class InitializeCall__Inputs {
     return this._call.inputValues[1].value.toAddress();
   }
 
-  get portfolioManager_(): Address {
+  get usdc_(): Address {
     return this._call.inputValues[2].value.toAddress();
   }
 
-  get usdc_(): Address {
+  get ocUsdPlus_(): Address {
     return this._call.inputValues[3].value.toAddress();
   }
 
-  get wUSDPlus_(): Address {
-    return this._call.inputValues[4].value.toAddress();
-  }
-
-  get usdPlusMarket_(): Address {
-    return this._call.inputValues[5].value.toAddress();
-  }
-
   get nextPayoutTime_(): BigInt {
-    return this._call.inputValues[6].value.toBigInt();
+    return this._call.inputValues[4].value.toBigInt();
   }
 }
 

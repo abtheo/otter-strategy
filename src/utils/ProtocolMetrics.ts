@@ -307,7 +307,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let clamMai_MaiOnlyValue = toDecimal(clamMaiPair.getReserves().value0, 18).times(
     clamMaiPOL.div(BigDecimal.fromString('100')),
   )
-  log.warning('ClamMaiValue: {} Mai only value: {}', [clamMai_value.toString(), clamMai_MaiOnlyValue.toString()])
 
   let mai3poolValueDecimal = BigDecimal.zero()
   if (transaction.blockNumber.ge(BigInt.fromString(CURVE_MAI_3POOL_PAIR_BLOCK))) {

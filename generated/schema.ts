@@ -1381,10 +1381,6 @@ export class CumulativeValues extends Entity {
       "rewardPayoutMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
-    this.set(
-      "clamPondDepositedAmount",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
   }
 
   save(): void {
@@ -1423,15 +1419,6 @@ export class CumulativeValues extends Entity {
   set rewardPayoutMarketValue(value: BigDecimal) {
     this.set("rewardPayoutMarketValue", Value.fromBigDecimal(value));
   }
-
-  get clamPondDepositedAmount(): BigDecimal {
-    let value = this.get("clamPondDepositedAmount");
-    return value!.toBigDecimal();
-  }
-
-  set clamPondDepositedAmount(value: BigDecimal) {
-    this.set("clamPondDepositedAmount", Value.fromBigDecimal(value));
-  }
 }
 
 export class PearlBankMetric extends Entity {
@@ -1450,11 +1437,26 @@ export class PearlBankMetric extends Entity {
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
-      "clamPondDepositedAmount",
+      "clamPondDepositedClamAmount",
       Value.fromBigDecimal(BigDecimal.zero())
     );
-    this.set("stakedCLAMAmount", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("clamTotalSupply", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set(
+      "pearlBankDepositedClamAmount",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "clamPondDepositedUsdValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "pearlBankDepositedUsdValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set("totalClamStaked", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set(
+      "totalClamStakedUsdValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -1520,31 +1522,58 @@ export class PearlBankMetric extends Entity {
     this.set("cumulativeRewardPayoutMarketValue", Value.fromBigDecimal(value));
   }
 
-  get clamPondDepositedAmount(): BigDecimal {
-    let value = this.get("clamPondDepositedAmount");
+  get clamPondDepositedClamAmount(): BigDecimal {
+    let value = this.get("clamPondDepositedClamAmount");
     return value!.toBigDecimal();
   }
 
-  set clamPondDepositedAmount(value: BigDecimal) {
-    this.set("clamPondDepositedAmount", Value.fromBigDecimal(value));
+  set clamPondDepositedClamAmount(value: BigDecimal) {
+    this.set("clamPondDepositedClamAmount", Value.fromBigDecimal(value));
   }
 
-  get stakedCLAMAmount(): BigDecimal {
-    let value = this.get("stakedCLAMAmount");
+  get pearlBankDepositedClamAmount(): BigDecimal {
+    let value = this.get("pearlBankDepositedClamAmount");
     return value!.toBigDecimal();
   }
 
-  set stakedCLAMAmount(value: BigDecimal) {
-    this.set("stakedCLAMAmount", Value.fromBigDecimal(value));
+  set pearlBankDepositedClamAmount(value: BigDecimal) {
+    this.set("pearlBankDepositedClamAmount", Value.fromBigDecimal(value));
   }
 
-  get clamTotalSupply(): BigDecimal {
-    let value = this.get("clamTotalSupply");
+  get clamPondDepositedUsdValue(): BigDecimal {
+    let value = this.get("clamPondDepositedUsdValue");
     return value!.toBigDecimal();
   }
 
-  set clamTotalSupply(value: BigDecimal) {
-    this.set("clamTotalSupply", Value.fromBigDecimal(value));
+  set clamPondDepositedUsdValue(value: BigDecimal) {
+    this.set("clamPondDepositedUsdValue", Value.fromBigDecimal(value));
+  }
+
+  get pearlBankDepositedUsdValue(): BigDecimal {
+    let value = this.get("pearlBankDepositedUsdValue");
+    return value!.toBigDecimal();
+  }
+
+  set pearlBankDepositedUsdValue(value: BigDecimal) {
+    this.set("pearlBankDepositedUsdValue", Value.fromBigDecimal(value));
+  }
+
+  get totalClamStaked(): BigDecimal {
+    let value = this.get("totalClamStaked");
+    return value!.toBigDecimal();
+  }
+
+  set totalClamStaked(value: BigDecimal) {
+    this.set("totalClamStaked", Value.fromBigDecimal(value));
+  }
+
+  get totalClamStakedUsdValue(): BigDecimal {
+    let value = this.get("totalClamStakedUsdValue");
+    return value!.toBigDecimal();
+  }
+
+  set totalClamStakedUsdValue(value: BigDecimal) {
+    this.set("totalClamStakedUsdValue", Value.fromBigDecimal(value));
   }
 
   get timestamp(): BigInt {

@@ -580,8 +580,8 @@ dataSources:
         - name: UniswapV2Router02
           file: ./abis/UniswapV2Router02.json
       eventHandlers:
-        - event: Deposit(address,uint256)
+        - event: Deposit(indexed address,uint256)
           handler: handleDeposit
-        - event: Withdraw(address,uint256)
+        - event: Withdraw(indexed address,uint256,uint256)
           handler: handleWithdraw
       file: ./src/ClamPond.ts

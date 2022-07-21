@@ -1,4 +1,4 @@
-import { Deposit, Withdraw } from '../generated/ClamPond/ClamPond'
+import { ClamPond, Deposit, Withdraw } from '../generated/ClamPond/ClamPond'
 import { loadOrCreatePearlBankMetric } from './utils/PearlBankMetric'
 import { toDecimal } from './utils/Decimals'
 import { loadCumulativeValues } from './utils/CumulativeValues'
@@ -9,42 +9,31 @@ import { getClamUsdRate } from './utils/Price'
 import { log } from '@graphprotocol/graph-ts'
 
 export function handleDeposit(deposit: Deposit): void {
-  let cumulativeValues = loadCumulativeValues()
+  let clamPondStakedClam = toDecimal(ClamPond.bind(CLAM_PLUS).totalSupply(), 9)
+  let clamPondMv = clamPondStakedClam.times(getClamUsdRate(deposit.block.number))
+
   let metric = loadOrCreatePearlBankMetric(deposit.block.timestamp)
+  metric.clamPondDepositedClamAmount = clamPondStakedClam
+  metric.clamPondDepositedUsdValue = clamPondMv
 
-  cumulativeValues.clamPondDepositedAmount = cumulativeValues.clamPondDepositedAmount.plus(
-    toDecimal(deposit.params.amount, 6),
-  )
-  metric.clamPondDepositedAmount = cumulativeValues.clamPondDepositedAmount
-
-  cumulativeValues.save()
+  metric.totalClamStaked = metric.clamPondDepositedClamAmount.plus(metric.pearlBankDepositedClamAmount)
   metric.save()
 }
 
 export function handleWithdraw(withdraw: Withdraw): void {
-  let cumulativeValues = loadCumulativeValues()
+  let clamPondStakedClam = toDecimal(ClamPond.bind(CLAM_PLUS).totalSupply(), 9)
+  let clamPondMv = clamPondStakedClam.times(getClamUsdRate(withdraw.block.number))
+
   let metric = loadOrCreatePearlBankMetric(withdraw.block.timestamp)
-
-  cumulativeValues.clamPondDepositedAmount = cumulativeValues.clamPondDepositedAmount.minus(
-    toDecimal(withdraw.params.amount, 6),
-  )
-  metric.clamPondDepositedAmount = cumulativeValues.clamPondDepositedAmount
-
-  cumulativeValues.save()
+  metric.clamPondDepositedClamAmount = clamPondStakedClam
+  metric.clamPondDepositedUsdValue = clamPondMv
+  metric.totalClamStaked = clamPondStakedClam.plus(metric.pearlBankDepositedClamAmount)
   metric.save()
 
   //add to burns if early withdrawal
   let burns = loadOrCreateTotalBurnedClamSingleton()
-  let currentClamPondBurn = toDecimal(ClamPlus.bind(CLAM_PLUS).totalBurn(), 9)
-  let burnDiff = currentClamPondBurn.minus(burns.clamPondTotal)
-  log.debug('Burned CLAM change from {} to {}, diff {}', [
-    burns.clamPondTotal.toString(),
-    currentClamPondBurn.toString(),
-    burnDiff.toString(),
-  ])
-
-  burns.burnedClam = burns.burnedClam.plus(burnDiff)
-  burns.burnedValueUsd = burns.burnedValueUsd.plus(burnDiff.times(getClamUsdRate(withdraw.block.number)))
-  burns.clamPondTotal = currentClamPondBurn
+  let burnedClam = toDecimal(withdraw.params.fee, 9)
+  burns.burnedClam = burns.burnedClam.plus(burnedClam)
+  burns.burnedValueUsd = burns.burnedValueUsd.plus(getClamUsdRate(withdraw.block.number).times(burnedClam))
   burns.save()
 }

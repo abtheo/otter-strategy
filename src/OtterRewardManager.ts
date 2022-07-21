@@ -9,29 +9,20 @@ import { getClamUsdRate } from './utils/Price'
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
 export function handlePayout(payout: Payout): void {
-  let clam = OtterClamERC20V2.bind(CLAM_ERC20)
-  let pearlBank = PearlBank.bind(PEARL_BANK)
-
+  let metric = loadOrCreatePearlBankMetric(payout.block.timestamp)
   let clamPrice = getClamUsdRate(payout.block.number)
-
-  let maybe_totalStaked = pearlBank.try_totalStaked()
-  if (maybe_totalStaked.reverted) return
-  let totalStaked = maybe_totalStaked.reverted ? BigInt.zero() : maybe_totalStaked.value
-  let stakedMarketValue = clamPrice.times(toDecimal(totalStaked, 9))
+  let stakedUsd = metric.totalClamStaked.times(clamPrice)
 
   // update cumulative values
   let cumulativeValues = loadCumulativeValues()
-  let metric = loadOrCreatePearlBankMetric(payout.block.timestamp)
   cumulativeValues.rewardPayoutMarketValue = cumulativeValues.rewardPayoutMarketValue.plus(metric.payoutMatketValue)
 
   // update metrics
   metric.payoutMatketValue = toDecimal(payout.params.totalUsdPlus, 6)
   metric.cumulativeRewardPayoutMarketValue = cumulativeValues.rewardPayoutMarketValue
-  metric.apr = metric.payoutMatketValue.div(stakedMarketValue)
+  metric.apr = metric.payoutMatketValue.div(stakedUsd)
   metric.clamMarketValueWhenPayoutHappens = clamPrice
-
-  metric.clamTotalSupply = toDecimal(clam.totalSupply(), 9)
-  metric.stakedCLAMAmount = toDecimal(totalStaked, 9)
+  metric.totalClamStakedUsdValue = stakedUsd
 
   // persist
   cumulativeValues.save()

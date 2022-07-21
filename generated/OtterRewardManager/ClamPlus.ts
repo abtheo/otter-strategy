@@ -290,9 +290,9 @@ export class Withdraw__Params {
   }
 }
 
-export class ClamPond extends ethereum.SmartContract {
-  static bind(address: Address): ClamPond {
-    return new ClamPond("ClamPond", address);
+export class ClamPlus extends ethereum.SmartContract {
+  static bind(address: Address): ClamPlus {
+    return new ClamPlus("ClamPlus", address);
   }
 
   CLAM(): Address {

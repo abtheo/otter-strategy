@@ -530,8 +530,8 @@ dataSources:
       abis:
         - name: OtterRewardManager
           file: ./abis/OtterRewardManager.json
-        - name: ClamPond
-          file: ./abis/ClamPond.json
+        - name: ClamPlus
+          file: ./abis/ClamPlus.json
         - name: PearlBank
           file: ./abis/PearlBank.json
         - name: OtterClamERC20V2
@@ -635,11 +635,11 @@ dataSources:
       file: ./src/PearlBank.ts
 
   - kind: ethereum/contract
-    name: ClamPond
+    name: ClamPlus
     network: matic
     source:
       address: '0xF2A8705D327534E334d09BC28e5C97b5c356Aa01'
-      abi: ClamPond
+      abi: ClamPlus
       startBlock: 30712813
     mapping:
       kind: ethereum/events
@@ -649,8 +649,8 @@ dataSources:
         - PearlBankMetric
         - TotalBurnedClam
       abis:
-        - name: ClamPond
-          file: ./abis/ClamPond.json
+        - name: ClamPlus
+          file: ./abis/ClamPlus.json
         - name: PearlBank
           file: ./abis/PearlBank.json
         - name: OtterClamERC20V2
@@ -677,4 +677,4 @@ dataSources:
           handler: handleDeposit
         - event: Withdraw(indexed address,uint256,uint256)
           handler: handleWithdraw
-      file: ./src/ClamPond.ts
+      file: ./src/ClamPlus.ts

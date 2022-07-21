@@ -60,7 +60,7 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
+                "indexed": true,
                 "internalType": "address",
                 "name": "account",
                 "type": "address"
@@ -230,7 +230,7 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
+                "indexed": true,
                 "internalType": "address",
                 "name": "account",
                 "type": "address"
@@ -239,6 +239,12 @@
                 "indexed": false,
                 "internalType": "uint256",
                 "name": "amount",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "fee",
                 "type": "uint256"
             }
         ],

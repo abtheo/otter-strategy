@@ -1,11 +1,5 @@
 import {
-  UNI_CLAM_MAI_PAIR,
   USDC_MATIC_AGGREGATOR,
-  UNI_QI_WMATIC_PAIR,
-  UNI_QUICK_WMATIC_PAIR,
-  UNI_WETH_USDC_PAIR,
-  DYSTOPIA_PAIR_WMATIC_DYST,
-  DYSTOPIA_PAIR_WMATIC_PEN,
   MATIC_ERC20,
   DYST_ERC20,
   FRAX_ERC20,
@@ -15,12 +9,9 @@ import {
   CLAM_ERC20,
   PEN_ERC20,
   WETH_ERC20,
-  DYSTOPIA_PAIR_PENDYST_DYST,
   PENDYST_ERC20,
-  DQUICK_ERC20,
   QI_ERC20,
   OCQI_CONTRACT,
-  QUICK_ERC20,
   DYST_POOL_TRANSITION_BLOCK,
   TETU_QI_ERC20,
 } from './Constants'
@@ -51,8 +42,6 @@ export function getQiUsdRate(): BigDecimal {
   let wmaticPerQi = findTokenPrice(quickSwap, QI_ERC20, MATIC_ERC20)
   let usdPerQi = wmaticPerQi.times(getwMaticUsdRate())
 
-  log.debug('1 qi = {} wmatic = {} USD', [wmaticPerQi.toString(), usdPerQi.toString()])
-
   return usdPerQi
 }
 export function getTetuQiUsdRate(blockNumber: BigInt): BigDecimal {
@@ -65,20 +54,12 @@ export function getTetuQiUsdRate(blockNumber: BigInt): BigDecimal {
   let wmaticPerQi = findTokenPrice(quickSwap, QI_ERC20, MATIC_ERC20)
   let usdPerTetuQi = qiPerTetuQi.times(wmaticPerQi).times(getwMaticUsdRate())
 
-  log.debug('1 tetuQi = {} qi = {} wmatic = {} USD', [
-    qiPerTetuQi.toString(),
-    wmaticPerQi.toString(),
-    usdPerTetuQi.toString(),
-  ])
-
   return usdPerTetuQi
 }
 
 export function getDystUsdRate(): BigDecimal {
   let wmaticPerDyst = findTokenPrice(dyst, DYST_ERC20, MATIC_ERC20)
   let usdVal = wmaticPerDyst.times(getwMaticUsdRate())
-
-  log.debug('1 DYST = {} MATIC = {} USD', [wmaticPerDyst.toString(), usdVal.toString()])
 
   return usdVal
 }
@@ -87,15 +68,11 @@ export function getPenUsdRate(): BigDecimal {
   let wmaticPerPen = findTokenPrice(dyst, PEN_ERC20, MATIC_ERC20)
   let usdVal = wmaticPerPen.times(getwMaticUsdRate())
 
-  log.debug('1 PEN = {} MATIC = {} USD', [wmaticPerPen.toString(), usdVal.toString()])
-
   return usdVal
 }
 
 export function getPenDystUsdRate(): BigDecimal {
   let dystPerPen = findTokenPrice(dyst, PENDYST_ERC20, DYST_ERC20)
-
-  log.debug('1 penDYST = {} DYST', [dystPerPen.toString()])
 
   return dystPerPen.times(getDystUsdRate())
 }
@@ -103,8 +80,6 @@ export function getPenDystUsdRate(): BigDecimal {
 // TODO: we can get eth price from chainlink
 export function getwEthUsdRate(): BigDecimal {
   let usdcPerEth = findTokenPrice(quickSwap, WETH_ERC20, USDC_ERC20)
-
-  log.debug('weth rate {}', [usdcPerEth.toString()])
 
   return usdcPerEth
 }
@@ -117,8 +92,6 @@ export function getClamUsdRate(block: BigInt): BigDecimal {
   } else {
     rate = findTokenPrice(quickSwap, CLAM_ERC20, MAI_ERC20)
   }
-
-  log.debug('CLAM rate {}', [rate.toString()])
 
   return rate
 }

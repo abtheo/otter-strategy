@@ -24,7 +24,6 @@ export function loadOrCreateTotalBurnedClamSingleton(): TotalBurnedClam {
     */
     total.burnedClam = BigDecimal.fromString('4640')
     total.burnedValueUsd = BigDecimal.fromString('16197')
-    total.clamPondTotal = BigDecimal.zero()
     total.save()
   }
   return total

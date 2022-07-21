@@ -9,7 +9,7 @@ export function loadOrCreatePearlBankMetric(timestamp: BigInt): PearlBankMetric 
   let metric = PearlBankMetric.load(id)
   if (!metric) {
     metric = new PearlBankMetric(id)
-    metric.payoutMatketValue = BigDecimal.zero()
+    metric.payoutMarketValue = BigDecimal.zero()
     metric.cumulativeRewardPayoutMarketValue = BigDecimal.zero()
     metric.apr = BigDecimal.zero()
     metric.clamMarketValueWhenPayoutHappens = BigDecimal.zero()

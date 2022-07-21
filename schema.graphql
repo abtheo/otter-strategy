@@ -9,15 +9,6 @@ type Transaction @entity {
   gasPrice: BigInt!
 }
 
-type LogRebase @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  epoch: BigInt! # uint256
-  rebase: BigInt! # uint256
-  index: BigInt! # uint256
-}
-
 type Transfer @entity {
   id: ID!
   transaction: Transaction!
@@ -79,7 +70,6 @@ type TotalBurnedClam @entity {
   id: ID!
   burnedClam: BigDecimal!
   burnedValueUsd: BigDecimal!
-  clamPondTotal: BigDecimal!
 }
 
 type Harvest @entity {

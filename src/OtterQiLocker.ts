@@ -4,7 +4,6 @@ import {
 } from '../generated/OtterQiLocker/OtterQiLocker'
 import { updateTreasuryRevenueHarvest } from './utils/TreasuryRevenue'
 import { Harvest } from '../generated/schema'
-
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateProtocolMetrics } from './utils/ProtocolMetrics'
 

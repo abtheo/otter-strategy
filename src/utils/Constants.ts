@@ -91,24 +91,29 @@ export const DYSTOPIA_veDYST = Address.fromString('0x060fa7aD32C510F12550c7a9679
 export const DYSTOPIA_veDYST_ERC721_ID = '30'
 export const VLPEN_LOCKER = Address.fromString('0x55ca76e0341ccd35c2e3f34cbf767c6102aea70f')
 
-export const DYSTOPIA_PAIR_WMATIC_DYST = Address.fromString('0x1e08a5b6a1694bc1a65395db6f4c506498daa349')
 export const DYSTOPIA_PAIR_MAI_CLAM = Address.fromString('0x40705378b468b357435be7302ee22918ee4c4d24')
 export const DYSTOPIA_PAIR_USDPLUS_CLAM = Address.fromString('0x291e289c39cbaf5ee158028d086d76ffa141cfda')
+export const DYSTOPIA_PAIR_WMATIC_DYST = Address.fromString('0x1e08a5b6a1694bc1a65395db6f4c506498daa349')
+export const DYSTOPIA_PAIR_QI_TETUQI = Address.fromString('0x42c0cc5f1827C5d908392654389E5D93da426378')
+
+//unused
 export const DYSTOPIA_PAIR_MAI_USDC = Address.fromString('0x5a31f830225936ca28547ec3018188af44f21467')
 export const DYSTOPIA_PAIR_FRAX_USDC = Address.fromString('0x53227c83a98ba1035fed912da6ce26a0c11c7c66')
 export const DYSTOPIA_PAIR_WMATIC_PEN = Address.fromString('0x2c5ba816da67ce34029fc4a9cc7545d207abf945')
 export const DYSTOPIA_PAIR_PENDYST_DYST = Address.fromString('0x370c7feb6fcd9f0804b477e3c807392e59327764')
-export const DYSTOPIA_PAIR_QI_TETUQI = Address.fromString('0x42c0cc5f1827C5d908392654389E5D93da426378')
 
 export const DYSTOPIA_TRACKED_PAIRS = [
   DYSTOPIA_PAIR_MAI_CLAM,
   DYSTOPIA_PAIR_USDPLUS_CLAM,
   DYSTOPIA_PAIR_WMATIC_DYST,
-  DYSTOPIA_PAIR_MAI_USDC,
-  DYSTOPIA_PAIR_FRAX_USDC,
-  DYSTOPIA_PAIR_WMATIC_PEN,
   DYSTOPIA_PAIR_QI_TETUQI,
 ]
+
+export const PENROSE_REWARD_MAI_CLAM = Address.fromString('0x4edc2f4368179be77e5e8fba295fff0a82e3df21')
+export const PENROSE_REWARD_USDPLUS_CLAM = Address.fromString('0x582331EB734D2d81e29Eb54A9890AEED1627e2C2')
+export const PENROSE_REWARD_WMATIC_DYST = Address.fromString('0xbb1bF0980a61Fc5dAf981B33543Fb54c8E04DFa0')
+export const PENROSE_REWARD_QI_TETUQI = Address.fromString('0x249C0236B0F597EdCE0BF989fdf2EDbB1799FfA8')
+
 export const PENROSE_PROXY = Address.fromString('0xc9ae7dac956f82074437c6d40f67d6a5abf3e34b')
 export const DAO_WALLET_PENROSE_USER_PROXY = Address.fromString('0x3c56307bdbc8a59e85542cc795aa31c628748c62')
 export const PEN_DYST_REWARDS = Address.fromString('0x68c08ac637fcac8e63060aaca89dba4c32fdd912')

@@ -55,8 +55,12 @@ export function getQiUsdRate(): BigDecimal {
 
   return usdPerQi
 }
-export function getTetuQiUsdRate(): BigDecimal {
-  let qiPerTetuQi = findTokenPrice(dyst, TETU_QI_ERC20, QI_ERC20)
+export function getTetuQiUsdRate(blockNumber: BigInt): BigDecimal {
+  let qiPerTetuQi = BigDecimal.fromString('1')
+
+  if (blockNumber.gt(BigInt.fromString('28404188'))) {
+    qiPerTetuQi = findTokenPrice(dyst, TETU_QI_ERC20, QI_ERC20)
+  }
 
   let wmaticPerQi = findTokenPrice(quickSwap, QI_ERC20, MATIC_ERC20)
   let usdPerTetuQi = qiPerTetuQi.times(wmaticPerQi).times(getwMaticUsdRate())
@@ -188,16 +192,15 @@ export function getDystPairHalfReserveUSD(
     let usd_value_token0 = toDecimal(lp_token_0, token0.decimals()).times(findPrice(blockNumber, pair.token0()))
     return ownedLP.times(usd_value_token0)
   }
-  
+
   let usd_value_token1 = toDecimal(lp_token_1, token1.decimals()).times(findPrice(blockNumber, pair.token1()))
   return ownedLP.times(usd_value_token1)
-  
 }
 
 export function findPrice(blockNumber: BigInt, address: Address): BigDecimal {
   if (address == CLAM_ERC20) return getClamUsdRate(blockNumber)
   if (address == QI_ERC20 || address == OCQI_CONTRACT) return getQiUsdRate()
-  if (address == TETU_QI_ERC20) return getTetuQiUsdRate()
+  if (address == TETU_QI_ERC20) return getTetuQiUsdRate(blockNumber)
   if (address == MATIC_ERC20) return getwMaticUsdRate()
   if (address == DYST_ERC20) return getDystUsdRate()
   if (address == PEN_ERC20) return getPenUsdRate()

@@ -1,12 +1,9 @@
 import { ClamPond, Deposit, Withdraw } from '../generated/ClamPond/ClamPond'
 import { loadOrCreatePearlBankMetric } from './utils/PearlBankMetric'
 import { toDecimal } from './utils/Decimals'
-import { loadCumulativeValues } from './utils/CumulativeValues'
 import { loadOrCreateTotalBurnedClamSingleton } from './utils/Burned'
-import { ClamPlus } from '../generated/ClamPond/ClamPlus'
 import { CLAM_PLUS } from './utils/Constants'
 import { getClamUsdRate } from './utils/Price'
-import { log } from '@graphprotocol/graph-ts'
 
 export function handleDeposit(deposit: Deposit): void {
   let clamPondStakedClam = toDecimal(ClamPond.bind(CLAM_PLUS).totalSupply(), 9)

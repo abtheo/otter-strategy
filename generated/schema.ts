@@ -122,90 +122,6 @@ export class Transaction extends Entity {
   }
 }
 
-export class LogRebase extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("transaction", Value.fromString(""));
-    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
-    this.set("epoch", Value.fromBigInt(BigInt.zero()));
-    this.set("rebase", Value.fromBigInt(BigInt.zero()));
-    this.set("index", Value.fromBigInt(BigInt.zero()));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save LogRebase entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save LogRebase entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("LogRebase", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LogRebase | null {
-    return changetype<LogRebase | null>(store.get("LogRebase", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get transaction(): string {
-    let value = this.get("transaction");
-    return value!.toString();
-  }
-
-  set transaction(value: string) {
-    this.set("transaction", Value.fromString(value));
-  }
-
-  get timestamp(): BigInt {
-    let value = this.get("timestamp");
-    return value!.toBigInt();
-  }
-
-  set timestamp(value: BigInt) {
-    this.set("timestamp", Value.fromBigInt(value));
-  }
-
-  get epoch(): BigInt {
-    let value = this.get("epoch");
-    return value!.toBigInt();
-  }
-
-  set epoch(value: BigInt) {
-    this.set("epoch", Value.fromBigInt(value));
-  }
-
-  get rebase(): BigInt {
-    let value = this.get("rebase");
-    return value!.toBigInt();
-  }
-
-  set rebase(value: BigInt) {
-    this.set("rebase", Value.fromBigInt(value));
-  }
-
-  get index(): BigInt {
-    let value = this.get("index");
-    return value!.toBigInt();
-  }
-
-  set index(value: BigInt) {
-    this.set("index", Value.fromBigInt(value));
-  }
-}
-
 export class Transfer extends Entity {
   constructor(id: string) {
     super();
@@ -845,7 +761,6 @@ export class TotalBurnedClam extends Entity {
 
     this.set("burnedClam", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("burnedValueUsd", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("clamPondTotal", Value.fromBigDecimal(BigDecimal.zero()));
   }
 
   save(): void {
@@ -890,15 +805,6 @@ export class TotalBurnedClam extends Entity {
 
   set burnedValueUsd(value: BigDecimal) {
     this.set("burnedValueUsd", Value.fromBigDecimal(value));
-  }
-
-  get clamPondTotal(): BigDecimal {
-    let value = this.get("clamPondTotal");
-    return value!.toBigDecimal();
-  }
-
-  set clamPondTotal(value: BigDecimal) {
-    this.set("clamPondTotal", Value.fromBigDecimal(value));
   }
 }
 

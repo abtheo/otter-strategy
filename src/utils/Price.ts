@@ -119,7 +119,7 @@ export function getClamUsdRate(block: BigInt): BigDecimal {
   return rate
 }
 
-export function getPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {
+export function getClamMaiValueUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {
   let pair = UniswapV2Pair.bind(pair_address)
   let total_lp = pair.totalSupply()
   let lp_token_0 = pair.getReserves().value1
@@ -152,6 +152,46 @@ export function getDystPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_addr
   let total_lp_usd = usd_value_token0.plus(usd_value_token1)
 
   return ownedLP.times(total_lp_usd)
+}
+
+export enum ReserveToken {
+  TokenZero,
+  TokenOne,
+}
+
+/**
+Returns the USD value of one side of the reserves of a liquidity pool (proportional to the provided owned LP amount)
+* @param ReserveToken Determines whether to return the value of `token0` or `token1` from the LP
+*/
+export function getDystPairHalfReserveUSD(
+  blockNumber: BigInt,
+  lp_amount: BigInt,
+  pair_address: Address,
+  reserve: ReserveToken,
+): BigDecimal {
+  if (lp_amount == BigInt.fromString('0')) return BigDecimal.zero()
+  let pair = DystPair.bind(pair_address)
+
+  let token0 = ERC20.bind(pair.token0())
+  let token1 = ERC20.bind(pair.token1())
+
+  //get percentage of owned LP
+  let total_lp = pair.totalSupply()
+  let lp_token_0 = pair.getReserves().value0
+  let lp_token_1 = pair.getReserves().value1
+  let ownedLP = toDecimal(lp_amount, 18)
+
+  if (ownedLP.gt(BigDecimal.zero()) && total_lp.gt(BigInt.zero())) ownedLP = ownedLP.div(toDecimal(total_lp, 18))
+
+  //get half pool usd value
+  if (reserve == ReserveToken.TokenZero) {
+    let usd_value_token0 = toDecimal(lp_token_0, token0.decimals()).times(findPrice(blockNumber, pair.token0()))
+    return ownedLP.times(usd_value_token0)
+  }
+  
+  let usd_value_token1 = toDecimal(lp_token_1, token1.decimals()).times(findPrice(blockNumber, pair.token1()))
+  return ownedLP.times(usd_value_token1)
+  
 }
 
 export function findPrice(blockNumber: BigInt, address: Address): BigDecimal {

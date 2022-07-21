@@ -80,7 +80,7 @@ import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
 import {
   getClamUsdRate,
-  getPairUSD,
+  getClamMaiValueUSD,
   getwMaticUsdRate,
   getDystUsdRate,
   getDystPairUSD,
@@ -89,10 +89,13 @@ import {
   getPenDystUsdRate,
   getPenUsdRate,
   getTetuQiUsdRate,
+  getDystPairHalfReserveUSD,
+  ReserveToken,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
 import { DystPair } from '../../generated/OtterQiLocker/DystPair'
 import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
+import { ClamPlus } from '../../generated/ClamPond/ClamPlus'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -106,7 +109,7 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.clamPrice = BigDecimal.zero()
     protocolMetric.marketCap = BigDecimal.zero()
     protocolMetric.totalValueLocked = BigDecimal.zero()
-    protocolMetric.treasuryMaiUsdcQiInvestmentRiskFreeValue = BigDecimal.zero()
+    protocolMetric.treasuryMaiUsdcQiInvestmentValue = BigDecimal.zero()
     protocolMetric.treasuryMarketValue = BigDecimal.zero()
     protocolMetric.treasuryMaiMarketValue = BigDecimal.zero()
     protocolMetric.treasuryWmaticMarketValue = BigDecimal.zero()
@@ -286,21 +289,25 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let clamMaiPair = UniswapV2Pair.bind(UNI_CLAM_MAI_PAIR)
 
-  let maiBalance = maiERC20.balanceOf(TREASURY_ADDRESS)
-  let daiBalance = daiERC20.balanceOf(TREASURY_ADDRESS)
+  let maiBalance = toDecimal(maiERC20.balanceOf(TREASURY_ADDRESS), 18)
+  let daiBalance = toDecimal(daiERC20.balanceOf(TREASURY_ADDRESS), 18)
 
   let wmaticBalance = maticERC20.balanceOf(TREASURY_ADDRESS)
-  let wmatic_value = toDecimal(wmaticBalance, 18).times(getwMaticUsdRate())
+  let wmaticValue = toDecimal(wmaticBalance, 18).times(getwMaticUsdRate())
 
-  //CLAM-MAI & Investment to Quickswap
+  //CLAM-MAI Quickswap
   let clamMaiBalance = clamMaiPair.balanceOf(TREASURY_ADDRESS)
-  let dQuickMarketValue = BigDecimal.zero()
 
   let clamMaiTotalLP = toDecimal(clamMaiPair.totalSupply(), 18)
   let clamMaiPOL = toDecimal(clamMaiBalance, 18)
     .div(clamMaiTotalLP)
     .times(BigDecimal.fromString('100'))
-  let clamMai_value = getPairUSD(transaction.blockNumber, clamMaiBalance, UNI_CLAM_MAI_PAIR)
+  let clamMai_value = getClamMaiValueUSD(transaction.blockNumber, clamMaiBalance, UNI_CLAM_MAI_PAIR)
+
+  let clamMai_MaiOnlyValue = toDecimal(clamMaiPair.getReserves().value0, 18).times(
+    clamMaiPOL.div(BigDecimal.fromString('100')),
+  )
+  log.warning('ClamMaiValue: {} Mai only value: {}', [clamMai_value.toString(), clamMai_MaiOnlyValue.toString()])
 
   let mai3poolValueDecimal = BigDecimal.zero()
   if (transaction.blockNumber.ge(BigInt.fromString(CURVE_MAI_3POOL_PAIR_BLOCK))) {
@@ -360,6 +367,9 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let penMarketValue = BigDecimal.zero()
   let vlPenMarketValue = BigDecimal.zero()
   let penDystMarketValue = BigDecimal.zero()
+
+  let clamMaiDystLpOwned = BigInt.zero()
+  let clamUsdPlusDystLpOwned = BigInt.zero()
   if (transaction.blockNumber.gt(BigInt.fromI32(DYST_START_BLOCK))) {
     dystMarketValue = getTreasuryTokenValue(transaction.blockNumber, DYST_ERC20)
 
@@ -371,16 +381,20 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       if (pairDystBalance.reverted) continue
       let pairValue = getDystPairUSD(transaction.blockNumber, pairDystBalance.value, pair_address)
       //then add the Gauge staked LP balance from Penrose
-      // let dystGaugeLp = loadOrCreateDystopiaGaugeBalance(pair_address)
-
       let penroseRewards = PenroseMultiRewards.bind(pair_address).try_balanceOf(DAO_WALLET_PENROSE_USER_PROXY)
       let penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
       pairValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
 
       //finally, associate with relevant property
       if (pair_address == DYSTOPIA_PAIR_WMATIC_DYST) wMaticDystValue = pairValue
-      if (pair_address == DYSTOPIA_PAIR_MAI_CLAM) clamMaiDystValue = pairValue
-      if (pair_address == DYSTOPIA_PAIR_USDPLUS_CLAM) clamUsdplusDystValue = pairValue
+      if (pair_address == DYSTOPIA_PAIR_MAI_CLAM) {
+        clamMaiDystValue = pairValue
+        clamMaiDystLpOwned = pairDystBalance.value.plus(penroseRewardBalance)
+      }
+      if (pair_address == DYSTOPIA_PAIR_USDPLUS_CLAM) {
+        clamUsdplusDystValue = pairValue
+        clamUsdPlusDystLpOwned = pairDystBalance.value.plus(penroseRewardBalance)
+      }
       if (pair_address == DYSTOPIA_PAIR_MAI_USDC) usdcMaiDystValue = pairValue
       if (pair_address == DYSTOPIA_PAIR_FRAX_USDC) usdcFraxDystValue = pairValue
       if (pair_address == DYSTOPIA_PAIR_WMATIC_PEN) wMaticPenValue = pairValue
@@ -393,6 +407,24 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       getDystUsdRate(),
     )
   }
+
+  //add stablecoin-only half of Dystopia CLAM-X LPs
+  clamMai_MaiOnlyValue = clamMai_MaiOnlyValue.plus(
+    getDystPairHalfReserveUSD(
+      transaction.blockNumber,
+      clamMaiDystLpOwned,
+      DYSTOPIA_PAIR_MAI_CLAM,
+      ReserveToken.TokenZero, //MAI is token0
+    ),
+  )
+
+  let clamUsdPlus_UsdPlusOnlyValue = getDystPairHalfReserveUSD(
+    transaction.blockNumber,
+    clamUsdPlusDystLpOwned,
+    DYSTOPIA_PAIR_USDPLUS_CLAM,
+    ReserveToken.TokenZero, //USD+ is token0
+  )
+
   if (transaction.blockNumber.gt(BigInt.fromI32(PEN_START_BLOCK))) {
     penMarketValue = getTreasuryTokenValue(transaction.blockNumber, PEN_ERC20)
     let penDyst = ERC20.bind(PENDYST_ERC20)
@@ -421,8 +453,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       vlPenMarketValue.toString(),
     ])
   }
-  let stableValue = maiBalance.plus(daiBalance)
-  let stableValueDecimal = toDecimal(stableValue, 18)
+  let stableValueDecimal = maiBalance
+    .plus(daiBalance)
     .plus(maiUsdcQiInvestmentValueDecimal)
     .plus(mai3poolValueDecimal)
     .plus(mai3poolInvestmentValueDecimal)
@@ -439,11 +471,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(usdcFraxDystValue)
     .plus(wMaticPenValue)
 
-  let mv = stableValueDecimal
-    .plus(lpValue)
-    .plus(wmatic_value)
+  let tokenValues = wmaticValue
     .plus(qiMarketValue)
-    .plus(dQuickMarketValue)
     .plus(ocQiMarketValue)
     .plus(tetuQiMarketValue)
     .plus(dystMarketValue)
@@ -452,12 +481,29 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(vlPenMarketValue)
     .plus(penDystMarketValue)
 
-  //Attach results and return
+  let mv = stableValueDecimal.plus(lpValue).plus(tokenValues)
+
+  let lpValue_noClam = qiWmaticMarketValue
+    .plus(qiWmaticQiInvestmentMarketValue)
+    //dystopia
+    .plus(qiTetuQiValue)
+    .plus(wMaticDystValue)
+    .plus(clamMaiDystValue)
+    .plus(usdcMaiDystValue)
+    .plus(usdcFraxDystValue)
+    .plus(wMaticPenValue)
+    //no-clam pairs
+    .plus(clamMai_MaiOnlyValue)
+    .plus(clamUsdPlus_UsdPlusOnlyValue)
+
+  let mv_noClam = stableValueDecimal.plus(lpValue_noClam).plus(tokenValues)
+
   protocolMetric.treasuryMarketValue = mv
-  protocolMetric.treasuryMaiUsdcQiInvestmentRiskFreeValue = maiUsdcQiInvestmentValueDecimal
+  protocolMetric.treasuryMarketValueWithoutClam = mv_noClam
+  protocolMetric.treasuryMaiUsdcQiInvestmentValue = maiUsdcQiInvestmentValueDecimal
   protocolMetric.treasuryCurveMai3PoolValue = mai3poolValueDecimal
   protocolMetric.treasuryCurveMai3PoolInvestmentValue = mai3poolInvestmentValueDecimal
-  protocolMetric.treasuryMaiMarketValue = clamMai_value.plus(toDecimal(maiBalance, 18))
+  protocolMetric.treasuryMaiMarketValue = maiBalance
   protocolMetric.treasuryQiMarketValue = qiMarketValue
   protocolMetric.treasuryQiWmaticMarketValue = qiWmaticMarketValue
   protocolMetric.treasuryQiWmaticQiInvestmentMarketValue = qiWmaticQiInvestmentMarketValue
@@ -480,15 +526,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   return protocolMetric
 }
 
-function getNextCLAMRebase(): BigDecimal {
-  let staking_contract = OtterStaking.bind(STAKING_CONTRACT)
-  let distribution_v1 = toDecimal(staking_contract.epoch().value3, 9)
-  log.debug('next_distribution v2 {}', [distribution_v1.toString()])
-  let next_distribution = distribution_v1
-  log.debug('next_distribution total {}', [next_distribution.toString()])
-  return next_distribution
-}
-
 export function updateProtocolMetrics(transaction: Transaction): void {
   let pm = loadOrCreateProtocolMetric(transaction.timestamp)
 
@@ -498,6 +535,7 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.clamCirculatingSupply = getCirculatingSupply(transaction, pm.totalSupply)
   pm.clamPrice = getClamUsdRate(transaction.blockNumber)
   pm.marketCap = pm.clamCirculatingSupply.times(pm.clamPrice)
+  pm.clamBacking = pm.clamCirculatingSupply.div(pm.treasuryMarketValueWithoutClam)
 
   //TODO: Find values in Pearl Bank & Clam Pond
   pm.totalValueLocked = pm.clamPrice
@@ -508,7 +546,6 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.totalBurnedClamMarketValue = burns.burnedValueUsd
 
   pm.save()
-
   //Also trigger a Governance Metrics update
   updateGovernanceMetrics(transaction)
 }

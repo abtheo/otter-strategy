@@ -43,10 +43,12 @@ type ProtocolMetric @entity {
   clamCirculatingSupply: BigDecimal!
   totalSupply: BigDecimal!
   clamPrice: BigDecimal!
+  clamBacking: BigDecimal!
   marketCap: BigDecimal!
   totalValueLocked: BigDecimal!
   treasuryMarketValue: BigDecimal!
-  treasuryMaiUsdcQiInvestmentRiskFreeValue: BigDecimal!
+  treasuryMarketValueWithoutClam: BigDecimal!
+  treasuryMaiUsdcQiInvestmentValue: BigDecimal!
   treasuryMaiMarketValue: BigDecimal!
   treasuryWmaticMarketValue: BigDecimal!
   treasuryQiMarketValue: BigDecimal!

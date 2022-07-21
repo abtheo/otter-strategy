@@ -10,10 +10,13 @@ import { log } from '@graphprotocol/graph-ts'
 export function handleStake(stake: Stake): void {
   let clam = OtterClamERC20V2.bind(CLAM_ERC20)
   let pearlBank = PearlBank.bind(PEARL_BANK)
+  let try_staked = pearlBank.try_totalStaked()
+  if (try_staked.reverted) return
+  let staked = try_staked.value
 
   let metric = loadOrCreatePearlBankMetric(stake.block.timestamp)
   metric.clamTotalSupply = toDecimal(clam.totalSupply(), 6)
-  metric.stakedCLAMAmount = toDecimal(pearlBank.totalStaked())
+  metric.stakedCLAMAmount = toDecimal(staked)
 
   metric.save()
 }
@@ -21,10 +24,13 @@ export function handleStake(stake: Stake): void {
 export function handleWithdraw(withdraw: Withdraw): void {
   let clam = OtterClamERC20V2.bind(CLAM_ERC20)
   let pearlBank = PearlBank.bind(PEARL_BANK)
+  let try_staked = pearlBank.try_totalStaked()
+  if (try_staked.reverted) return
+  let staked = try_staked.value
 
   let metric = loadOrCreatePearlBankMetric(withdraw.block.timestamp)
   metric.clamTotalSupply = toDecimal(clam.totalSupply(), 9)
-  metric.stakedCLAMAmount = toDecimal(pearlBank.totalStaked(), 9)
+  metric.stakedCLAMAmount = toDecimal(staked, 9)
 
   //Cumulative total for burned CLAM
   let burns = loadOrCreateTotalBurnedClamSingleton()

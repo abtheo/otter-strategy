@@ -383,11 +383,16 @@ export class ProtocolMetric extends Entity {
     this.set("clamCirculatingSupply", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("totalSupply", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("clamPrice", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("clamBacking", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("marketCap", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("totalValueLocked", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("treasuryMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
-      "treasuryMaiUsdcQiInvestmentRiskFreeValue",
+      "treasuryMarketValueWithoutClam",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "treasuryMaiUsdcQiInvestmentValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set("treasuryMaiMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
@@ -535,6 +540,15 @@ export class ProtocolMetric extends Entity {
     this.set("clamPrice", Value.fromBigDecimal(value));
   }
 
+  get clamBacking(): BigDecimal {
+    let value = this.get("clamBacking");
+    return value!.toBigDecimal();
+  }
+
+  set clamBacking(value: BigDecimal) {
+    this.set("clamBacking", Value.fromBigDecimal(value));
+  }
+
   get marketCap(): BigDecimal {
     let value = this.get("marketCap");
     return value!.toBigDecimal();
@@ -562,16 +576,22 @@ export class ProtocolMetric extends Entity {
     this.set("treasuryMarketValue", Value.fromBigDecimal(value));
   }
 
-  get treasuryMaiUsdcQiInvestmentRiskFreeValue(): BigDecimal {
-    let value = this.get("treasuryMaiUsdcQiInvestmentRiskFreeValue");
+  get treasuryMarketValueWithoutClam(): BigDecimal {
+    let value = this.get("treasuryMarketValueWithoutClam");
     return value!.toBigDecimal();
   }
 
-  set treasuryMaiUsdcQiInvestmentRiskFreeValue(value: BigDecimal) {
-    this.set(
-      "treasuryMaiUsdcQiInvestmentRiskFreeValue",
-      Value.fromBigDecimal(value)
-    );
+  set treasuryMarketValueWithoutClam(value: BigDecimal) {
+    this.set("treasuryMarketValueWithoutClam", Value.fromBigDecimal(value));
+  }
+
+  get treasuryMaiUsdcQiInvestmentValue(): BigDecimal {
+    let value = this.get("treasuryMaiUsdcQiInvestmentValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryMaiUsdcQiInvestmentValue(value: BigDecimal) {
+    this.set("treasuryMaiUsdcQiInvestmentValue", Value.fromBigDecimal(value));
   }
 
   get treasuryMaiMarketValue(): BigDecimal {

@@ -5,7 +5,7 @@ import { PEARL_BANK } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
 import { loadCumulativeValues } from './utils/CumulativeValues'
 import { getClamUsdRate } from './utils/Price'
-import { BigDecimal } from '@graphprotocol/graph-ts'
+import { BigDecimal, log } from '@graphprotocol/graph-ts'
 
 export function handlePayout(payout: Payout): void {
   let metric = loadOrCreatePearlBankMetric(payout.block.timestamp)
@@ -20,11 +20,13 @@ export function handlePayout(payout: Payout): void {
   let newTotalPaid = cumulativeValues.rewardPayoutMarketValue.plus(payoutValue)
   cumulativeValues.rewardPayoutMarketValue = newTotalPaid
   cumulativeValues.save()
+  log.debug('Cumulative value rewards: {}', [cumulativeValues.rewardPayoutMarketValue.toString()])
 
   // update metrics
   metric.payoutMarketValue = payoutValue
   metric.clamMarketValueWhenPayoutHappens = clamPrice
   metric.totalClamStakedUsdValue = stakedUsd
+  metric.cumulativeRewardPayoutMarketValue = newTotalPaid
 
   // (stakedValue * APR) / 365 = payout
   // (payout*365 / stakedValue) * 100% = APR%

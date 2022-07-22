@@ -554,11 +554,12 @@ export function updateProtocolMetrics(transaction: Transaction): void {
 
   //Set metrics
   pm = setTreasuryAssetMarketValues(transaction, pm)
+  let circSupply = getCirculatingSupply(transaction, pm.totalSupply)
   pm.totalSupply = getTotalSupply()
-  pm.clamCirculatingSupply = getCirculatingSupply(transaction, pm.totalSupply)
+  pm.clamCirculatingSupply = circSupply
   pm.clamPrice = getClamUsdRate(transaction.blockNumber)
-  pm.marketCap = pm.clamCirculatingSupply.times(pm.clamPrice)
-  pm.clamBacking = pm.clamCirculatingSupply.div(pm.treasuryMarketValueWithoutClam)
+  pm.marketCap = circSupply.times(pm.clamPrice)
+  pm.clamBacking = pm.treasuryMarketValueWithoutClam.div(circSupply)
 
   //TODO: Find values in Pearl Bank & Clam Pond
   pm.totalValueLocked = pm.clamPrice

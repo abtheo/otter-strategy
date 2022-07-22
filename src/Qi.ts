@@ -13,6 +13,26 @@ import {
 import { toDecimal } from './utils/Decimals'
 
 export function handleQiTransfer(event: TransferEvent): void {
+  if (event.params.from == QI_BRIBE_REWARDS && event.params.to == OTTER_DEPLOYER) {
+    log.debug('QiDao Bribe Recieved {} for {} Qi, from: {}, to: {}', [
+      event.transaction.hash.toHexString(),
+      toDecimal(event.transaction.value, 18).toString(),
+      event.params.from.toHexString(),
+      event.params.to.toHexString(),
+    ])
+    let transaction = loadOrCreateTransaction(event.transaction, event.block)
+    let entity = new Transfer(transaction.id)
+    entity.transaction = transaction.id
+    entity.timestamp = transaction.timestamp
+    entity.from = event.params.from
+    entity.to = event.params.to
+    entity.value = event.params.value
+    entity.save()
+
+    //Pass entity to TreasuryRevenue
+    updateTreasuryRevenueQiTransfer(event.block.number, entity)
+    return
+  }
   if (
     (event.params.from == UNI_MAI_USDC_QI_INVESTMENT_PAIR || event.params.from == UNI_QI_WMATIC_INVESTMENT_PAIR) &&
     event.params.to == TREASURY_ADDRESS
@@ -33,24 +53,6 @@ export function handleQiTransfer(event: TransferEvent): void {
 
     //Pass entity to TreasuryRevenue
     updateTreasuryRevenueQiTransfer(event.block.number, entity)
-  }
-  if (event.params.from == QI_BRIBE_REWARDS && event.params.to == OTTER_DEPLOYER) {
-    log.debug('QiDao Bribe Recieved {} for {} Qi, from: {}, to: {}', [
-      event.transaction.hash.toHexString(),
-      toDecimal(event.transaction.value, 18).toString(),
-      event.params.from.toHexString(),
-      event.params.to.toHexString(),
-    ])
-    let transaction = loadOrCreateTransaction(event.transaction, event.block)
-    let entity = new Transfer(transaction.id)
-    entity.transaction = transaction.id
-    entity.timestamp = transaction.timestamp
-    entity.from = event.params.from
-    entity.to = event.params.to
-    entity.value = event.params.value
-    entity.save()
-
-    //Pass entity to TreasuryRevenue
-    updateTreasuryRevenueQiTransfer(event.block.number, entity)
+    return
   }
 }

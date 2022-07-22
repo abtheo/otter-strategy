@@ -6,14 +6,10 @@ import { toDecimal } from './utils/Decimals'
 import { loadCumulativeValues } from './utils/CumulativeValues'
 import { getClamUsdRate } from './utils/Price'
 import { loadOrCreateTransaction } from './utils/Transactions'
-import { updateProtocolMetrics } from './utils/ProtocolMetrics'
 import { BigDecimal } from '@graphprotocol/graph-ts'
 import { ClamPlus } from '../generated/OtterRewardManager/ClamPlus'
 
 export function handlePayout(payout: Payout): void {
-  let transaction = loadOrCreateTransaction(payout.transaction, payout.block)
-  updateProtocolMetrics(transaction)
-
   let metric = loadOrCreatePearlBankMetric(payout.block.timestamp)
   let clamPrice = getClamUsdRate(payout.block.number)
   let clamPondStakedClam = toDecimal(ClamPlus.bind(CLAM_PLUS).totalSupply(), 9)

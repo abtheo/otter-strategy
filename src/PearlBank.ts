@@ -1,36 +1,50 @@
-import { OtterClamERC20V2 } from '../generated/PearlBank/OtterClamERC20V2'
 import { PearlBank, Stake, Withdraw } from '../generated/PearlBank/PearlBank'
 import { loadOrCreatePearlBankMetric } from './utils/PearlBankMetric'
-import { CLAM_ERC20, PEARL_BANK } from './utils/Constants'
+import { CLAM_PLUS, PEARL_BANK } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
 import { loadOrCreateTotalBurnedClamSingleton } from './utils/Burned'
 import { getClamUsdRate } from './utils/Price'
-import { log } from '@graphprotocol/graph-ts'
+import { ClamPlus } from '../generated/OtterRewardManager/ClamPlus'
 
 export function handleStake(stake: Stake): void {
-  let clam = OtterClamERC20V2.bind(CLAM_ERC20)
   let pearlBank = PearlBank.bind(PEARL_BANK)
+  let clamPlus = ClamPlus.bind(CLAM_PLUS)
   let try_staked = pearlBank.try_totalStaked()
   if (try_staked.reverted) return
   let staked = toDecimal(try_staked.value, 9)
+  let autocompoundStake = toDecimal(clamPlus.totalSupply(), 9)
+  let clamPrice = getClamUsdRate(stake.block.number)
 
   let metric = loadOrCreatePearlBankMetric(stake.block.timestamp)
-  metric.pearlBankDepositedClamAmount = staked
-  metric.pearlBankDepositedUsdValue = staked.times(getClamUsdRate(stake.block.number))
+  metric.pearlBankDepositedClamAmount = staked.minus(autocompoundStake)
+  metric.pearlBankDepositedUsdValue = staked.minus(autocompoundStake).times(clamPrice)
+
+  metric.clamPondDepositedClamAmount = autocompoundStake
+  metric.clamPondDepositedUsdValue = autocompoundStake.times(clamPrice)
+
+  metric.totalClamStaked = staked
+  metric.totalClamStakedUsdValue = staked.times(clamPrice)
   metric.save()
 }
 
 export function handleWithdraw(withdraw: Withdraw): void {
-  let clam = OtterClamERC20V2.bind(CLAM_ERC20)
   let pearlBank = PearlBank.bind(PEARL_BANK)
+  let clamPlus = ClamPlus.bind(CLAM_PLUS)
   let try_staked = pearlBank.try_totalStaked()
   if (try_staked.reverted) return
   let staked = toDecimal(try_staked.value, 9)
+  let autocompoundStake = toDecimal(clamPlus.totalSupply(), 9)
+  let clamPrice = getClamUsdRate(withdraw.block.number)
 
   let metric = loadOrCreatePearlBankMetric(withdraw.block.timestamp)
-  metric.pearlBankDepositedClamAmount = staked
-  metric.pearlBankDepositedUsdValue = staked.times(getClamUsdRate(withdraw.block.number))
-  metric.totalClamStaked = staked.plus(metric.clamPondDepositedClamAmount)
+  metric.pearlBankDepositedClamAmount = staked.minus(autocompoundStake)
+  metric.pearlBankDepositedUsdValue = staked.minus(autocompoundStake).times(clamPrice)
+
+  metric.clamPondDepositedClamAmount = autocompoundStake
+  metric.clamPondDepositedUsdValue = autocompoundStake.times(clamPrice)
+  metric.totalClamStaked = staked
+  metric.totalClamStakedUsdValue = staked.times(clamPrice)
+
   metric.save()
 
   //Cumulative total for burned CLAM

@@ -1333,6 +1333,7 @@ export class PearlBankMetric extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("apr", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("apy", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("payoutMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "clamMarketValueWhenPayoutHappens",
@@ -1399,6 +1400,15 @@ export class PearlBankMetric extends Entity {
 
   set apr(value: BigDecimal) {
     this.set("apr", Value.fromBigDecimal(value));
+  }
+
+  get apy(): BigDecimal {
+    let value = this.get("apy");
+    return value!.toBigDecimal();
+  }
+
+  set apy(value: BigDecimal) {
+    this.set("apy", Value.fromBigDecimal(value));
   }
 
   get payoutMarketValue(): BigDecimal {

@@ -35,6 +35,17 @@ export function handlePayout(payout: Payout): void {
     .div(stakedUsd)
     .times(BigDecimal.fromString('100'))
 
+  // 1+(payout/staked)^365 = APY
+  metric.apy = BigDecimal.fromString(
+    Math.pow(
+      Number.parseFloat(
+        BigDecimal.fromString('1')
+          .plus(payoutValue.div(stakedUsd))
+          .toString(),
+      ),
+      365,
+    ).toString(),
+  )
   // persist
   metric.save()
 }

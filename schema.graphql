@@ -135,6 +135,7 @@ type PearlBankMetric @entity {
   reward
   """
   apr: BigDecimal!
+  apy: BigDecimal!
   payoutMarketValue: BigDecimal!
   clamMarketValueWhenPayoutHappens: BigDecimal!
   cumulativeRewardPayoutMarketValue: BigDecimal!

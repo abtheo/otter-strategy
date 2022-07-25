@@ -36,7 +36,6 @@ type ProtocolMetric @entity {
   clamPrice: BigDecimal!
   clamBacking: BigDecimal!
   marketCap: BigDecimal!
-  totalValueLocked: BigDecimal!
   treasuryMarketValue: BigDecimal!
   treasuryMarketValueWithoutClam: BigDecimal!
   treasuryMaiUsdcQiInvestmentValue: BigDecimal!
@@ -56,9 +55,6 @@ type ProtocolMetric @entity {
   treasuryDystopiaPairwMaticDystMarketValue: BigDecimal!
   treasuryDystopiaPairMaiClamMarketValue: BigDecimal!
   treasuryDystopiaPairUSDPLUSClamMarketValue: BigDecimal!
-  treasuryDystopiaPairMaiUsdcMarketValue: BigDecimal!
-  treasuryDystopiaPairFraxUsdcMarketValue: BigDecimal!
-  treasuryDystopiaPairwMaticPenMarketValue: BigDecimal!
   treasuryDystMarketValue: BigDecimal!
   treasuryVeDystMarketValue: BigDecimal!
   treasuryPenMarketValue: BigDecimal!

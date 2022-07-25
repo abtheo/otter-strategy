@@ -111,7 +111,6 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.totalSupply = BigDecimal.zero()
     protocolMetric.clamPrice = BigDecimal.zero()
     protocolMetric.marketCap = BigDecimal.zero()
-    protocolMetric.totalValueLocked = BigDecimal.zero()
     protocolMetric.treasuryMaiUsdcQiInvestmentValue = BigDecimal.zero()
     protocolMetric.treasuryMarketValue = BigDecimal.zero()
     protocolMetric.treasuryMaiMarketValue = BigDecimal.zero()
@@ -127,8 +126,6 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.treasuryDystopiaPairQiTetuQiMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairMaiClamMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairMaiUsdcMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairFraxUsdcMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystMarketValue = BigDecimal.zero()
     protocolMetric.treasuryVeDystMarketValue = BigDecimal.zero()
@@ -560,9 +557,6 @@ export function updateProtocolMetrics(transaction: Transaction): void {
   pm.clamPrice = getClamUsdRate(transaction.blockNumber)
   pm.marketCap = circSupply.times(pm.clamPrice)
   pm.clamBacking = pm.treasuryMarketValueWithoutClam.div(circSupply)
-
-  //TODO: Find values in Pearl Bank & Clam Pond
-  pm.totalValueLocked = pm.clamPrice
 
   //Total burned CLAM
   let burns = loadOrCreateTotalBurnedClamSingleton()

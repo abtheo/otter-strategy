@@ -74,6 +74,13 @@ type Harvest @entity {
   timestamp: BigInt!
   amount: BigInt!
 }
+type ClaimReward @entity {
+  id: ID!
+  transaction: Transaction!
+  timestamp: BigInt!
+  amountUsd: BigDecimal!
+  amountQi: BigDecimal!
+}
 
 type TreasuryRevenue @entity {
   id: ID!

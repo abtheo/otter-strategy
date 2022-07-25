@@ -3,9 +3,7 @@ import { ClamCirculatingSupply } from '../../generated/OtterQiLocker/ClamCircula
 import { xTetuQi } from '../../generated/OtterQiLocker/xTetuQi'
 import { ERC20 } from '../../generated/OtterQiLocker/ERC20'
 import { OtterClamERC20V2 } from '../../generated/OtterQiLocker/OtterClamERC20V2'
-import { OtterPearlERC20 } from '../../generated/OtterQiLocker/OtterPearlERC20'
 import { OtterQiDAOInvestment } from '../../generated/OtterQiLocker/OtterQiDAOInvestment'
-import { OtterStaking } from '../../generated/OtterQiLocker/OtterStaking'
 import { QiFarm } from '../../generated/OtterQiLocker/QiFarm'
 import { veDyst } from '../../generated/OtterQiLocker/veDyst'
 import { PenLens } from '../../generated/OtterQiLocker/PenLens'
@@ -27,21 +25,11 @@ import {
   TETU_QI_START_BLOCK,
   XTETU_QI_CONTRACT,
   XTETU_QI_START_BLOCK,
-  OTTER_LAKE_ADDRESS,
-  PEARL_CHEST_BLOCK,
-  PEARL_ERC20,
   QI_ERC20,
-  STAKING_CONTRACT,
   TREASURY_ADDRESS,
   UNI_CLAM_MAI_PAIR,
-  UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR,
-  UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR_BLOCK,
-  UNI_MAI_USDC_PAIR,
-  UNI_MAI_USDC_PAIR_BLOCK,
   UNI_MAI_USDC_QI_INVESTMENT_PAIR,
   UNI_MAI_USDC_QI_INVESTMENT_PAIR_BLOCK,
-  UNI_PEARL_WMATIC_PAIR,
-  UNI_PEARL_WMATIC_PAIR_BLOCK,
   UNI_QI_WMATIC_INVESTMENT_PAIR,
   UNI_QI_WMATIC_INVESTMENT_PAIR_BLOCK,
   UNI_QI_WMATIC_PAIR,
@@ -60,9 +48,6 @@ import {
   DYSTOPIA_veDYST_ERC721_ID,
   DYSTOPIA_TRACKED_PAIRS,
   DYSTOPIA_PAIR_USDPLUS_CLAM,
-  DYSTOPIA_PAIR_MAI_USDC,
-  DYSTOPIA_PAIR_FRAX_USDC,
-  DYSTOPIA_PAIR_WMATIC_PEN,
   PEN_ERC20,
   PENDYST_ERC20,
   DAO_WALLET_PENROSE_USER_PROXY,
@@ -534,9 +519,9 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = wMaticDystValue
   protocolMetric.treasuryDystopiaPairMaiClamMarketValue = clamMaiDystValue
   protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = clamUsdplusDystValue
-  protocolMetric.treasuryDystopiaPairMaiUsdcMarketValue = usdcMaiDystValue
-  protocolMetric.treasuryDystopiaPairFraxUsdcMarketValue = usdcFraxDystValue
-  protocolMetric.treasuryDystopiaPairwMaticPenMarketValue = wMaticPenValue
+  // protocolMetric.treasuryDystopiaPairMaiUsdcMarketValue = usdcMaiDystValue
+  // protocolMetric.treasuryDystopiaPairFraxUsdcMarketValue = usdcFraxDystValue
+  // protocolMetric.treasuryDystopiaPairwMaticPenMarketValue = wMaticPenValue
   protocolMetric.treasuryDystMarketValue = dystMarketValue
   protocolMetric.treasuryVeDystMarketValue = veDystMarketValue
   protocolMetric.treasuryPenMarketValue = penMarketValue

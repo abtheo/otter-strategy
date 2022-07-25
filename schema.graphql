@@ -27,7 +27,6 @@ type Buyback @entity {
   clamAmount: BigInt! # uint256
 }
 
-#TODO: Remove or rename Risk-Free Values
 type ProtocolMetric @entity {
   id: ID!
   timestamp: BigInt!
@@ -40,6 +39,7 @@ type ProtocolMetric @entity {
   treasuryMarketValueWithoutClam: BigDecimal!
   treasuryMaiUsdcQiInvestmentValue: BigDecimal!
   treasuryMaiMarketValue: BigDecimal!
+  treasuryClamMaiMarketValue: BigDecimal!
   treasuryWmaticMarketValue: BigDecimal!
   treasuryQiMarketValue: BigDecimal!
   treasuryTetuQiMarketValue: BigDecimal!

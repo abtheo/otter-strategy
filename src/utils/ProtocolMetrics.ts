@@ -509,6 +509,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryCurveMai3PoolValue = mai3poolValueDecimal
   protocolMetric.treasuryCurveMai3PoolInvestmentValue = mai3poolInvestmentValueDecimal
   protocolMetric.treasuryMaiMarketValue = maiBalance
+  protocolMetric.treasuryClamMaiMarketValue = clamMai_value
   protocolMetric.treasuryQiMarketValue = qiMarketValue
   protocolMetric.treasuryQiWmaticMarketValue = qiWmaticMarketValue
   protocolMetric.treasuryQiWmaticQiInvestmentMarketValue = qiWmaticQiInvestmentMarketValue
@@ -519,9 +520,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = wMaticDystValue
   protocolMetric.treasuryDystopiaPairMaiClamMarketValue = clamMaiDystValue
   protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = clamUsdplusDystValue
-  // protocolMetric.treasuryDystopiaPairMaiUsdcMarketValue = usdcMaiDystValue
-  // protocolMetric.treasuryDystopiaPairFraxUsdcMarketValue = usdcFraxDystValue
-  // protocolMetric.treasuryDystopiaPairwMaticPenMarketValue = wMaticPenValue
   protocolMetric.treasuryDystMarketValue = dystMarketValue
   protocolMetric.treasuryVeDystMarketValue = veDystMarketValue
   protocolMetric.treasuryPenMarketValue = penMarketValue

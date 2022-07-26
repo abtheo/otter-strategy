@@ -460,7 +460,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(maiUsdcQiInvestmentValueDecimal)
     .plus(maiUsdcMarketValue)
 
-  let lpValue_noClam = clamMai_value
+  let lpValue = clamMai_value
     .plus(qiWmaticMarketValue)
     .plus(qiWmaticQiInvestmentMarketValue)
     //dystopia
@@ -470,7 +470,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(usdcFraxDystValue)
     .plus(wMaticPenValue)
 
-  let lpValue_Clam = lpValue_noClam.plus(clamMai_MaiOnlyValue).plus(clamUsdPlus_UsdPlusOnlyValue)
+  let lpValue_noClam = lpValue.plus(clamMai_MaiOnlyValue).plus(clamUsdPlus_UsdPlusOnlyValue)
+  let lpValue_Clam = lpValue.plus(clamMai_value).plus(clamUsdplusDystValue)
 
   let tokenValues = wmaticValue
     .plus(qiMarketValue)

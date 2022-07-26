@@ -307,6 +307,10 @@ export class ProtocolMetric extends Entity {
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
+      "treasuryMaiUsdcMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
       "treasuryMaiUsdcQiInvestmentValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
@@ -334,14 +338,6 @@ export class ProtocolMetric extends Entity {
     );
     this.set(
       "treasuryQiWmaticQiInvestmentMarketValue",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
-    this.set(
-      "treasuryCurveMai3PoolValue",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
-    this.set(
-      "treasuryCurveMai3PoolInvestmentValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set("treasuryClamMaiPOL", Value.fromBigDecimal(BigDecimal.zero()));
@@ -483,6 +479,15 @@ export class ProtocolMetric extends Entity {
     this.set("treasuryMarketValueWithoutClam", Value.fromBigDecimal(value));
   }
 
+  get treasuryMaiUsdcMarketValue(): BigDecimal {
+    let value = this.get("treasuryMaiUsdcMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryMaiUsdcMarketValue(value: BigDecimal) {
+    this.set("treasuryMaiUsdcMarketValue", Value.fromBigDecimal(value));
+  }
+
   get treasuryMaiUsdcQiInvestmentValue(): BigDecimal {
     let value = this.get("treasuryMaiUsdcQiInvestmentValue");
     return value!.toBigDecimal();
@@ -563,27 +568,6 @@ export class ProtocolMetric extends Entity {
   set treasuryQiWmaticQiInvestmentMarketValue(value: BigDecimal) {
     this.set(
       "treasuryQiWmaticQiInvestmentMarketValue",
-      Value.fromBigDecimal(value)
-    );
-  }
-
-  get treasuryCurveMai3PoolValue(): BigDecimal {
-    let value = this.get("treasuryCurveMai3PoolValue");
-    return value!.toBigDecimal();
-  }
-
-  set treasuryCurveMai3PoolValue(value: BigDecimal) {
-    this.set("treasuryCurveMai3PoolValue", Value.fromBigDecimal(value));
-  }
-
-  get treasuryCurveMai3PoolInvestmentValue(): BigDecimal {
-    let value = this.get("treasuryCurveMai3PoolInvestmentValue");
-    return value!.toBigDecimal();
-  }
-
-  set treasuryCurveMai3PoolInvestmentValue(value: BigDecimal) {
-    this.set(
-      "treasuryCurveMai3PoolInvestmentValue",
       Value.fromBigDecimal(value)
     );
   }

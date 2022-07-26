@@ -64,12 +64,12 @@ import {
   PENROSE_REWARD_MAI_CLAM,
   PENROSE_REWARD_USDPLUS_CLAM,
   PENROSE_REWARD_QI_TETUQI,
+  UNI_MAI_USDC_PAIR,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
 import {
   getClamUsdRate,
-  getClamMaiValueUSD,
   getwMaticUsdRate,
   getDystUsdRate,
   getDystPairUSD,
@@ -80,6 +80,7 @@ import {
   getTetuQiUsdRate,
   getDystPairHalfReserveUSD,
   ReserveToken,
+  getUniPairUSD,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
 import { DystPair } from '../../generated/OtterQiLocker/DystPair'
@@ -287,21 +288,11 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let clamMaiPOL = toDecimal(clamMaiBalance, 18)
     .div(clamMaiTotalLP)
     .times(BigDecimal.fromString('100'))
-  let clamMai_value = getClamMaiValueUSD(transaction.blockNumber, clamMaiBalance, UNI_CLAM_MAI_PAIR)
+  let clamMai_value = getUniPairUSD(transaction.blockNumber, clamMaiBalance, UNI_CLAM_MAI_PAIR)
 
   let clamMai_MaiOnlyValue = toDecimal(clamMaiPair.getReserves().value0, 18).times(
     clamMaiPOL.div(BigDecimal.fromString('100')),
   )
-
-  let mai3poolValueDecimal = BigDecimal.zero()
-  if (transaction.blockNumber.ge(BigInt.fromString(CURVE_MAI_3POOL_PAIR_BLOCK))) {
-    mai3poolValueDecimal = getMai3poolValue()
-  }
-
-  let mai3poolInvestmentValueDecimal = BigDecimal.zero()
-  if (transaction.blockNumber.ge(BigInt.fromString(CURVE_MAI_3POOL_INVESTMENT_PAIR_BLOCK))) {
-    mai3poolInvestmentValueDecimal = getMai3poolInvestmentValue()
-  }
 
   let qiMarketValue = BigDecimal.zero()
   let maiUsdcQiInvestmentValueDecimal = BigDecimal.zero()
@@ -309,6 +300,12 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     maiUsdcQiInvestmentValueDecimal = getMaiUsdcInvestmentValue()
     qiMarketValue = getQiUsdRate().times(toDecimal(qiERC20.balanceOf(TREASURY_ADDRESS), qiERC20.decimals()))
   }
+
+  let maiUsdcMarketValue = getUniPairUSD(
+    transaction.blockNumber,
+    ERC20.bind(UNI_MAI_USDC_PAIR).balanceOf(TREASURY_ADDRESS),
+    UNI_MAI_USDC_PAIR,
+  )
 
   let tetuQiMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(TETU_QI_START_BLOCK))) {
@@ -461,20 +458,19 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let stableValueDecimal = maiBalance
     .plus(daiBalance)
     .plus(maiUsdcQiInvestmentValueDecimal)
-    .plus(mai3poolValueDecimal)
-    .plus(mai3poolInvestmentValueDecimal)
+    .plus(maiUsdcMarketValue)
 
-  let lpValue = clamMai_value
+  let lpValue_noClam = clamMai_value
     .plus(qiWmaticMarketValue)
     .plus(qiWmaticQiInvestmentMarketValue)
     //dystopia
     .plus(qiTetuQiValue)
     .plus(wMaticDystValue)
-    .plus(clamMaiDystValue)
-    .plus(clamUsdplusDystValue)
     .plus(usdcMaiDystValue)
     .plus(usdcFraxDystValue)
     .plus(wMaticPenValue)
+
+  let lpValue_Clam = lpValue_noClam.plus(clamMai_MaiOnlyValue).plus(clamUsdPlus_UsdPlusOnlyValue)
 
   let tokenValues = wmaticValue
     .plus(qiMarketValue)
@@ -486,28 +482,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(vlPenMarketValue)
     .plus(penDystMarketValue)
 
-  let mv = stableValueDecimal.plus(lpValue).plus(tokenValues)
-
-  let lpValue_noClam = qiWmaticMarketValue
-    .plus(qiWmaticQiInvestmentMarketValue)
-    //dystopia
-    .plus(qiTetuQiValue)
-    .plus(wMaticDystValue)
-    .plus(clamMaiDystValue)
-    .plus(usdcMaiDystValue)
-    .plus(usdcFraxDystValue)
-    .plus(wMaticPenValue)
-    //no-clam pairs
-    .plus(clamMai_MaiOnlyValue)
-    .plus(clamUsdPlus_UsdPlusOnlyValue)
+  let mv = stableValueDecimal.plus(lpValue_Clam).plus(tokenValues)
 
   let mv_noClam = stableValueDecimal.plus(lpValue_noClam).plus(tokenValues)
 
   protocolMetric.treasuryMarketValue = mv
   protocolMetric.treasuryMarketValueWithoutClam = mv_noClam
+  protocolMetric.treasuryMaiUsdcMarketValue = maiUsdcMarketValue
   protocolMetric.treasuryMaiUsdcQiInvestmentValue = maiUsdcQiInvestmentValueDecimal
-  protocolMetric.treasuryCurveMai3PoolValue = mai3poolValueDecimal
-  protocolMetric.treasuryCurveMai3PoolInvestmentValue = mai3poolInvestmentValueDecimal
   protocolMetric.treasuryMaiMarketValue = maiBalance
   protocolMetric.treasuryClamMaiMarketValue = clamMai_value
   protocolMetric.treasuryQiMarketValue = qiMarketValue

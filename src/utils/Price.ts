@@ -96,16 +96,28 @@ export function getClamUsdRate(block: BigInt): BigDecimal {
   return rate
 }
 
-export function getClamMaiValueUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {
+export function getUniPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {
   let pair = UniswapV2Pair.bind(pair_address)
   let total_lp = pair.totalSupply()
-  let lp_token_0 = pair.getReserves().value1
-  let lp_token_1 = pair.getReserves().value0
-  let ownedLP = toDecimal(lp_amount, 18).div(toDecimal(total_lp, 18))
-  let clam_value = toDecimal(lp_token_0, 9).times(getClamUsdRate(blockNumber))
-  let total_lp_usd = clam_value.plus(toDecimal(lp_token_1, 18))
 
-  return ownedLP.times(total_lp_usd)
+  let token0 = ERC20.bind(pair.token0())
+  let lp_token_0 = pair.getReserves().value0
+  // let lp_token_1 = pair.getReserves().value1
+
+  let ownedLP = toDecimal(lp_amount, 18).div(toDecimal(total_lp, 18))
+
+  let usd_value = toDecimal(lp_token_0, token0.decimals()).times(findPrice(blockNumber, pair.token0()))
+  let total_lp_usd = usd_value.times(BigDecimal.fromString('2'))
+  let final_value = ownedLP.times(total_lp_usd)
+
+  log.debug('Uni Pair USD Value: pair {} is {} owned with a total value of {}, final value {}', [
+    pair_address.toHexString(),
+    ownedLP.toString(),
+    total_lp_usd.toString(),
+    final_value.toString(),
+  ])
+
+  return final_value
 }
 
 export function getDystPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {

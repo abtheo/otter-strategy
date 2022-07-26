@@ -37,6 +37,7 @@ type ProtocolMetric @entity {
   marketCap: BigDecimal!
   treasuryMarketValue: BigDecimal!
   treasuryMarketValueWithoutClam: BigDecimal!
+  treasuryMaiUsdcMarketValue: BigDecimal!
   treasuryMaiUsdcQiInvestmentValue: BigDecimal!
   treasuryMaiMarketValue: BigDecimal!
   treasuryClamMaiMarketValue: BigDecimal!
@@ -46,8 +47,6 @@ type ProtocolMetric @entity {
   treasuryOtterClamQiMarketValue: BigDecimal!
   treasuryQiWmaticMarketValue: BigDecimal!
   treasuryQiWmaticQiInvestmentMarketValue: BigDecimal!
-  treasuryCurveMai3PoolValue: BigDecimal!
-  treasuryCurveMai3PoolInvestmentValue: BigDecimal!
   treasuryClamMaiPOL: BigDecimal!
   totalBurnedClam: BigDecimal!
   totalBurnedClamMarketValue: BigDecimal!

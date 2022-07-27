@@ -24,6 +24,22 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
   return treasuryRevenue as TreasuryRevenue
 }
 
+export function setTreasuryRevenueTotals(revenue: TreasuryRevenue): TreasuryRevenue {
+  revenue.totalRevenueClamAmount = revenue.qiClamAmount
+    .plus(revenue.ottopiaClamAmount)
+    .plus(revenue.dystClamAmount)
+    .plus(revenue.penDystClamAmount)
+    .plus(revenue.penClamAmount)
+
+  revenue.totalRevenueMarketValue = revenue.qiMarketValue
+    .plus(revenue.ottopiaMarketValue)
+    .plus(revenue.dystMarketValue)
+    .plus(revenue.penDystMarketValue)
+    .plus(revenue.penMarketValue)
+
+  return revenue
+}
+
 export function updateTreasuryRevenueHarvest(block: BigInt, harvest: Harvest): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(harvest.timestamp)
   let qi = toDecimal(harvest.amount, 18)
@@ -39,8 +55,7 @@ export function updateTreasuryRevenueHarvest(block: BigInt, harvest: Harvest): v
   treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
   treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
 
-  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
-  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
+  treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
 
   treasuryRevenue.save()
 }
@@ -59,8 +74,7 @@ export function updateTreasuryRevenueClaimQiReward(block: BigInt, claim: ClaimRe
   treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
   treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(claim.amountUsd)
 
-  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
-  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(claim.amountUsd)
+  treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
 
   treasuryRevenue.save()
 }
@@ -80,8 +94,7 @@ export function updateTreasuryRevenueQiTransfer(block: BigInt, transfer: Transfe
   treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
   treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
 
-  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
-  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(qiMarketValue)
+  treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
 
   treasuryRevenue.save()
 }
@@ -100,8 +113,7 @@ export function updateTreasuryRevenueDystRewardPaid(transaction: Transaction, am
   treasuryRevenue.dystClamAmount = treasuryRevenue.dystClamAmount.plus(clamAmount)
   treasuryRevenue.dystMarketValue = treasuryRevenue.dystMarketValue.plus(dystMarketValue)
 
-  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
-  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(dystMarketValue)
+  treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
 
   treasuryRevenue.save()
 }
@@ -122,8 +134,7 @@ export function updateTreasuryRevenuePenRewardPaid(transaction: Transaction, amo
   treasuryRevenue.penClamAmount = treasuryRevenue.penClamAmount.plus(clamAmount)
   treasuryRevenue.penMarketValue = treasuryRevenue.penMarketValue.plus(penMarketValue)
 
-  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
-  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(penMarketValue)
+  treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
 
   treasuryRevenue.save()
 }
@@ -143,8 +154,7 @@ export function updateTreasuryRevenuePenDystRewardPaid(transaction: Transaction,
   treasuryRevenue.penDystClamAmount = treasuryRevenue.penClamAmount.plus(clamAmount)
   treasuryRevenue.penDystMarketValue = treasuryRevenue.penMarketValue.plus(penDystMarketValue)
 
-  treasuryRevenue.totalRevenueClamAmount = treasuryRevenue.totalRevenueClamAmount.plus(clamAmount)
-  treasuryRevenue.totalRevenueMarketValue = treasuryRevenue.totalRevenueMarketValue.plus(penDystMarketValue)
+  treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
 
   treasuryRevenue.save()
 }

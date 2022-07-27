@@ -4,7 +4,7 @@ import { loadOrCreateTotalBurnedClamSingleton } from './utils/Burned'
 import { toDecimal } from './utils/Decimals'
 import { getClamUsdRate } from './utils/Price'
 import { loadOrCreateTransaction } from './utils/Transactions'
-import { loadOrCreateTreasuryRevenue } from './utils/TreasuryRevenue'
+import { loadOrCreateTreasuryRevenue, setTreasuryRevenueTotals } from './utils/TreasuryRevenue'
 import { BuyProduct } from '../generated/schema'
 import { updateProtocolMetrics } from './utils/ProtocolMetrics'
 
@@ -49,9 +49,7 @@ export function handleBuyProduct(buy: BuyProductEvent): void {
   revenue.ottopiaClamAmount = revenue.ottopiaClamAmount.plus(revenueClam)
   revenue.ottopiaMarketValue = revenue.ottopiaMarketValue.plus(clamMarketValue)
 
-  //add to total revenue
-  revenue.totalRevenueClamAmount = revenue.totalRevenueClamAmount.plus(revenueClam)
-  revenue.totalRevenueMarketValue = revenue.totalRevenueMarketValue.plus(clamMarketValue)
+  revenue = setTreasuryRevenueTotals(revenue)
 
   revenue.save()
 }

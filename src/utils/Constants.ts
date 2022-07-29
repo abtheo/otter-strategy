@@ -14,6 +14,7 @@ export const DAI_ERC20 = Address.fromString('0x8f3cf7ad23cd3cadbd9735aff95802323
 export const MATIC_ERC20 = Address.fromString('0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270')
 export const PEARL_ERC20 = Address.fromString('0x52A7F40BB6e9BD9183071cdBdd3A977D713F2e34')
 export const QI_ERC20 = Address.fromString('0x580A84C73811E1839F75d86d75d88cCa0c241fF4')
+export const QUICK_ERC20 = Address.fromString('0x831753DD7087CaC61aB5644b308642cc1c33Dc13')
 export const DQUICK_ERC20 = Address.fromString('0xf28164A485B0B2C90639E47b0f377b4a438a16B1')
 export const WETH_ERC20 = Address.fromString('0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619')
 export const USDPLUS_ERC20 = Address.fromString('0x236eec6359fb44cce8f97e99387aa7f8cd5cde1f')
@@ -21,11 +22,11 @@ export const USDC_ERC20 = Address.fromString('0x2791bca1f2de4661ed88a30c99a7a944
 export const PEN_ERC20 = Address.fromString('0x9008d70a5282a936552593f410abcbce2f891a97')
 export const PENDYST_ERC20 = Address.fromString('0x5b0522391d0a5a37fd117fe4c43e8876fb4e91e6')
 export const DYST_ERC20 = Address.fromString('0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb')
+export const TETU_QI_ERC20 = Address.fromString('0x4cd44ced63d9a6fef595f6ad3f7ced13fceac768')
 
 export const OCQI_CONTRACT = Address.fromString('0x0906ee253B2cD6737A3CD3838490Cb0b90fD68be')
 export const QCQI_START_BLOCK = '25443072'
 
-export const TETU_QI_CONTRACT = Address.fromString('0x4cd44ced63d9a6fef595f6ad3f7ced13fceac768')
 export const TETU_QI_START_BLOCK = '26184969'
 export const XTETU_QI_CONTRACT = Address.fromString('0x8f1505C8F3B45Cb839D09c607939095a4195738e')
 export const XTETU_QI_START_BLOCK = '26184969'
@@ -90,37 +91,28 @@ export const DYSTOPIA_veDYST = Address.fromString('0x060fa7aD32C510F12550c7a9679
 export const DYSTOPIA_veDYST_ERC721_ID = '30'
 export const VLPEN_LOCKER = Address.fromString('0x55ca76e0341ccd35c2e3f34cbf767c6102aea70f')
 
-export const DYSTOPIA_PAIR_WMATIC_DYST = Address.fromString('0x1e08a5b6a1694bc1a65395db6f4c506498daa349')
 export const DYSTOPIA_PAIR_MAI_CLAM = Address.fromString('0x40705378b468b357435be7302ee22918ee4c4d24')
 export const DYSTOPIA_PAIR_USDPLUS_CLAM = Address.fromString('0x291e289c39cbaf5ee158028d086d76ffa141cfda')
+export const DYSTOPIA_PAIR_WMATIC_DYST = Address.fromString('0x1e08a5b6a1694bc1a65395db6f4c506498daa349')
+export const DYSTOPIA_PAIR_QI_TETUQI = Address.fromString('0x42c0cc5f1827C5d908392654389E5D93da426378')
+
+//unused
 export const DYSTOPIA_PAIR_MAI_USDC = Address.fromString('0x5a31f830225936ca28547ec3018188af44f21467')
 export const DYSTOPIA_PAIR_FRAX_USDC = Address.fromString('0x53227c83a98ba1035fed912da6ce26a0c11c7c66')
 export const DYSTOPIA_PAIR_WMATIC_PEN = Address.fromString('0x2c5ba816da67ce34029fc4a9cc7545d207abf945')
 export const DYSTOPIA_PAIR_PENDYST_DYST = Address.fromString('0x370c7feb6fcd9f0804b477e3c807392e59327764')
 
-export const DYSTOPIA_GAUGE_MAI_CLAM = Address.fromString('0xd5c00c0e58f489ac428e5ce24f26a94bd8bfe923')
-export const DYSTOPIA_GAUGE_USDPLUS_CLAM = Address.fromString('0xbe72608f9d161a77ece96da403c24ce176fba9e3')
-export const DYSTOPIA_GAUGE_WMATIC_DYST = Address.fromString('0xbe9d5356915f6f20be701341966a5b57808c866e')
-export const DYSTOPIA_GAUGE_MAI_USDC = Address.fromString('0x9d4d5885ae53ca9420d40a3dae3d2b826ec75128')
-export const DYSTOPIA_GAUGE_FRAX_USDC = Address.fromString('0x768e8639c1be413832af4bff0c42284b2d799689')
-export const DYSTOPIA_GAUGE_WMATIC_PEN = Address.fromString('0x77a93d0a4acc6cc8eff33b51c268807d086d0c95')
-
 export const DYSTOPIA_TRACKED_PAIRS = [
   DYSTOPIA_PAIR_MAI_CLAM,
   DYSTOPIA_PAIR_USDPLUS_CLAM,
   DYSTOPIA_PAIR_WMATIC_DYST,
-  DYSTOPIA_PAIR_MAI_USDC,
-  DYSTOPIA_PAIR_FRAX_USDC,
-  DYSTOPIA_PAIR_WMATIC_PEN,
+  DYSTOPIA_PAIR_QI_TETUQI,
 ]
-export const DYSTOPIA_TRACKED_GAUGES = [
-  DYSTOPIA_GAUGE_MAI_CLAM,
-  DYSTOPIA_GAUGE_USDPLUS_CLAM,
-  DYSTOPIA_GAUGE_WMATIC_DYST,
-  DYSTOPIA_GAUGE_MAI_USDC,
-  DYSTOPIA_GAUGE_FRAX_USDC,
-  DYSTOPIA_GAUGE_WMATIC_PEN,
-]
+
+export const PENROSE_REWARD_MAI_CLAM = Address.fromString('0x4edc2f4368179be77e5e8fba295fff0a82e3df21')
+export const PENROSE_REWARD_USDPLUS_CLAM = Address.fromString('0x582331EB734D2d81e29Eb54A9890AEED1627e2C2')
+export const PENROSE_REWARD_WMATIC_DYST = Address.fromString('0xbb1bF0980a61Fc5dAf981B33543Fb54c8E04DFa0')
+export const PENROSE_REWARD_QI_TETUQI = Address.fromString('0x249C0236B0F597EdCE0BF989fdf2EDbB1799FfA8')
 
 export const PENROSE_PROXY = Address.fromString('0xc9ae7dac956f82074437c6d40f67d6a5abf3e34b')
 export const DAO_WALLET_PENROSE_USER_PROXY = Address.fromString('0x3c56307bdbc8a59e85542cc795aa31c628748c62')
@@ -128,8 +120,18 @@ export const PEN_DYST_REWARDS = Address.fromString('0x68c08ac637fcac8e63060aaca8
 export const PEN_DYST_REWARD_PROXY = Address.fromString('0x62f9b938323fb68379b9ac1641012f9bee339c69')
 export const PEN_DYST_PARTNER_REWARDS = Address.fromString('0x5DD340DD4142D093c1926282CD56B0D4690dEB11')
 
-export const PENROSE_GAUGE_MAI_CLAM = Address.fromString('0x4edc2f4368179be77e5e8fba295fff0a82e3df21')
+export const PENROSE_REWARDS_GAUGE = Address.fromString('0x4edc2f4368179be77e5e8fba295fff0a82e3df21')
 export const PENROSE_LENS_PROXY = Address.fromString('0x1432c3553fdf7fbd593a84b3a4d380c643cbf7a2')
 
 export const QIDAO_TREASURY = Address.fromString('0x3feacf904b152b1880bde8bf04ac9eb636fee4d8')
-export const QIDAO_veDYST_ERC721_ID = '4'
+export const QIDAO_veDYST_ERC721_ID = 4
+
+export const PEARL_BANK = Address.fromString('0x845eb7730a8d37e8d190fb8bb9c582038331b48a')
+export const DYST_ROUTER = Address.fromString('0xbe75dd16d029c6b32b7ad57a0fd9c1c20dd2862e')
+export const QUICKSWAP_ROUTER = Address.fromString('0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff')
+
+export const DYST_POOL_TRANSITION_BLOCK = 30393227
+export const DYST_START_BLOCK = 28773233
+export const PEN_START_BLOCK = 29401160
+
+export const CLAM_PLUS = Address.fromString('0xF2A8705D327534E334d09BC28e5C97b5c356Aa01')

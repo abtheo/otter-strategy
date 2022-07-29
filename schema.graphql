@@ -9,15 +9,6 @@ type Transaction @entity {
   gasPrice: BigInt!
 }
 
-type LogRebase @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  epoch: BigInt! # uint256
-  rebase: BigInt! # uint256
-  index: BigInt! # uint256
-}
-
 type Transfer @entity {
   id: ID!
   transaction: Transaction!
@@ -36,53 +27,33 @@ type Buyback @entity {
   clamAmount: BigInt! # uint256
 }
 
-#TODO: Remove or rename Risk-Free Values
 type ProtocolMetric @entity {
   id: ID!
   timestamp: BigInt!
   clamCirculatingSupply: BigDecimal!
-  sClamCirculatingSupply: BigDecimal!
   totalSupply: BigDecimal!
   clamPrice: BigDecimal!
+  clamBacking: BigDecimal!
   marketCap: BigDecimal!
-  totalValueLocked: BigDecimal!
-  treasuryRiskFreeValue: BigDecimal!
   treasuryMarketValue: BigDecimal!
-  nextEpochRebase: BigDecimal!
-  nextDistributedClam: BigDecimal!
-  treasuryMaiUsdcRiskFreeValue: BigDecimal!
-  treasuryMaiUsdcQiInvestmentRiskFreeValue: BigDecimal!
-  treasuryMaiRiskFreeValue: BigDecimal!
+  treasuryMarketValueWithoutClam: BigDecimal!
+  treasuryMaiUsdcMarketValue: BigDecimal!
+  treasuryMaiUsdcQiInvestmentValue: BigDecimal!
   treasuryMaiMarketValue: BigDecimal!
-  treasuryFraxRiskFreeValue: BigDecimal!
-  treasuryFraxMarketValue: BigDecimal!
-  treasuryDaiRiskFreeValue: BigDecimal!
-  treasuryWmaticRiskFreeValue: BigDecimal!
+  treasuryClamMaiMarketValue: BigDecimal!
   treasuryWmaticMarketValue: BigDecimal!
   treasuryQiMarketValue: BigDecimal!
   treasuryTetuQiMarketValue: BigDecimal!
   treasuryOtterClamQiMarketValue: BigDecimal!
-  treasuryDquickMarketValue: BigDecimal!
   treasuryQiWmaticMarketValue: BigDecimal!
   treasuryQiWmaticQiInvestmentMarketValue: BigDecimal!
-  treasuryCurveMai3PoolValue: BigDecimal!
-  treasuryCurveMai3PoolInvestmentValue: BigDecimal!
-  currentAPY: BigDecimal!
-  safeHandAPY: BigDecimal!
-  furryHandAPY: BigDecimal!
-  stoneHandAPY: BigDecimal!
-  diamondHandAPY: BigDecimal!
   treasuryClamMaiPOL: BigDecimal!
-  treasuryClamFraxPOL: BigDecimal!
-  treasuryClamWmaticPOL: BigDecimal!
   totalBurnedClam: BigDecimal!
   totalBurnedClamMarketValue: BigDecimal!
+  treasuryDystopiaPairQiTetuQiMarketValue: BigDecimal!
   treasuryDystopiaPairwMaticDystMarketValue: BigDecimal!
   treasuryDystopiaPairMaiClamMarketValue: BigDecimal!
   treasuryDystopiaPairUSDPLUSClamMarketValue: BigDecimal!
-  treasuryDystopiaPairMaiUsdcMarketValue: BigDecimal!
-  treasuryDystopiaPairFraxUsdcMarketValue: BigDecimal!
-  treasuryDystopiaPairwMaticPenMarketValue: BigDecimal!
   treasuryDystMarketValue: BigDecimal!
   treasuryVeDystMarketValue: BigDecimal!
   treasuryPenMarketValue: BigDecimal!
@@ -102,6 +73,13 @@ type Harvest @entity {
   timestamp: BigInt!
   amount: BigInt!
 }
+type ClaimReward @entity {
+  id: ID!
+  transaction: Transaction!
+  timestamp: BigInt!
+  amountUsd: BigDecimal!
+  amountQi: BigDecimal!
+}
 
 type TreasuryRevenue @entity {
   id: ID!
@@ -112,44 +90,12 @@ type TreasuryRevenue @entity {
   dystMarketValue: BigDecimal!
   penClamAmount: BigDecimal!
   penMarketValue: BigDecimal!
+  penDystClamAmount: BigDecimal!
+  penDystMarketValue: BigDecimal!
   ottopiaClamAmount: BigDecimal!
   ottopiaMarketValue: BigDecimal!
-  buybackClamAmount: BigDecimal!
-  buybackMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
-  cumulativeBuybackClamAmount: BigDecimal!
-  cumulativeBuybackMarketValue: BigDecimal!
-  #TODO: Remove Yields
-  yieldClamAmount: BigDecimal!
-  yieldMarketValue: BigDecimal!
-}
-
-type APY @entity {
-  id: ID!
-  timestamp: BigInt!
-  rebaseReward: BigDecimal!
-  apy: BigDecimal!
-  clamDistributed: BigInt!
-  clamDistributedDecimal: BigDecimal!
-}
-
-type TotalBuybacks @entity {
-  id: ID!
-  boughtClam: BigDecimal!
-  boughtMarketValue: BigDecimal!
-}
-
-type DystopiaGaugeBalance @entity {
-  id: ID! #lp token address
-  balance: BigInt!
-}
-
-type TotalBribeReward @entity {
-  id: ID!
-  qiBribeRewardsMarketValue: BigDecimal!
-  # dystopiaBribeRewardsMarketValue: BigDecimal!
-  # penroseBribeRewardsMarketValue: BigDecimal!
 }
 
 type Vote @entity {
@@ -167,31 +113,54 @@ type GovernanceMetric @entity {
   id: ID!
   timestamp: BigInt!
   qiDaoVeDystAmt: BigDecimal!
-  dystTotalSupply: BigDecimal!
-  veDystTotalSupply: BigDecimal!
-  penDystTotalSupply: BigDecimal!
-  vlPenTotalSupply: BigDecimal!
-  otterClamVlPenTotalOwned: BigDecimal!
+  dystMarketCap: BigDecimal!
+  veDystMarketCap: BigDecimal!
+  penDystMarketCap: BigDecimal!
+  vlPenMarketCap: BigDecimal!
+  otterClamVlPenMarketCap: BigDecimal!
   otterClamVlPenPercentOwned: BigDecimal!
   otterClamVeDystPercentOwned: BigDecimal!
-  #Set from TotalBribeReward singleton
-  totalQiBribeRewardsMarketValue: BigDecimal!
 }
 
-type Term @entity {
+type CumulativeValues @entity {
   id: ID!
-  note: Bytes!
-  minLockAmount: BigInt!
-  lockPeriod: BigInt!
-  multiplier: Int!
-  enabled: Boolean!
+  """
+  always equal 'CumulativeValues'
+  """
+  rewardPayoutMarketValue: BigDecimal!
 }
 
-type NoteToken @entity {
+type PearlBankMetric @entity {
   id: ID!
-  tokenId: BigInt!
-  note: Bytes!
-  user: Bytes!
+
+  """
+  reward
+  """
+  apr: BigDecimal!
+  apy: BigDecimal!
+  payoutMarketValue: BigDecimal!
+  clamMarketValueWhenPayoutHappens: BigDecimal!
+  cumulativeRewardPayoutMarketValue: BigDecimal!
+
+  clamPondDepositedClamAmount: BigDecimal!
+  pearlBankDepositedClamAmount: BigDecimal!
+
+  clamPondDepositedUsdValue: BigDecimal!
+  pearlBankDepositedUsdValue: BigDecimal!
+
+  totalClamStaked: BigDecimal!
+  totalClamStakedUsdValue: BigDecimal!
+
+  """
+  token supply
+  """
+  timestamp: BigInt!
+}
+
+type BuyProduct @entity {
+  id: ID!
+  product_id: BigInt!
+  price: BigDecimal!
   amount: BigInt!
-  updatedAt: BigInt!
+  totalClam: BigDecimal!
 }

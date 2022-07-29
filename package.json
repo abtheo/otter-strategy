@@ -6,6 +6,7 @@
     "build": "graph build",
     "auth": "graph auth --product hosted-service",
     "deploy": "yarn build && graph deploy --product hosted-service otterclam/otterclam",
+    "deploy-backup": "yarn build && graph deploy --product hosted-service otterclam/otterclam_backup",
     "deploy-test": "yarn build && graph deploy --product hosted-service abtheo/otter-development",
     "create-local": "graph create --node http://localhost:8020/ otterclam/otterclam",
     "remove-local": "graph remove --node http://localhost:8020/ otterclam/otterclam",

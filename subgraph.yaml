@@ -378,6 +378,48 @@ dataSources:
       file: ./src/PenroseMultiRewards.ts
       
   - kind: ethereum/contract
+    name: PenroseUsdcTusdRewards
+    network: matic
+    source: 
+      address: '0xc1Cc12d610bd71fFdBfE489C941e548Df6f94D14'
+      abi: PenroseMultiRewards
+      startBlock: 29069971
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+      abis:
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        - name: Pen
+          file: ./abis/Pen.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+      eventHandlers:
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/PenroseMultiRewards.ts
+
+  - kind: ethereum/contract
     name: PenroseQiTetuQiRewards
     network: matic
     source: 

@@ -28,6 +28,8 @@ dataSources:
         - name: OtterQiLocker
           file: ./abis/OtterQiLocker.json
         #=== protocolMetrics ===
+        - name: UsdPlus
+          file: ./abis/UsdPlus.json
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
         - name: OtterStaking
@@ -153,6 +155,8 @@ dataSources:
         - name: OttopiaStore
           file: ./abis/OttopiaStore.json
         #=== protocolMetrics ===
+        - name: UsdPlus
+          file: ./abis/UsdPlus.json
         - name: OtterQiLocker
           file: ./abis/OtterQiLocker.json
         - name: OtterClamERC20V2

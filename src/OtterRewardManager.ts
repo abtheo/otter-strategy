@@ -27,6 +27,7 @@ export function handlePayout(payout: Payout): void {
   metric.clamMarketValueWhenPayoutHappens = clamPrice
   metric.totalClamStakedUsdValue = stakedUsd
   metric.cumulativeRewardPayoutMarketValue = newTotalPaid
+  metric.rewardRate = payoutValue.div(stakedUsd).times(BigDecimal.fromString('100'))
 
   // (stakedValue * APR) / 365 = payout
   // (payout*365 / stakedValue) * 100% = APR%

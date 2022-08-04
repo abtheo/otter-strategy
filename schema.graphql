@@ -48,17 +48,20 @@ type ProtocolMetric @entity {
   treasuryQiWmaticMarketValue: BigDecimal!
   treasuryQiWmaticQiInvestmentMarketValue: BigDecimal!
   treasuryClamMaiPOL: BigDecimal!
-  totalBurnedClam: BigDecimal!
-  totalBurnedClamMarketValue: BigDecimal!
   treasuryDystopiaPairQiTetuQiMarketValue: BigDecimal!
   treasuryDystopiaPairwMaticDystMarketValue: BigDecimal!
   treasuryDystopiaPairMaiClamMarketValue: BigDecimal!
   treasuryDystopiaPairUSDPLUSClamMarketValue: BigDecimal!
+  treasuryDystopiaPairUsdcTusdMarketValue: BigDecimal!
   treasuryDystMarketValue: BigDecimal!
   treasuryVeDystMarketValue: BigDecimal!
   treasuryPenMarketValue: BigDecimal!
   treasuryVlPenMarketValue: BigDecimal!
   treasuryPenDystMarketValue: BigDecimal!
+
+  totalBurnedClam: BigDecimal!
+  totalBurnedClamMarketValue: BigDecimal!
+  totalClamUsdPlusRebaseValue: BigDecimal!
 }
 
 type TotalBurnedClam @entity {
@@ -123,21 +126,15 @@ type GovernanceMetric @entity {
 }
 
 type CumulativeValues @entity {
-  id: ID!
-  """
-  always equal 'CumulativeValues'
-  """
+  id: ID! #always equals 'CumulativeValues'
   rewardPayoutMarketValue: BigDecimal!
 }
 
 type PearlBankMetric @entity {
   id: ID!
-
-  """
-  reward
-  """
   apr: BigDecimal!
   apy: BigDecimal!
+  rewardRate: BigDecimal!
   payoutMarketValue: BigDecimal!
   clamMarketValueWhenPayoutHappens: BigDecimal!
   cumulativeRewardPayoutMarketValue: BigDecimal!
@@ -150,10 +147,6 @@ type PearlBankMetric @entity {
 
   totalClamStaked: BigDecimal!
   totalClamStakedUsdValue: BigDecimal!
-
-  """
-  token supply
-  """
   timestamp: BigInt!
 }
 
@@ -163,4 +156,22 @@ type BuyProduct @entity {
   price: BigDecimal!
   amount: BigInt!
   totalClam: BigDecimal!
+}
+
+"""
+Tracks the staked balance of every wallet address,
+along with the most recent reward payouts
+"""
+type StakedBalance @entity {
+  id: ID! #address
+  clamPondBalance: BigDecimal!
+  clamPondLastPayout: BigDecimal!
+  clamPondLastPayoutUsd: BigDecimal!
+  pearlBankBalance: BigDecimal!
+  pearlBankLastPayout: BigDecimal!
+}
+
+type AllStakedBalance @entity {
+  id: ID!
+  balances: [StakedBalance!]!
 }

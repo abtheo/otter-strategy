@@ -23,6 +23,7 @@ export const PEN_ERC20 = Address.fromString('0x9008d70a5282a936552593f410abcbce2
 export const PENDYST_ERC20 = Address.fromString('0x5b0522391d0a5a37fd117fe4c43e8876fb4e91e6')
 export const DYST_ERC20 = Address.fromString('0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb')
 export const TETU_QI_ERC20 = Address.fromString('0x4cd44ced63d9a6fef595f6ad3f7ced13fceac768')
+export const TUSD_ERC20 = Address.fromString('0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756')
 
 export const OCQI_CONTRACT = Address.fromString('0x0906ee253B2cD6737A3CD3838490Cb0b90fD68be')
 export const QCQI_START_BLOCK = '25443072'
@@ -95,6 +96,7 @@ export const DYSTOPIA_PAIR_MAI_CLAM = Address.fromString('0x40705378b468b357435b
 export const DYSTOPIA_PAIR_USDPLUS_CLAM = Address.fromString('0x291e289c39cbaf5ee158028d086d76ffa141cfda')
 export const DYSTOPIA_PAIR_WMATIC_DYST = Address.fromString('0x1e08a5b6a1694bc1a65395db6f4c506498daa349')
 export const DYSTOPIA_PAIR_QI_TETUQI = Address.fromString('0x42c0cc5f1827C5d908392654389E5D93da426378')
+export const DYSTOPIA_PAIR_USDC_TUSD = Address.fromString('0xA498a892AD0D3F70AA449798023AA1F4A0888268')
 
 //unused
 export const DYSTOPIA_PAIR_MAI_USDC = Address.fromString('0x5a31f830225936ca28547ec3018188af44f21467')
@@ -107,12 +109,14 @@ export const DYSTOPIA_TRACKED_PAIRS = [
   DYSTOPIA_PAIR_USDPLUS_CLAM,
   DYSTOPIA_PAIR_WMATIC_DYST,
   DYSTOPIA_PAIR_QI_TETUQI,
+  DYSTOPIA_PAIR_USDC_TUSD,
 ]
 
 export const PENROSE_REWARD_MAI_CLAM = Address.fromString('0x4edc2f4368179be77e5e8fba295fff0a82e3df21')
 export const PENROSE_REWARD_USDPLUS_CLAM = Address.fromString('0x582331EB734D2d81e29Eb54A9890AEED1627e2C2')
 export const PENROSE_REWARD_WMATIC_DYST = Address.fromString('0xbb1bF0980a61Fc5dAf981B33543Fb54c8E04DFa0')
 export const PENROSE_REWARD_QI_TETUQI = Address.fromString('0x249C0236B0F597EdCE0BF989fdf2EDbB1799FfA8')
+export const PENROSE_REWARD_USDC_TUSD = Address.fromString('0xc1Cc12d610bd71fFdBfE489C941e548Df6f94D14')
 
 export const PENROSE_PROXY = Address.fromString('0xc9ae7dac956f82074437c6d40f67d6a5abf3e34b')
 export const DAO_WALLET_PENROSE_USER_PROXY = Address.fromString('0x3c56307bdbc8a59e85542cc795aa31c628748c62')

@@ -14,6 +14,7 @@ import {
   OCQI_CONTRACT,
   DYST_POOL_TRANSITION_BLOCK,
   TETU_QI_ERC20,
+  TUSD_ERC20,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { UniswapV2Pair } from '../../generated/OtterQiLocker/UniswapV2Pair'
@@ -192,7 +193,13 @@ export function findPrice(blockNumber: BigInt, address: Address): BigDecimal {
   if (address == WETH_ERC20) return getwEthUsdRate()
   if (address == PENDYST_ERC20) return getPenDystUsdRate()
 
-  if (address == FRAX_ERC20 || address == MAI_ERC20 || address == USDPLUS_ERC20 || address == USDC_ERC20)
+  if (
+    address == FRAX_ERC20 ||
+    address == MAI_ERC20 ||
+    address == USDPLUS_ERC20 ||
+    address == USDC_ERC20 ||
+    address == TUSD_ERC20
+  )
     //TODO: Find real price
     return BigDecimal.fromString('1')
 

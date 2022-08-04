@@ -8,10 +8,10 @@ import { QiFarm } from '../../generated/OtterQiLocker/QiFarm'
 import { veDyst } from '../../generated/OtterQiLocker/veDyst'
 import { PenLens } from '../../generated/OtterQiLocker/PenLens'
 import { UniswapV2Pair } from '../../generated/OtterQiLocker/UniswapV2Pair'
-import { CurveMai3poolContract } from '../../generated/OtterQiLocker/CurveMai3poolContract'
 import { PenDystRewards } from '../../generated/OtterQiLocker/PenDystRewards'
 import { PenrosePartnerRewards } from '../../generated/OtterQiLocker/PenrosePartnerRewards'
 import { PenLockerV2 } from '../../generated/OtterQiLocker/PenLockerV2'
+import { UsdPlus } from '../../generated/OtterQiLocker/UsdPlus'
 import { ProtocolMetric, Transaction, VotePosition, Vote, GovernanceMetric } from '../../generated/schema'
 import {
   CIRCULATING_SUPPLY_CONTRACT,
@@ -65,6 +65,10 @@ import {
   PENROSE_REWARD_USDPLUS_CLAM,
   PENROSE_REWARD_QI_TETUQI,
   UNI_MAI_USDC_PAIR,
+  DYSTOPIA_PAIR_USDC_TUSD,
+  PENROSE_REWARD_USDC_TUSD,
+  DYST_POOL_TRANSITION_BLOCK,
+  USDPLUS_ERC20,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -113,9 +117,11 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairMaiClamMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDystopiaPairUsdcTusdMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystMarketValue = BigDecimal.zero()
     protocolMetric.treasuryVeDystMarketValue = BigDecimal.zero()
     protocolMetric.treasuryPenDystMarketValue = BigDecimal.zero()
+    protocolMetric.totalClamUsdPlusRebaseValue = BigDecimal.zero()
 
     protocolMetric.save()
   }
@@ -161,29 +167,6 @@ function getCirculatingSupply(transaction: Transaction, total_supply: BigDecimal
   }
   log.debug('Circulating Supply {}', [total_supply.toString()])
   return circ_supply
-}
-
-function getMai3poolValue(): BigDecimal {
-  let mai3pool = CurveMai3poolContract.bind(CURVE_MAI_3POOL_PAIR)
-  let balance = toDecimal(mai3pool.balanceOf(TREASURY_ADDRESS), 18)
-  let price = toDecimal(mai3pool.get_virtual_price(), 18)
-  let value = balance.times(price)
-  log.debug('MAI3Pool balance {}, price {}, value {}', [balance.toString(), price.toString(), value.toString()])
-  return value
-}
-
-function getMai3poolInvestmentValue(): BigDecimal {
-  let mai3pool = CurveMai3poolContract.bind(CURVE_MAI_3POOL_PAIR)
-  let investment = ERC20.bind(CURVE_MAI_3POOL_INVESTMENT_PAIR)
-  let balance = toDecimal(investment.balanceOf(TREASURY_ADDRESS), 18)
-  let price = toDecimal(mai3pool.get_virtual_price(), 18)
-  let value = balance.times(price)
-  log.debug('MAI3Pool investment balance {}, price {}, value {}', [
-    balance.toString(),
-    price.toString(),
-    value.toString(),
-  ])
-  return value
 }
 
 function getMaiUsdcInvestmentValue(): BigDecimal {
@@ -337,8 +320,16 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     ocQiMarketValue = getTreasuryTokenValue(transaction.blockNumber, OCQI_CONTRACT)
   }
 
+  let clamUsdPlusRebases = BigDecimal.zero()
+  if (transaction.blockNumber.gt(BigInt.fromI32(DYST_POOL_TRANSITION_BLOCK))) {
+    let usdPlus = UsdPlus.bind(USDPLUS_ERC20)
+    clamUsdPlusRebases = toDecimal(usdPlus.balanceOf(DYSTOPIA_PAIR_USDPLUS_CLAM), 6).minus(
+      toDecimal(usdPlus.scaledBalanceOf(DYSTOPIA_PAIR_USDPLUS_CLAM), 15),
+    )
+  }
   //DYSTOPIA & PENROSE
   let qiTetuQiValue = BigDecimal.zero()
+  let usdcTusdValue = BigDecimal.zero()
   let wMaticDystValue = BigDecimal.zero()
   let clamMaiDystValue = BigDecimal.zero()
   let clamUsdplusDystValue = BigDecimal.zero()
@@ -401,6 +392,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
         qiTetuQiValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
       }
+      if (pair_address == DYSTOPIA_PAIR_USDC_TUSD) {
+        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDC_TUSD).try_balanceOf(
+          DAO_WALLET_PENROSE_USER_PROXY,
+        )
+        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
+
+        usdcTusdValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
+      }
     }
 
     //plus the locked veDyst inside NFT
@@ -459,6 +458,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(daiBalance)
     .plus(maiUsdcQiInvestmentValueDecimal)
     .plus(maiUsdcMarketValue)
+    .plus(usdcTusdValue)
 
   let lpValue = clamMai_value
     .plus(qiWmaticMarketValue)
@@ -503,11 +503,13 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = wMaticDystValue
   protocolMetric.treasuryDystopiaPairMaiClamMarketValue = clamMaiDystValue
   protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = clamUsdplusDystValue
+  protocolMetric.treasuryDystopiaPairUsdcTusdMarketValue = usdcTusdValue
   protocolMetric.treasuryDystMarketValue = dystMarketValue
   protocolMetric.treasuryVeDystMarketValue = veDystMarketValue
   protocolMetric.treasuryPenMarketValue = penMarketValue
   protocolMetric.treasuryVlPenMarketValue = vlPenMarketValue
   protocolMetric.treasuryPenDystMarketValue = penDystMarketValue
+  protocolMetric.totalClamUsdPlusRebaseValue = clamUsdPlusRebases
 
   return protocolMetric
 }

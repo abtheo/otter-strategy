@@ -341,11 +341,6 @@ export class ProtocolMetric extends Entity {
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set("treasuryClamMaiPOL", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("totalBurnedClam", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set(
-      "totalBurnedClamMarketValue",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
     this.set(
       "treasuryDystopiaPairQiTetuQiMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
@@ -363,6 +358,10 @@ export class ProtocolMetric extends Entity {
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
+      "treasuryDystopiaPairUsdcTusdMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
       "treasuryDystMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
@@ -377,6 +376,15 @@ export class ProtocolMetric extends Entity {
     );
     this.set(
       "treasuryPenDystMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set("totalBurnedClam", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set(
+      "totalBurnedClamMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
+      "totalClamUsdPlusRebaseValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
   }
@@ -581,24 +589,6 @@ export class ProtocolMetric extends Entity {
     this.set("treasuryClamMaiPOL", Value.fromBigDecimal(value));
   }
 
-  get totalBurnedClam(): BigDecimal {
-    let value = this.get("totalBurnedClam");
-    return value!.toBigDecimal();
-  }
-
-  set totalBurnedClam(value: BigDecimal) {
-    this.set("totalBurnedClam", Value.fromBigDecimal(value));
-  }
-
-  get totalBurnedClamMarketValue(): BigDecimal {
-    let value = this.get("totalBurnedClamMarketValue");
-    return value!.toBigDecimal();
-  }
-
-  set totalBurnedClamMarketValue(value: BigDecimal) {
-    this.set("totalBurnedClamMarketValue", Value.fromBigDecimal(value));
-  }
-
   get treasuryDystopiaPairQiTetuQiMarketValue(): BigDecimal {
     let value = this.get("treasuryDystopiaPairQiTetuQiMarketValue");
     return value!.toBigDecimal();
@@ -647,6 +637,18 @@ export class ProtocolMetric extends Entity {
     );
   }
 
+  get treasuryDystopiaPairUsdcTusdMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystopiaPairUsdcTusdMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryDystopiaPairUsdcTusdMarketValue(value: BigDecimal) {
+    this.set(
+      "treasuryDystopiaPairUsdcTusdMarketValue",
+      Value.fromBigDecimal(value)
+    );
+  }
+
   get treasuryDystMarketValue(): BigDecimal {
     let value = this.get("treasuryDystMarketValue");
     return value!.toBigDecimal();
@@ -690,6 +692,33 @@ export class ProtocolMetric extends Entity {
 
   set treasuryPenDystMarketValue(value: BigDecimal) {
     this.set("treasuryPenDystMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get totalBurnedClam(): BigDecimal {
+    let value = this.get("totalBurnedClam");
+    return value!.toBigDecimal();
+  }
+
+  set totalBurnedClam(value: BigDecimal) {
+    this.set("totalBurnedClam", Value.fromBigDecimal(value));
+  }
+
+  get totalBurnedClamMarketValue(): BigDecimal {
+    let value = this.get("totalBurnedClamMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set totalBurnedClamMarketValue(value: BigDecimal) {
+    this.set("totalBurnedClamMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get totalClamUsdPlusRebaseValue(): BigDecimal {
+    let value = this.get("totalClamUsdPlusRebaseValue");
+    return value!.toBigDecimal();
+  }
+
+  set totalClamUsdPlusRebaseValue(value: BigDecimal) {
+    this.set("totalClamUsdPlusRebaseValue", Value.fromBigDecimal(value));
   }
 }
 
@@ -1347,6 +1376,7 @@ export class PearlBankMetric extends Entity {
 
     this.set("apr", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("apy", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("rewardRate", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("payoutMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "clamMarketValueWhenPayoutHappens",
@@ -1422,6 +1452,15 @@ export class PearlBankMetric extends Entity {
 
   set apy(value: BigDecimal) {
     this.set("apy", Value.fromBigDecimal(value));
+  }
+
+  get rewardRate(): BigDecimal {
+    let value = this.get("rewardRate");
+    return value!.toBigDecimal();
+  }
+
+  set rewardRate(value: BigDecimal) {
+    this.set("rewardRate", Value.fromBigDecimal(value));
   }
 
   get payoutMarketValue(): BigDecimal {
@@ -1586,5 +1625,135 @@ export class BuyProduct extends Entity {
 
   set totalClam(value: BigDecimal) {
     this.set("totalClam", Value.fromBigDecimal(value));
+  }
+}
+
+export class StakedBalance extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("clamPondBalance", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("clamPondLastPayout", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("clamPondLastPayoutUsd", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("pearlBankBalance", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("pearlBankLastPayout", Value.fromBigDecimal(BigDecimal.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save StakedBalance entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save StakedBalance entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("StakedBalance", id.toString(), this);
+    }
+  }
+
+  static load(id: string): StakedBalance | null {
+    return changetype<StakedBalance | null>(store.get("StakedBalance", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get clamPondBalance(): BigDecimal {
+    let value = this.get("clamPondBalance");
+    return value!.toBigDecimal();
+  }
+
+  set clamPondBalance(value: BigDecimal) {
+    this.set("clamPondBalance", Value.fromBigDecimal(value));
+  }
+
+  get clamPondLastPayout(): BigDecimal {
+    let value = this.get("clamPondLastPayout");
+    return value!.toBigDecimal();
+  }
+
+  set clamPondLastPayout(value: BigDecimal) {
+    this.set("clamPondLastPayout", Value.fromBigDecimal(value));
+  }
+
+  get clamPondLastPayoutUsd(): BigDecimal {
+    let value = this.get("clamPondLastPayoutUsd");
+    return value!.toBigDecimal();
+  }
+
+  set clamPondLastPayoutUsd(value: BigDecimal) {
+    this.set("clamPondLastPayoutUsd", Value.fromBigDecimal(value));
+  }
+
+  get pearlBankBalance(): BigDecimal {
+    let value = this.get("pearlBankBalance");
+    return value!.toBigDecimal();
+  }
+
+  set pearlBankBalance(value: BigDecimal) {
+    this.set("pearlBankBalance", Value.fromBigDecimal(value));
+  }
+
+  get pearlBankLastPayout(): BigDecimal {
+    let value = this.get("pearlBankLastPayout");
+    return value!.toBigDecimal();
+  }
+
+  set pearlBankLastPayout(value: BigDecimal) {
+    this.set("pearlBankLastPayout", Value.fromBigDecimal(value));
+  }
+}
+
+export class AllStakedBalance extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("balances", Value.fromStringArray(new Array(0)));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save AllStakedBalance entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save AllStakedBalance entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("AllStakedBalance", id.toString(), this);
+    }
+  }
+
+  static load(id: string): AllStakedBalance | null {
+    return changetype<AllStakedBalance | null>(
+      store.get("AllStakedBalance", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get balances(): Array<string> {
+    let value = this.get("balances");
+    return value!.toStringArray();
+  }
+
+  set balances(value: Array<string>) {
+    this.set("balances", Value.fromStringArray(value));
   }
 }

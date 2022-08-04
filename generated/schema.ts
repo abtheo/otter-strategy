@@ -1633,11 +1633,11 @@ export class StakedBalance extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("address", Value.fromBytes(Bytes.empty()));
-    this.set("pool", Value.fromString(""));
-    this.set("balance", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
-    this.set("lastPayout", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("clamPondBalance", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("clamPondLastPayout", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("clamPondLastPayoutUsd", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("pearlBankBalance", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("pearlBankLastPayout", Value.fromBigDecimal(BigDecimal.zero()));
   }
 
   save(): void {
@@ -1666,48 +1666,94 @@ export class StakedBalance extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get address(): Bytes {
-    let value = this.get("address");
-    return value!.toBytes();
+  get clamPondBalance(): BigDecimal {
+    let value = this.get("clamPondBalance");
+    return value!.toBigDecimal();
   }
 
-  set address(value: Bytes) {
-    this.set("address", Value.fromBytes(value));
+  set clamPondBalance(value: BigDecimal) {
+    this.set("clamPondBalance", Value.fromBigDecimal(value));
   }
 
-  get pool(): string {
-    let value = this.get("pool");
+  get clamPondLastPayout(): BigDecimal {
+    let value = this.get("clamPondLastPayout");
+    return value!.toBigDecimal();
+  }
+
+  set clamPondLastPayout(value: BigDecimal) {
+    this.set("clamPondLastPayout", Value.fromBigDecimal(value));
+  }
+
+  get clamPondLastPayoutUsd(): BigDecimal {
+    let value = this.get("clamPondLastPayoutUsd");
+    return value!.toBigDecimal();
+  }
+
+  set clamPondLastPayoutUsd(value: BigDecimal) {
+    this.set("clamPondLastPayoutUsd", Value.fromBigDecimal(value));
+  }
+
+  get pearlBankBalance(): BigDecimal {
+    let value = this.get("pearlBankBalance");
+    return value!.toBigDecimal();
+  }
+
+  set pearlBankBalance(value: BigDecimal) {
+    this.set("pearlBankBalance", Value.fromBigDecimal(value));
+  }
+
+  get pearlBankLastPayout(): BigDecimal {
+    let value = this.get("pearlBankLastPayout");
+    return value!.toBigDecimal();
+  }
+
+  set pearlBankLastPayout(value: BigDecimal) {
+    this.set("pearlBankLastPayout", Value.fromBigDecimal(value));
+  }
+}
+
+export class AllStakedBalance extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("balances", Value.fromStringArray(new Array(0)));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save AllStakedBalance entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save AllStakedBalance entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("AllStakedBalance", id.toString(), this);
+    }
+  }
+
+  static load(id: string): AllStakedBalance | null {
+    return changetype<AllStakedBalance | null>(
+      store.get("AllStakedBalance", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
     return value!.toString();
   }
 
-  set pool(value: string) {
-    this.set("pool", Value.fromString(value));
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
   }
 
-  get balance(): BigDecimal {
-    let value = this.get("balance");
-    return value!.toBigDecimal();
+  get balances(): Array<string> {
+    let value = this.get("balances");
+    return value!.toStringArray();
   }
 
-  set balance(value: BigDecimal) {
-    this.set("balance", Value.fromBigDecimal(value));
-  }
-
-  get timestamp(): BigInt {
-    let value = this.get("timestamp");
-    return value!.toBigInt();
-  }
-
-  set timestamp(value: BigInt) {
-    this.set("timestamp", Value.fromBigInt(value));
-  }
-
-  get lastPayout(): BigDecimal {
-    let value = this.get("lastPayout");
-    return value!.toBigDecimal();
-  }
-
-  set lastPayout(value: BigDecimal) {
-    this.set("lastPayout", Value.fromBigDecimal(value));
+  set balances(value: Array<string>) {
+    this.set("balances", Value.fromStringArray(value));
   }
 }

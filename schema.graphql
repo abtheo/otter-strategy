@@ -158,20 +158,20 @@ type BuyProduct @entity {
   totalClam: BigDecimal!
 }
 
-enum StakingPool {
-  PEARL_BANK
-  CLAM_POND
-}
-
 """
 Tracks the staked balance of every wallet address,
 along with the most recent reward payouts
 """
 type StakedBalance @entity {
+  id: ID! #address
+  clamPondBalance: BigDecimal!
+  clamPondLastPayout: BigDecimal!
+  clamPondLastPayoutUsd: BigDecimal!
+  pearlBankBalance: BigDecimal!
+  pearlBankLastPayout: BigDecimal!
+}
+
+type AllStakedBalance @entity {
   id: ID!
-  address: Bytes!
-  pool: StakingPool!
-  balance: BigDecimal!
-  timestamp: BigInt!
-  lastPayout: BigDecimal! #in either CLAM or USD+ depending on pool
+  balances: [StakedBalance!]!
 }

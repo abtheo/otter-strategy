@@ -5,7 +5,8 @@ import { PEARL_BANK } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
 import { loadCumulativeValues } from './utils/CumulativeValues'
 import { getClamUsdRate } from './utils/Price'
-import { BigDecimal, log } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, log } from '@graphprotocol/graph-ts'
+import { AllStakedBalance, StakedBalance } from '../generated/schema'
 
 export function handlePayout(payout: Payout): void {
   let metric = loadOrCreatePearlBankMetric(payout.block.timestamp)
@@ -14,6 +15,7 @@ export function handlePayout(payout: Payout): void {
 
   let stakedUsd = pearlBankStakedClam.times(clamPrice)
   let payoutValue = toDecimal(payout.params.totalUsdPlus, 6)
+  let rewardRate = payoutValue.div(stakedUsd)
 
   // update cumulative values
   let cumulativeValues = loadCumulativeValues()
@@ -27,14 +29,11 @@ export function handlePayout(payout: Payout): void {
   metric.clamMarketValueWhenPayoutHappens = clamPrice
   metric.totalClamStakedUsdValue = stakedUsd
   metric.cumulativeRewardPayoutMarketValue = newTotalPaid
-  metric.rewardRate = payoutValue.div(stakedUsd).times(BigDecimal.fromString('100'))
+  metric.rewardRate = rewardRate.times(BigDecimal.fromString('100'))
 
   // (stakedValue * APR) / 365 = payout
   // (payout*365 / stakedValue) * 100% = APR%
-  metric.apr = payoutValue
-    .times(BigDecimal.fromString('365'))
-    .div(stakedUsd)
-    .times(BigDecimal.fromString('100'))
+  metric.apr = rewardRate.times(BigDecimal.fromString('365')).times(BigDecimal.fromString('100'))
 
   //( (1+(payout/staked))^365 -1 ) * 100% = APY%
   metric.apy = BigDecimal.fromString(
@@ -42,7 +41,7 @@ export function handlePayout(payout: Payout): void {
       (Math.pow(
         Number.parseFloat(
           BigDecimal.fromString('1')
-            .plus(payoutValue.div(stakedUsd))
+            .plus(rewardRate)
             .toString(),
         ),
         365,
@@ -51,6 +50,48 @@ export function handlePayout(payout: Payout): void {
       100
     ).toString(),
   )
-  // persist
   metric.save()
+
+  //find last payout value for all staked addresses
+  let allBalances = loadOrCreateAllStakedBalance()
+  let newBalanceIds: string[] = []
+  for (let i = 0; i < allBalances.balances.length; i++) {
+    let userBalance = loadOrCreateStakedBalance(Address.fromString(allBalances.balances[i]))
+    userBalance.pearlBankLastPayout = userBalance.pearlBankBalance.times(rewardRate).times(clamPrice)
+    userBalance.clamPondLastPayout = userBalance.clamPondBalance.times(rewardRate)
+    userBalance.clamPondLastPayoutUsd = userBalance.clamPondBalance.times(rewardRate).times(clamPrice)
+    userBalance.save()
+
+    newBalanceIds.push(userBalance.id)
+  }
+  log.debug('AllBalances, Old len: {} New len: {}', [
+    allBalances.balances.length.toString(),
+    newBalanceIds.length.toString(),
+  ])
+  allBalances.balances = newBalanceIds
+  allBalances.save()
+}
+
+export function loadOrCreateStakedBalance(address: Address): StakedBalance {
+  let balance = StakedBalance.load(address.toHexString())
+  if (balance == null) {
+    balance = new StakedBalance(address.toHexString())
+    balance.clamPondBalance = BigDecimal.zero()
+    balance.clamPondLastPayout = BigDecimal.zero()
+    balance.clamPondLastPayoutUsd = BigDecimal.zero()
+    balance.pearlBankBalance = BigDecimal.zero()
+    balance.pearlBankLastPayout = BigDecimal.zero()
+    balance.save()
+  }
+  return balance
+}
+
+export function loadOrCreateAllStakedBalance(): AllStakedBalance {
+  let balance = AllStakedBalance.load('1')
+  if (balance == null) {
+    balance = new AllStakedBalance('1')
+    balance.balances = []
+    balance.save()
+  }
+  return balance
 }

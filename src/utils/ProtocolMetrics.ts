@@ -509,6 +509,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryPenMarketValue = penMarketValue
   protocolMetric.treasuryVlPenMarketValue = vlPenMarketValue
   protocolMetric.treasuryPenDystMarketValue = penDystMarketValue
+  protocolMetric.totalClamUsdPlusRebaseValue = clamUsdPlusRebases
 
   return protocolMetric
 }

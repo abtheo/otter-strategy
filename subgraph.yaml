@@ -8,7 +8,7 @@ dataSources:
     source:
       address: '0x69f6c4Fa150F9F0b3037612CF8FadDAeDbd46Bb8'
       abi: OtterQiLocker
-      startBlock: 26888468
+      startBlock: 30747603 #26888468
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -24,6 +24,7 @@ dataSources:
         - TotalBurnedClam
         - Harvest
         - HarvestStaking
+        - AllStakedBalance
       abis:
         - name: OtterQiLocker
           file: ./abis/OtterQiLocker.json
@@ -559,6 +560,8 @@ dataSources:
       entities:
         - PearlBankMetric
         - CumulativeValues
+        - StakedBalance
+        - AllStakedBalance
       abis:
         - name: OtterRewardManager
           file: ./abis/OtterRewardManager.json
@@ -600,6 +603,8 @@ dataSources:
       entities:
         - PearlBankMetric
         - TotalBurnedClam
+        - StakedBalance
+        - AllStakedBalance
       abis:
         - name: PearlBank
           file: ./abis/PearlBank.json
@@ -628,6 +633,51 @@ dataSources:
       file: ./src/PearlBank.ts
 
   - kind: ethereum/contract
+    name: DeprecatedClamPlus
+    network: matic
+    source:
+      address: '0xF2A8705D327534E334d09BC28e5C97b5c356Aa01'
+      abi: DeprecatedClamPlus
+      startBlock: 30711722 #30712813
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - PearlBankMetric
+        - TotalBurnedClam
+        - StakedBalance
+        - AllStakedBalance
+      abis:
+        - name: DeprecatedClamPlus
+          file: ./abis/DeprecatedClamPlus.json
+        - name: PearlBank
+          file: ./abis/PearlBank.json
+        - name: ClamPlus
+          file: ./abis/ClamPlus.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+      eventHandlers:
+        - event: Deposit(address,uint256)
+          handler: handleDeprecatedDeposit
+        - event: Withdraw(address,uint256)
+          handler: handleDeprecatedWithdraw
+      file: ./src/ClamPlus.ts
+
+  - kind: ethereum/contract
     name: ClamPlus
     network: matic
     source:
@@ -641,9 +691,9 @@ dataSources:
       entities:
         - PearlBankMetric
         - TotalBurnedClam
+        - StakedBalance
+        - AllStakedBalance
       abis:
-        - name: ClamPlus
-          file: ./abis/ClamPlus.json
         - name: PearlBank
           file: ./abis/PearlBank.json
         - name: ClamPlus

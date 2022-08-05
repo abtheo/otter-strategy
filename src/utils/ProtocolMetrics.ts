@@ -118,6 +118,7 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
     protocolMetric.treasuryDystopiaPairMaiClamMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystopiaPairUsdcTusdMarketValue = BigDecimal.zero()
+    protocolMetric.treasuryDystopiaPairUsdplusUsdcMarketValue = BigDecimal.zero()
     protocolMetric.treasuryDystMarketValue = BigDecimal.zero()
     protocolMetric.treasuryVeDystMarketValue = BigDecimal.zero()
     protocolMetric.treasuryPenDystMarketValue = BigDecimal.zero()
@@ -330,6 +331,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   //DYSTOPIA & PENROSE
   let qiTetuQiValue = BigDecimal.zero()
   let usdcTusdValue = BigDecimal.zero()
+  let usdplusUsdcValue = BigDecimal.zero()
   let wMaticDystValue = BigDecimal.zero()
   let clamMaiDystValue = BigDecimal.zero()
   let clamUsdplusDystValue = BigDecimal.zero()
@@ -400,6 +402,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
         usdcTusdValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
       }
+      if (pair_address == DYSTOPIA_PAIR_USDPLUS_CLAM) {
+        let penroseRewards = PenroseMultiRewards.bind(DYSTOPIA_PAIR_USDPLUS_CLAM).try_balanceOf(
+          DAO_WALLET_PENROSE_USER_PROXY,
+        )
+        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
+
+        usdplusUsdcValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
+      }
     }
 
     //plus the locked veDyst inside NFT
@@ -459,6 +469,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(maiUsdcQiInvestmentValueDecimal)
     .plus(maiUsdcMarketValue)
     .plus(usdcTusdValue)
+    .plus(usdplusUsdcValue)
 
   let lpValue = clamMai_value
     .plus(qiWmaticMarketValue)
@@ -504,6 +515,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryDystopiaPairMaiClamMarketValue = clamMaiDystValue
   protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = clamUsdplusDystValue
   protocolMetric.treasuryDystopiaPairUsdcTusdMarketValue = usdcTusdValue
+  protocolMetric.treasuryDystopiaPairUsdplusUsdcMarketValue = usdplusUsdcValue
   protocolMetric.treasuryDystMarketValue = dystMarketValue
   protocolMetric.treasuryVeDystMarketValue = veDystMarketValue
   protocolMetric.treasuryPenMarketValue = penMarketValue

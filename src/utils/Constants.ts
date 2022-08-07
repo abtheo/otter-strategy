@@ -119,6 +119,7 @@ export const PENROSE_REWARD_USDPLUS_CLAM = Address.fromString('0x582331EB734D2d8
 export const PENROSE_REWARD_WMATIC_DYST = Address.fromString('0xbb1bF0980a61Fc5dAf981B33543Fb54c8E04DFa0')
 export const PENROSE_REWARD_QI_TETUQI = Address.fromString('0x249C0236B0F597EdCE0BF989fdf2EDbB1799FfA8')
 export const PENROSE_REWARD_USDC_TUSD = Address.fromString('0xc1Cc12d610bd71fFdBfE489C941e548Df6f94D14')
+export const PENROSE_REWARD_USDPLUS_USDC = Address.fromString('0x39b3a36d7d6b2bae6e13d2ceb00f847aa3e6990a')
 
 export const PENROSE_PROXY = Address.fromString('0xc9ae7dac956f82074437c6d40f67d6a5abf3e34b')
 export const DAO_WALLET_PENROSE_USER_PROXY = Address.fromString('0x3c56307bdbc8a59e85542cc795aa31c628748c62')

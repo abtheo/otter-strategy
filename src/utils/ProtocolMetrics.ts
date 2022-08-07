@@ -69,6 +69,7 @@ import {
   PENROSE_REWARD_USDC_TUSD,
   DYST_POOL_TRANSITION_BLOCK,
   USDPLUS_ERC20,
+  DYSTOPIA_PAIR_USDPLUS_USDC,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -402,8 +403,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
         usdcTusdValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
       }
-      if (pair_address == DYSTOPIA_PAIR_USDPLUS_CLAM) {
-        let penroseRewards = PenroseMultiRewards.bind(DYSTOPIA_PAIR_USDPLUS_CLAM).try_balanceOf(
+      if (pair_address == DYSTOPIA_PAIR_USDPLUS_USDC) {
+        let penroseRewards = PenroseMultiRewards.bind(DYSTOPIA_PAIR_USDPLUS_USDC).try_balanceOf(
           DAO_WALLET_PENROSE_USER_PROXY,
         )
         penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value

@@ -45,6 +45,8 @@ dataSources:
           file: ./abis/OtterQiDAOInvestment.json
         - name: QiFarm
           file: ./abis/QiFarm.json
+        - name: QiFarmV3
+          file: ./abis/QiFarmV3.json
         - name: PearlNote
           file: ./abis/PearlNote.json
         - name: OtterPearlERC20

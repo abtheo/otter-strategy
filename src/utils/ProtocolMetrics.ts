@@ -1,5 +1,6 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { ClamCirculatingSupply } from '../../generated/OtterQiLocker/ClamCirculatingSupply'
+import { QiFarmV3 } from '../../generated/OtterQiLocker/QiFarmV3'
 import { xTetuQi } from '../../generated/OtterQiLocker/xTetuQi'
 import { ERC20 } from '../../generated/OtterQiLocker/ERC20'
 import { OtterClamERC20V2 } from '../../generated/OtterQiLocker/OtterClamERC20V2'
@@ -71,6 +72,9 @@ import {
   USDPLUS_ERC20,
   DYSTOPIA_PAIR_USDPLUS_USDC,
   PENROSE_REWARD_USDPLUS_USDC,
+  QI_FARM_V3,
+  MAI_USDC_INVESTMENT_STRATEGY,
+  QI_FARM_CHANGE_BLOCK,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -153,6 +157,14 @@ function getMaiUsdcInvestmentValue(): BigDecimal {
     .div(total)
   log.debug('investment MAI/USDC value {}', [value.toString()])
   return value
+}
+
+function getMaiUsdcInvestmentValueFarmV3(block: BigInt): BigDecimal {
+  let pair = UniswapV2Pair.bind(UNI_MAI_USDC_PAIR)
+  let farm = QiFarmV3.bind(QI_FARM_V3)
+
+  let deposited = farm.deposited(BigInt.zero(), MAI_USDC_INVESTMENT_STRATEGY)
+  return getUniPairUSD(block, deposited, UNI_MAI_USDC_PAIR)
 }
 
 function getQiWmaticMarketValue(): BigDecimal {
@@ -250,7 +262,11 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     maiUsdcQiInvestmentValueDecimal = getMaiUsdcInvestmentValue()
     qiMarketValue = getQiUsdRate().times(toDecimal(qiERC20.balanceOf(TREASURY_ADDRESS), qiERC20.decimals()))
   }
-
+  if (transaction.blockNumber.gt(BigInt.fromI32(QI_FARM_CHANGE_BLOCK))) {
+    maiUsdcQiInvestmentValueDecimal = maiUsdcQiInvestmentValueDecimal.plus(
+      getMaiUsdcInvestmentValueFarmV3(transaction.blockNumber),
+    )
+  }
   let maiUsdcMarketValue = getUniPairUSD(
     transaction.blockNumber,
     ERC20.bind(UNI_MAI_USDC_PAIR).balanceOf(TREASURY_ADDRESS),

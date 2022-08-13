@@ -40,6 +40,7 @@ type ProtocolMetric @entity {
   treasuryMaiUsdcMarketValue: BigDecimal!
   treasuryMaiUsdcQiInvestmentValue: BigDecimal!
   treasuryMaiMarketValue: BigDecimal!
+  treasuryDaiMarketValue: BigDecimal!
   treasuryClamMaiMarketValue: BigDecimal!
   treasuryWmaticMarketValue: BigDecimal!
   treasuryQiMarketValue: BigDecimal!

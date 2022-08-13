@@ -9,14 +9,6 @@ export function loadOrCreatePearlBankMetric(timestamp: BigInt): PearlBankMetric 
   let metric = PearlBankMetric.load(id)
   if (!metric) {
     metric = new PearlBankMetric(id)
-    metric.payoutMarketValue = BigDecimal.zero()
-    metric.cumulativeRewardPayoutMarketValue = BigDecimal.zero()
-    metric.apr = BigDecimal.zero()
-    metric.clamMarketValueWhenPayoutHappens = BigDecimal.zero()
-    metric.clamPondDepositedClamAmount = BigDecimal.zero()
-    metric.clamPondDepositedUsdValue = BigDecimal.zero()
-    metric.pearlBankDepositedClamAmount = BigDecimal.zero()
-    metric.pearlBankDepositedUsdValue = BigDecimal.zero()
   }
 
   metric.timestamp = date

@@ -99,33 +99,6 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   if (protocolMetric == null) {
     protocolMetric = new ProtocolMetric(dayTimestamp)
     protocolMetric.timestamp = timestamp
-    protocolMetric.clamCirculatingSupply = BigDecimal.zero()
-    protocolMetric.totalSupply = BigDecimal.zero()
-    protocolMetric.clamPrice = BigDecimal.zero()
-    protocolMetric.marketCap = BigDecimal.zero()
-    protocolMetric.treasuryMaiUsdcQiInvestmentValue = BigDecimal.zero()
-    protocolMetric.treasuryMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryMaiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryWmaticMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryQiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryTetuQiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryQiWmaticMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryQiWmaticQiInvestmentMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryOtterClamQiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryClamMaiPOL = BigDecimal.zero()
-    protocolMetric.totalBurnedClam = BigDecimal.zero()
-    protocolMetric.totalBurnedClamMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairQiTetuQiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairMaiClamMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairUsdcTusdMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairUsdplusUsdcMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryVeDystMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryPenDystMarketValue = BigDecimal.zero()
-    protocolMetric.totalClamUsdPlusRebaseValue = BigDecimal.zero()
-
     protocolMetric.save()
   }
   return protocolMetric as ProtocolMetric
@@ -138,15 +111,6 @@ export function loadOrCreateGovernanceMetric(timestamp: BigInt): GovernanceMetri
   if (governanceMetric == null) {
     governanceMetric = new GovernanceMetric(dayTimestamp)
     governanceMetric.timestamp = timestamp
-    governanceMetric.qiDaoVeDystAmt = BigDecimal.zero()
-    governanceMetric.qiDaoVeDystAmt = BigDecimal.zero()
-    governanceMetric.dystMarketCap = BigDecimal.zero()
-    governanceMetric.veDystMarketCap = BigDecimal.zero()
-    governanceMetric.penDystMarketCap = BigDecimal.zero()
-    governanceMetric.vlPenMarketCap = BigDecimal.zero()
-    governanceMetric.otterClamVlPenMarketCap = BigDecimal.zero()
-    governanceMetric.otterClamVlPenPercentOwned = BigDecimal.zero()
-    governanceMetric.otterClamVeDystPercentOwned = BigDecimal.zero()
 
     governanceMetric.save()
   }
@@ -505,6 +469,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryMaiUsdcMarketValue = maiUsdcMarketValue
   protocolMetric.treasuryMaiUsdcQiInvestmentValue = maiUsdcQiInvestmentValueDecimal
   protocolMetric.treasuryMaiMarketValue = maiBalance
+  protocolMetric.treasuryDaiMarketValue = daiBalance
   protocolMetric.treasuryClamMaiMarketValue = clamMai_value
   protocolMetric.treasuryQiMarketValue = qiMarketValue
   protocolMetric.treasuryQiWmaticMarketValue = qiWmaticMarketValue

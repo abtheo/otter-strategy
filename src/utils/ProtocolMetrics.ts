@@ -1,5 +1,6 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { ClamCirculatingSupply } from '../../generated/OtterQiLocker/ClamCirculatingSupply'
+import { QiFarmV3 } from '../../generated/OtterQiLocker/QiFarmV3'
 import { xTetuQi } from '../../generated/OtterQiLocker/xTetuQi'
 import { ERC20 } from '../../generated/OtterQiLocker/ERC20'
 import { OtterClamERC20V2 } from '../../generated/OtterQiLocker/OtterClamERC20V2'
@@ -71,6 +72,10 @@ import {
   USDPLUS_ERC20,
   DYSTOPIA_PAIR_USDPLUS_USDC,
   PENROSE_REWARD_USDPLUS_USDC,
+  QI_FARM_V3,
+  MAI_USDC_INVESTMENT_STRATEGY,
+  QI_FARM_CHANGE_BLOCK,
+  QI_MATIC_INVESTMENT_STRATEGY,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -99,33 +104,6 @@ export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   if (protocolMetric == null) {
     protocolMetric = new ProtocolMetric(dayTimestamp)
     protocolMetric.timestamp = timestamp
-    protocolMetric.clamCirculatingSupply = BigDecimal.zero()
-    protocolMetric.totalSupply = BigDecimal.zero()
-    protocolMetric.clamPrice = BigDecimal.zero()
-    protocolMetric.marketCap = BigDecimal.zero()
-    protocolMetric.treasuryMaiUsdcQiInvestmentValue = BigDecimal.zero()
-    protocolMetric.treasuryMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryMaiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryWmaticMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryQiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryTetuQiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryQiWmaticMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryQiWmaticQiInvestmentMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryOtterClamQiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryClamMaiPOL = BigDecimal.zero()
-    protocolMetric.totalBurnedClam = BigDecimal.zero()
-    protocolMetric.totalBurnedClamMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairQiTetuQiMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairMaiClamMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairUsdcTusdMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystopiaPairUsdplusUsdcMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryDystMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryVeDystMarketValue = BigDecimal.zero()
-    protocolMetric.treasuryPenDystMarketValue = BigDecimal.zero()
-    protocolMetric.totalClamUsdPlusRebaseValue = BigDecimal.zero()
-
     protocolMetric.save()
   }
   return protocolMetric as ProtocolMetric
@@ -138,15 +116,6 @@ export function loadOrCreateGovernanceMetric(timestamp: BigInt): GovernanceMetri
   if (governanceMetric == null) {
     governanceMetric = new GovernanceMetric(dayTimestamp)
     governanceMetric.timestamp = timestamp
-    governanceMetric.qiDaoVeDystAmt = BigDecimal.zero()
-    governanceMetric.qiDaoVeDystAmt = BigDecimal.zero()
-    governanceMetric.dystMarketCap = BigDecimal.zero()
-    governanceMetric.veDystMarketCap = BigDecimal.zero()
-    governanceMetric.penDystMarketCap = BigDecimal.zero()
-    governanceMetric.vlPenMarketCap = BigDecimal.zero()
-    governanceMetric.otterClamVlPenMarketCap = BigDecimal.zero()
-    governanceMetric.otterClamVlPenPercentOwned = BigDecimal.zero()
-    governanceMetric.otterClamVeDystPercentOwned = BigDecimal.zero()
 
     governanceMetric.save()
   }
@@ -189,6 +158,20 @@ function getMaiUsdcInvestmentValue(): BigDecimal {
     .div(total)
   log.debug('investment MAI/USDC value {}', [value.toString()])
   return value
+}
+
+function getMaiUsdcInvestmentValueFarmV3(block: BigInt): BigDecimal {
+  let farm = QiFarmV3.bind(QI_FARM_V3)
+  //pid 0 == mai/usdc
+  let deposited = farm.deposited(BigInt.zero(), MAI_USDC_INVESTMENT_STRATEGY)
+  return getUniPairUSD(block, deposited, UNI_MAI_USDC_PAIR)
+}
+
+function geQiWmaticInvestmentValueFarmV3(block: BigInt): BigDecimal {
+  let farm = QiFarmV3.bind(QI_FARM_V3)
+  //pid 1 == qi/wmatic
+  let deposited = farm.deposited(BigInt.fromI32(1), QI_MATIC_INVESTMENT_STRATEGY)
+  return getUniPairUSD(block, deposited, UNI_QI_WMATIC_PAIR)
 }
 
 function getQiWmaticMarketValue(): BigDecimal {
@@ -286,7 +269,11 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     maiUsdcQiInvestmentValueDecimal = getMaiUsdcInvestmentValue()
     qiMarketValue = getQiUsdRate().times(toDecimal(qiERC20.balanceOf(TREASURY_ADDRESS), qiERC20.decimals()))
   }
-
+  if (transaction.blockNumber.gt(BigInt.fromI32(QI_FARM_CHANGE_BLOCK))) {
+    maiUsdcQiInvestmentValueDecimal = maiUsdcQiInvestmentValueDecimal.plus(
+      getMaiUsdcInvestmentValueFarmV3(transaction.blockNumber),
+    )
+  }
   let maiUsdcMarketValue = getUniPairUSD(
     transaction.blockNumber,
     ERC20.bind(UNI_MAI_USDC_PAIR).balanceOf(TREASURY_ADDRESS),
@@ -316,6 +303,11 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let qiWmaticQiInvestmentMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_QI_WMATIC_INVESTMENT_PAIR_BLOCK))) {
     qiWmaticQiInvestmentMarketValue = getQiWmaticInvestmentMarketValue()
+  }
+  if (transaction.blockNumber.gt(BigInt.fromI32(QI_FARM_CHANGE_BLOCK))) {
+    qiWmaticQiInvestmentMarketValue = qiWmaticQiInvestmentMarketValue.plus(
+      geQiWmaticInvestmentValueFarmV3(transaction.blockNumber),
+    )
   }
 
   let ocQiMarketValue = BigDecimal.zero()
@@ -505,6 +497,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryMaiUsdcMarketValue = maiUsdcMarketValue
   protocolMetric.treasuryMaiUsdcQiInvestmentValue = maiUsdcQiInvestmentValueDecimal
   protocolMetric.treasuryMaiMarketValue = maiBalance
+  protocolMetric.treasuryDaiMarketValue = daiBalance
   protocolMetric.treasuryClamMaiMarketValue = clamMai_value
   protocolMetric.treasuryQiMarketValue = qiMarketValue
   protocolMetric.treasuryQiWmaticMarketValue = qiWmaticMarketValue

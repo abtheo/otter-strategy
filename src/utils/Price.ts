@@ -97,6 +97,9 @@ export function getClamUsdRate(block: BigInt): BigDecimal {
   return rate
 }
 
+/**
+Calculates the USD value of an LP investment position on Quickswap from the number of owned LP tokens and the pair address.
+*/
 export function getUniPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {
   let pair = UniswapV2Pair.bind(pair_address)
   let total_lp = pair.totalSupply()
@@ -121,6 +124,9 @@ export function getUniPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_addre
   return final_value
 }
 
+/**
+Calculates the USD value of an LP investment position on Dystopia from the number of owned LP tokens and the pair address.
+*/
 export function getDystPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {
   if (lp_amount == BigInt.fromString('0')) return BigDecimal.zero()
   let pair = DystPair.bind(pair_address)

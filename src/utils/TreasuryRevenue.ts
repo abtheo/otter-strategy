@@ -11,14 +11,6 @@ export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue 
   if (treasuryRevenue == null) {
     treasuryRevenue = new TreasuryRevenue(ts)
     treasuryRevenue.timestamp = timestamp
-    treasuryRevenue.qiClamAmount = BigDecimal.zero()
-    treasuryRevenue.qiMarketValue = BigDecimal.zero()
-    treasuryRevenue.dystClamAmount = BigDecimal.zero()
-    treasuryRevenue.dystMarketValue = BigDecimal.zero()
-    treasuryRevenue.penClamAmount = BigDecimal.zero()
-    treasuryRevenue.penMarketValue = BigDecimal.zero()
-    treasuryRevenue.totalRevenueMarketValue = BigDecimal.zero()
-    treasuryRevenue.totalRevenueClamAmount = BigDecimal.zero()
     treasuryRevenue.save()
   }
   return treasuryRevenue as TreasuryRevenue

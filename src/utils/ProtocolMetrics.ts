@@ -75,6 +75,7 @@ import {
   QI_FARM_V3,
   MAI_USDC_INVESTMENT_STRATEGY,
   QI_FARM_CHANGE_BLOCK,
+  QI_MATIC_INVESTMENT_STRATEGY,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -160,11 +161,17 @@ function getMaiUsdcInvestmentValue(): BigDecimal {
 }
 
 function getMaiUsdcInvestmentValueFarmV3(block: BigInt): BigDecimal {
-  let pair = UniswapV2Pair.bind(UNI_MAI_USDC_PAIR)
   let farm = QiFarmV3.bind(QI_FARM_V3)
-
+  //pid 0 == mai/usdc
   let deposited = farm.deposited(BigInt.zero(), MAI_USDC_INVESTMENT_STRATEGY)
   return getUniPairUSD(block, deposited, UNI_MAI_USDC_PAIR)
+}
+
+function geQiWmaticInvestmentValueFarmV3(block: BigInt): BigDecimal {
+  let farm = QiFarmV3.bind(QI_FARM_V3)
+  //pid 1 == qi/wmatic
+  let deposited = farm.deposited(BigInt.fromI32(1), QI_MATIC_INVESTMENT_STRATEGY)
+  return getUniPairUSD(block, deposited, UNI_QI_WMATIC_PAIR)
 }
 
 function getQiWmaticMarketValue(): BigDecimal {
@@ -296,6 +303,11 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let qiWmaticQiInvestmentMarketValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(BigInt.fromString(UNI_QI_WMATIC_INVESTMENT_PAIR_BLOCK))) {
     qiWmaticQiInvestmentMarketValue = getQiWmaticInvestmentMarketValue()
+  }
+  if (transaction.blockNumber.gt(BigInt.fromI32(QI_FARM_CHANGE_BLOCK))) {
+    qiWmaticQiInvestmentMarketValue = qiWmaticQiInvestmentMarketValue.plus(
+      geQiWmaticInvestmentValueFarmV3(transaction.blockNumber),
+    )
   }
 
   let ocQiMarketValue = BigDecimal.zero()

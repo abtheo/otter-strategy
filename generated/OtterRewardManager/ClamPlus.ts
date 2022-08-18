@@ -98,6 +98,46 @@ export class Deposit__Params {
   }
 }
 
+export class DepositPearl extends ethereum.Event {
+  get params(): DepositPearl__Params {
+    return new DepositPearl__Params(this);
+  }
+}
+
+export class DepositPearl__Params {
+  _event: DepositPearl;
+
+  constructor(event: DepositPearl) {
+    this._event = event;
+  }
+
+  get account(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class Initialized extends ethereum.Event {
+  get params(): Initialized__Params {
+    return new Initialized__Params(this);
+  }
+}
+
+export class Initialized__Params {
+  _event: Initialized;
+
+  constructor(event: Initialized) {
+    this._event = event;
+  }
+
+  get version(): i32 {
+    return this._event.parameters[0].value.toI32();
+  }
+}
+
 export class LiquidityIndexUpdated extends ethereum.Event {
   get params(): LiquidityIndexUpdated__Params {
     return new LiquidityIndexUpdated__Params(this);
@@ -284,9 +324,27 @@ export class Withdraw__Params {
   get amount(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
+}
 
-  get fee(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
+export class WithdrawPearl extends ethereum.Event {
+  get params(): WithdrawPearl__Params {
+    return new WithdrawPearl__Params(this);
+  }
+}
+
+export class WithdrawPearl__Params {
+  _event: WithdrawPearl;
+
+  constructor(event: WithdrawPearl) {
+    this._event = event;
+  }
+
+  get account(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
   }
 }
 
@@ -1146,6 +1204,36 @@ export class DepositCall__Outputs {
   }
 }
 
+export class DepositPearlCall extends ethereum.Call {
+  get inputs(): DepositPearlCall__Inputs {
+    return new DepositPearlCall__Inputs(this);
+  }
+
+  get outputs(): DepositPearlCall__Outputs {
+    return new DepositPearlCall__Outputs(this);
+  }
+}
+
+export class DepositPearlCall__Inputs {
+  _call: DepositPearlCall;
+
+  constructor(call: DepositPearlCall) {
+    this._call = call;
+  }
+
+  get amount_(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class DepositPearlCall__Outputs {
+  _call: DepositPearlCall;
+
+  constructor(call: DepositPearlCall) {
+    this._call = call;
+  }
+}
+
 export class GrantRoleCall extends ethereum.Call {
   get inputs(): GrantRoleCall__Inputs {
     return new GrantRoleCall__Inputs(this);
@@ -1614,6 +1702,36 @@ export class WithdrawCall__Outputs {
   _call: WithdrawCall;
 
   constructor(call: WithdrawCall) {
+    this._call = call;
+  }
+}
+
+export class WithdrawPearlCall extends ethereum.Call {
+  get inputs(): WithdrawPearlCall__Inputs {
+    return new WithdrawPearlCall__Inputs(this);
+  }
+
+  get outputs(): WithdrawPearlCall__Outputs {
+    return new WithdrawPearlCall__Outputs(this);
+  }
+}
+
+export class WithdrawPearlCall__Inputs {
+  _call: WithdrawPearlCall;
+
+  constructor(call: WithdrawPearlCall) {
+    this._call = call;
+  }
+
+  get amount_(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class WithdrawPearlCall__Outputs {
+  _call: WithdrawPearlCall;
+
+  constructor(call: WithdrawPearlCall) {
     this._call = call;
   }
 }

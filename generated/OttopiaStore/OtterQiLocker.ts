@@ -50,6 +50,24 @@ export class BeaconUpgraded__Params {
   }
 }
 
+export class ClaimReward extends ethereum.Event {
+  get params(): ClaimReward__Params {
+    return new ClaimReward__Params(this);
+  }
+}
+
+export class ClaimReward__Params {
+  _event: ClaimReward;
+
+  constructor(event: ClaimReward) {
+    this._event = event;
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
 export class ConvertToQi extends ethereum.Event {
   get params(): ConvertToQi__Params {
     return new ConvertToQi__Params(this);
@@ -142,6 +160,42 @@ export class HarvestStaking__Params {
   }
 }
 
+export class Initialized extends ethereum.Event {
+  get params(): Initialized__Params {
+    return new Initialized__Params(this);
+  }
+}
+
+export class Initialized__Params {
+  _event: Initialized;
+
+  constructor(event: Initialized) {
+    this._event = event;
+  }
+
+  get version(): i32 {
+    return this._event.parameters[0].value.toI32();
+  }
+}
+
+export class Invest extends ethereum.Event {
+  get params(): Invest__Params {
+    return new Invest__Params(this);
+  }
+}
+
+export class Invest__Params {
+  _event: Invest;
+
+  constructor(event: Invest) {
+    this._event = event;
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
 export class Leave extends ethereum.Event {
   get params(): Leave__Params {
     return new Leave__Params(this);
@@ -201,6 +255,60 @@ export class OwnershipTransferred__Params {
 
   get newOwner(): Address {
     return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class PortfolioManagerUpdated extends ethereum.Event {
+  get params(): PortfolioManagerUpdated__Params {
+    return new PortfolioManagerUpdated__Params(this);
+  }
+}
+
+export class PortfolioManagerUpdated__Params {
+  _event: PortfolioManagerUpdated;
+
+  constructor(event: PortfolioManagerUpdated) {
+    this._event = event;
+  }
+
+  get value(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
+export class ReinvestRateUpdated extends ethereum.Event {
+  get params(): ReinvestRateUpdated__Params {
+    return new ReinvestRateUpdated__Params(this);
+  }
+}
+
+export class ReinvestRateUpdated__Params {
+  _event: ReinvestRateUpdated;
+
+  constructor(event: ReinvestRateUpdated) {
+    this._event = event;
+  }
+
+  get value(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
+export class ReinvestStrategyUpdated extends ethereum.Event {
+  get params(): ReinvestStrategyUpdated__Params {
+    return new ReinvestStrategyUpdated__Params(this);
+  }
+}
+
+export class ReinvestStrategyUpdated__Params {
+  _event: ReinvestStrategyUpdated;
+
+  constructor(event: ReinvestStrategyUpdated) {
+    this._event = event;
+  }
+
+  get value(): Address {
+    return this._event.parameters[0].value.toAddress();
   }
 }
 
@@ -316,6 +424,59 @@ export class OtterQiLocker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  USDC(): Address {
+    let result = super.call("USDC", "USDC():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_USDC(): ethereum.CallResult<Address> {
+    let result = super.tryCall("USDC", "USDC():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  WMATIC(): Address {
+    let result = super.call("WMATIC", "WMATIC():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_WMATIC(): ethereum.CallResult<Address> {
+    let result = super.tryCall("WMATIC", "WMATIC():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  claimAndReinvest(to_: Address): BigInt {
+    let result = super.call(
+      "claimAndReinvest",
+      "claimAndReinvest(address):(uint256)",
+      [ethereum.Value.fromAddress(to_)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_claimAndReinvest(to_: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "claimAndReinvest",
+      "claimAndReinvest(address):(uint256)",
+      [ethereum.Value.fromAddress(to_)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   convertToQI(
     path_: Array<Address>,
     amountIn_: BigInt,
@@ -385,6 +546,27 @@ export class OtterQiLocker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  invest(param0: Address, param1: BigInt): BigInt {
+    let result = super.call("invest", "invest(address,uint256):(uint256)", [
+      ethereum.Value.fromAddress(param0),
+      ethereum.Value.fromUnsignedBigInt(param1)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_invest(param0: Address, param1: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("invest", "invest(address,uint256):(uint256)", [
+      ethereum.Value.fromAddress(param0),
+      ethereum.Value.fromUnsignedBigInt(param1)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   lockers(param0: Address): boolean {
     let result = super.call("lockers", "lockers(address):(bool)", [
       ethereum.Value.fromAddress(param0)
@@ -402,6 +584,21 @@ export class OtterQiLocker extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  maticQi(): Address {
+    let result = super.call("maticQi", "maticQi():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_maticQi(): ethereum.CallResult<Address> {
+    let result = super.tryCall("maticQi", "maticQi():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   ocQi(): Address {
@@ -483,29 +680,37 @@ export class OtterQiLocker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  tetuQi(): Address {
-    let result = super.call("tetuQi", "tetuQi():(address)", []);
+  reinvestRate(): BigInt {
+    let result = super.call("reinvestRate", "reinvestRate():(uint256)", []);
 
-    return result[0].toAddress();
+    return result[0].toBigInt();
   }
 
-  try_tetuQi(): ethereum.CallResult<Address> {
-    let result = super.tryCall("tetuQi", "tetuQi():(address)", []);
+  try_reinvestRate(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("reinvestRate", "reinvestRate():(uint256)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  tetuRouter(): Address {
-    let result = super.call("tetuRouter", "tetuRouter():(address)", []);
+  reinvestStrategy(): Address {
+    let result = super.call(
+      "reinvestStrategy",
+      "reinvestStrategy():(address)",
+      []
+    );
 
     return result[0].toAddress();
   }
 
-  try_tetuRouter(): ethereum.CallResult<Address> {
-    let result = super.tryCall("tetuRouter", "tetuRouter():(address)", []);
+  try_reinvestStrategy(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "reinvestStrategy",
+      "reinvestStrategy():(address)",
+      []
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -528,19 +733,91 @@ export class OtterQiLocker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  xTetuQi(): Address {
-    let result = super.call("xTetuQi", "xTetuQi():(address)", []);
+  usdcMai(): Address {
+    let result = super.call("usdcMai", "usdcMai():(address)", []);
 
     return result[0].toAddress();
   }
 
-  try_xTetuQi(): ethereum.CallResult<Address> {
-    let result = super.tryCall("xTetuQi", "xTetuQi():(address)", []);
+  try_usdcMai(): ethereum.CallResult<Address> {
+    let result = super.tryCall("usdcMai", "usdcMai():(address)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+}
+
+export class ClaimAndReinvestCall extends ethereum.Call {
+  get inputs(): ClaimAndReinvestCall__Inputs {
+    return new ClaimAndReinvestCall__Inputs(this);
+  }
+
+  get outputs(): ClaimAndReinvestCall__Outputs {
+    return new ClaimAndReinvestCall__Outputs(this);
+  }
+}
+
+export class ClaimAndReinvestCall__Inputs {
+  _call: ClaimAndReinvestCall;
+
+  constructor(call: ClaimAndReinvestCall) {
+    this._call = call;
+  }
+
+  get to_(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class ClaimAndReinvestCall__Outputs {
+  _call: ClaimAndReinvestCall;
+
+  constructor(call: ClaimAndReinvestCall) {
+    this._call = call;
+  }
+
+  get value0(): BigInt {
+    return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class ConvertStableToQiMaticCall extends ethereum.Call {
+  get inputs(): ConvertStableToQiMaticCall__Inputs {
+    return new ConvertStableToQiMaticCall__Inputs(this);
+  }
+
+  get outputs(): ConvertStableToQiMaticCall__Outputs {
+    return new ConvertStableToQiMaticCall__Outputs(this);
+  }
+}
+
+export class ConvertStableToQiMaticCall__Inputs {
+  _call: ConvertStableToQiMaticCall;
+
+  constructor(call: ConvertStableToQiMaticCall) {
+    this._call = call;
+  }
+
+  get amount_(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get minMaticAmount_(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get minQiAmount_(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class ConvertStableToQiMaticCall__Outputs {
+  _call: ConvertStableToQiMaticCall;
+
+  constructor(call: ConvertStableToQiMaticCall) {
+    this._call = call;
   }
 }
 
@@ -583,48 +860,6 @@ export class ConvertToQICall__Outputs {
 
   get value0(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
-  }
-}
-
-export class ConvertToTetuQiCall extends ethereum.Call {
-  get inputs(): ConvertToTetuQiCall__Inputs {
-    return new ConvertToTetuQiCall__Inputs(this);
-  }
-
-  get outputs(): ConvertToTetuQiCall__Outputs {
-    return new ConvertToTetuQiCall__Outputs(this);
-  }
-}
-
-export class ConvertToTetuQiCall__Inputs {
-  _call: ConvertToTetuQiCall;
-
-  constructor(call: ConvertToTetuQiCall) {
-    this._call = call;
-  }
-
-  get path_(): Array<Address> {
-    return this._call.inputValues[0].value.toAddressArray();
-  }
-
-  get amountIn_(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-
-  get amountOutMin_(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-
-  get stake_(): boolean {
-    return this._call.inputValues[3].value.toBoolean();
-  }
-}
-
-export class ConvertToTetuQiCall__Outputs {
-  _call: ConvertToTetuQiCall;
-
-  constructor(call: ConvertToTetuQiCall) {
-    this._call = call;
   }
 }
 
@@ -684,36 +919,6 @@ export class HarvestCall__Outputs {
   _call: HarvestCall;
 
   constructor(call: HarvestCall) {
-    this._call = call;
-  }
-}
-
-export class HarvestStakingCall extends ethereum.Call {
-  get inputs(): HarvestStakingCall__Inputs {
-    return new HarvestStakingCall__Inputs(this);
-  }
-
-  get outputs(): HarvestStakingCall__Outputs {
-    return new HarvestStakingCall__Outputs(this);
-  }
-}
-
-export class HarvestStakingCall__Inputs {
-  _call: HarvestStakingCall;
-
-  constructor(call: HarvestStakingCall) {
-    this._call = call;
-  }
-
-  get pid_(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class HarvestStakingCall__Outputs {
-  _call: HarvestStakingCall;
-
-  constructor(call: HarvestStakingCall) {
     this._call = call;
   }
 }
@@ -790,6 +995,40 @@ export class LockCall__Outputs {
   }
 }
 
+export class MigrateStakingCall extends ethereum.Call {
+  get inputs(): MigrateStakingCall__Inputs {
+    return new MigrateStakingCall__Inputs(this);
+  }
+
+  get outputs(): MigrateStakingCall__Outputs {
+    return new MigrateStakingCall__Outputs(this);
+  }
+}
+
+export class MigrateStakingCall__Inputs {
+  _call: MigrateStakingCall;
+
+  constructor(call: MigrateStakingCall) {
+    this._call = call;
+  }
+
+  get oldPid_(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get newPid_(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class MigrateStakingCall__Outputs {
+  _call: MigrateStakingCall;
+
+  constructor(call: MigrateStakingCall) {
+    this._call = call;
+  }
+}
+
 export class RenounceOwnershipCall extends ethereum.Call {
   get inputs(): RenounceOwnershipCall__Inputs {
     return new RenounceOwnershipCall__Inputs(this);
@@ -846,6 +1085,66 @@ export class SetDelegateCall__Outputs {
   _call: SetDelegateCall;
 
   constructor(call: SetDelegateCall) {
+    this._call = call;
+  }
+}
+
+export class SetReinvestRateCall extends ethereum.Call {
+  get inputs(): SetReinvestRateCall__Inputs {
+    return new SetReinvestRateCall__Inputs(this);
+  }
+
+  get outputs(): SetReinvestRateCall__Outputs {
+    return new SetReinvestRateCall__Outputs(this);
+  }
+}
+
+export class SetReinvestRateCall__Inputs {
+  _call: SetReinvestRateCall;
+
+  constructor(call: SetReinvestRateCall) {
+    this._call = call;
+  }
+
+  get rate_(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class SetReinvestRateCall__Outputs {
+  _call: SetReinvestRateCall;
+
+  constructor(call: SetReinvestRateCall) {
+    this._call = call;
+  }
+}
+
+export class SetReinvestStrategyCall extends ethereum.Call {
+  get inputs(): SetReinvestStrategyCall__Inputs {
+    return new SetReinvestStrategyCall__Inputs(this);
+  }
+
+  get outputs(): SetReinvestStrategyCall__Outputs {
+    return new SetReinvestStrategyCall__Outputs(this);
+  }
+}
+
+export class SetReinvestStrategyCall__Inputs {
+  _call: SetReinvestStrategyCall;
+
+  constructor(call: SetReinvestStrategyCall) {
+    this._call = call;
+  }
+
+  get reinvestStrategy_(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetReinvestStrategyCall__Outputs {
+  _call: SetReinvestStrategyCall;
+
+  constructor(call: SetReinvestStrategyCall) {
     this._call = call;
   }
 }

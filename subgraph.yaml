@@ -711,14 +711,14 @@ dataSources:
         - name: UniswapV2Router02
           file: ./abis/UniswapV2Router02.json
       eventHandlers:
-        - event: Deposit(indexed address,uint256)
+        - event: Deposit(address,uint256)
           handler: handleDeposit
-        - event: Withdraw(indexed address,uint256,uint256)
+        - event: Withdraw(address,uint256)
           handler: handleWithdraw
-        # - event: DepositPearl(indexed address,uint256)
-        #   handler: handleDeposit
-        # - event: WithdrawPearl(indexed address,uint256)
-        #   handler: handleWithdraw
+        - event: DepositPearl(address,uint256)
+          handler: handleDepositPearl
+        - event: WithdrawPearl(address,uint256)
+          handler: handleWithdrawPearl
       file: ./src/ClamPlus.ts
 
   - kind: ethereum/contract

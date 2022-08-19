@@ -1,17 +1,20 @@
 import { Payout } from '../generated/OtterRewardManager/OtterRewardManager'
 import { PearlBank } from '../generated/OtterRewardManager/PearlBank'
 import { loadOrCreatePearlBankMetric } from './utils/PearlBankMetric'
-import { PEARL_BANK } from './utils/Constants'
+import { CLAM_PLUS, PEARL_BANK } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
 import { loadCumulativeValues } from './utils/CumulativeValues'
 import { getClamUsdRate } from './utils/Price'
 import { Address, BigDecimal, log } from '@graphprotocol/graph-ts'
 import { AllStakedBalance, StakedBalance } from '../generated/schema'
+import { ClamPlus } from '../generated/OtterRewardManager/ClamPlus'
 
 export function handlePayout(payout: Payout): void {
+  let pearlBank = PearlBank.bind(PEARL_BANK)
+  let clamPlus = ClamPlus.bind(CLAM_PLUS)
   let metric = loadOrCreatePearlBankMetric(payout.block.timestamp)
   let clamPrice = getClamUsdRate(payout.block.number)
-  let pearlBankStakedClam = toDecimal(PearlBank.bind(PEARL_BANK).totalSupply(), 9)
+  let pearlBankStakedClam = toDecimal(pearlBank.totalSupply(), 9)
 
   let stakedUsd = pearlBankStakedClam.times(clamPrice)
   let payoutValue = toDecimal(payout.params.totalUsdPlus, 6)
@@ -60,6 +63,9 @@ export function handlePayout(payout: Payout): void {
     userBalance.pearlBankLastPayout = userBalance.pearlBankBalance.times(rewardRate).times(clamPrice)
     userBalance.clamPondLastPayout = userBalance.clamPondBalance.times(rewardRate)
     userBalance.clamPondLastPayoutUsd = userBalance.clamPondBalance.times(rewardRate).times(clamPrice)
+
+    userBalance.pearlBankBalance = toDecimal(pearlBank.balanceOf(Address.fromString(userBalance.id)), 9)
+    userBalance.clamPondBalance = toDecimal(clamPlus.balanceOf(Address.fromString(userBalance.id)), 9)
     userBalance.save()
 
     newBalanceIds.push(userBalance.id)

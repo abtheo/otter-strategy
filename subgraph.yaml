@@ -102,7 +102,6 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - OttoMinted
-        - TotalBurnedClam
         - BuyProduct
         - Transaction
         - TreasuryRevenue
@@ -143,7 +142,6 @@ dataSources:
       entities:
         - BuyProduct
         - Transaction
-        - TotalBurnedClam
         - TreasuryRevenue
         - ProtocolMetric
         - Transfer
@@ -151,7 +149,6 @@ dataSources:
         - Vote
         - VotePosition
         - GovernanceMetric
-        - TotalBurnedClam
         - Harvest
         - HarvestStaking
       abis:
@@ -649,7 +646,6 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - PearlBankMetric
-        - TotalBurnedClam
         - StakedBalance
         - AllStakedBalance
       abis:
@@ -680,24 +676,21 @@ dataSources:
       file: ./src/PearlBank.ts
 
   - kind: ethereum/contract
-    name: DeprecatedClamPlus
+    name: ClamPlus
     network: matic
     source:
       address: '0xF2A8705D327534E334d09BC28e5C97b5c356Aa01'
-      abi: DeprecatedClamPlus
-      startBlock: 30711722 #30712813
+      abi: ClamPlus
+      startBlock: 30712813
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - PearlBankMetric
-        - TotalBurnedClam
         - StakedBalance
         - AllStakedBalance
       abis:
-        - name: DeprecatedClamPlus
-          file: ./abis/DeprecatedClamPlus.json
         - name: PearlBank
           file: ./abis/PearlBank.json
         - name: ClamPlus
@@ -719,32 +712,33 @@ dataSources:
           file: ./abis/UniswapV2Router02.json
       eventHandlers:
         - event: Deposit(address,uint256)
-          handler: handleDeprecatedDeposit
+          handler: handleDeposit
         - event: Withdraw(address,uint256)
-          handler: handleDeprecatedWithdraw
+          handler: handleWithdraw
+        - event: DepositPearl(address,uint256)
+          handler: handleDepositPearl
+        - event: WithdrawPearl(address,uint256)
+          handler: handleWithdrawPearl
       file: ./src/ClamPlus.ts
 
   - kind: ethereum/contract
-    name: ClamPlus
+    name: OtterClamERC20V2
     network: matic
     source:
-      address: '0xF2A8705D327534E334d09BC28e5C97b5c356Aa01'
-      abi: ClamPlus
-      startBlock: 30712813
+      address: '0xc250e9987a032acac293d838726c511e6e1c029d'
+      abi: OtterClamERC20V2
+      startBlock: 26991825 #First burn transfer
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - PearlBankMetric
+        - Transaction
+        - Transfer
         - TotalBurnedClam
-        - StakedBalance
-        - AllStakedBalance
       abis:
-        - name: PearlBank
-          file: ./abis/PearlBank.json
-        - name: ClamPlus
-          file: ./abis/ClamPlus.json
+        - name: OtterClamERC20V2
+          file: ./abis/OtterClamERC20V2.json
         #====== getPrice() required contracts======
         - name: ERC20
           file: ./abis/ERC20.json
@@ -761,8 +755,6 @@ dataSources:
         - name: UniswapV2Router02
           file: ./abis/UniswapV2Router02.json
       eventHandlers:
-        - event: Deposit(indexed address,uint256)
-          handler: handleDeposit
-        - event: Withdraw(indexed address,uint256,uint256)
-          handler: handleWithdraw
-      file: ./src/ClamPlus.ts
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/OtterClamERC20V2.ts

@@ -2,7 +2,6 @@ import { PearlBank, Stake, Withdraw } from '../generated/PearlBank/PearlBank'
 import { loadOrCreatePearlBankMetric } from './utils/PearlBankMetric'
 import { CLAM_PLUS, PEARL_BANK } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
-import { loadOrCreateTotalBurnedClamSingleton } from './utils/Burned'
 import { getClamUsdRate } from './utils/Price'
 import { ClamPlus } from '../generated/OtterRewardManager/ClamPlus'
 import { loadOrCreateAllStakedBalance, loadOrCreateStakedBalance } from './OtterRewardManager'
@@ -64,13 +63,6 @@ export function handleWithdraw(withdraw: Withdraw): void {
   metric.totalClamStakedUsdValue = staked.times(clamPrice)
 
   metric.save()
-
-  //Cumulative total for burned CLAM
-  let burns = loadOrCreateTotalBurnedClamSingleton()
-  let burnedClam = toDecimal(withdraw.params.fee, 9)
-  burns.burnedClam = burns.burnedClam.plus(burnedClam)
-  burns.burnedValueUsd = burns.burnedValueUsd.plus(getClamUsdRate(withdraw.block.number).times(burnedClam))
-  burns.save()
 
   //track individual user balances
   let stakedBalance = loadOrCreateStakedBalance(withdraw.params.addr)

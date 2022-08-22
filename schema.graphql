@@ -55,6 +55,7 @@ type ProtocolMetric @entity {
   treasuryDystopiaPairUSDPLUSClamMarketValue: BigDecimal!
   treasuryDystopiaPairUsdcTusdMarketValue: BigDecimal!
   treasuryDystopiaPairUsdplusUsdcMarketValue: BigDecimal!
+  treasuryDystopiaPairUsdplusStMaticMarketValue: BigDecimal!
   treasuryDystMarketValue: BigDecimal!
   treasuryVeDystMarketValue: BigDecimal!
   treasuryPenMarketValue: BigDecimal!

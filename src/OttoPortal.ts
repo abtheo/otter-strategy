@@ -7,7 +7,6 @@ import { BuyProduct } from '../generated/schema'
 
 export function handleOttoMinted(mint: OttoMinted): void {
   let transaction = loadOrCreateTransaction(mint.transaction, mint.block)
-  // updateProtocolMetrics(transaction)
 
   let clamPerPortal = BigDecimal.fromString('50')
   let clamPaid = mint.params.quantity.toBigDecimal().times(clamPerPortal)

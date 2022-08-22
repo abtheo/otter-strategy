@@ -15,13 +15,14 @@ import {
   DYST_POOL_TRANSITION_BLOCK,
   TETU_QI_ERC20,
   TUSD_ERC20,
+  STMATIC_ERC20,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { UniswapV2Pair } from '../../generated/OtterQiLocker/UniswapV2Pair'
-import { AggregatorV3InterfaceABI } from '../../generated/OtterQiLocker/AggregatorV3InterfaceABI'
+import { UniswapV2Pair } from '../../generated/OtterClamERC20V2/UniswapV2Pair'
+import { AggregatorV3InterfaceABI } from '../../generated/OtterClamERC20V2/AggregatorV3InterfaceABI'
 import { toDecimal } from './Decimals'
-import { DystPair } from '../../generated/OtterQiLocker/DystPair'
-import { ERC20 } from '../../generated/OtterQiLocker/ERC20'
+import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
+import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
 import { dyst, quickSwap, Exchange } from './Exchange'
 
 function findTokenPrice(exchange: Exchange, inTokenAddress: Address, outTokenAddress: Address): BigDecimal {
@@ -37,6 +38,10 @@ export function getwMaticUsdRate(): BigDecimal {
   let pair = AggregatorV3InterfaceABI.bind(USDC_MATIC_AGGREGATOR)
   let wmaticPrice = pair.latestRoundData()
   return toDecimal(wmaticPrice.value1, 8)
+}
+
+export function getStMaticUsdRate(): BigDecimal {
+  return findTokenPrice(dyst, STMATIC_ERC20, USDPLUS_ERC20)
 }
 
 export function getQiUsdRate(): BigDecimal {
@@ -198,6 +203,7 @@ export function findPrice(blockNumber: BigInt, address: Address): BigDecimal {
   if (address == PEN_ERC20) return getPenUsdRate()
   if (address == WETH_ERC20) return getwEthUsdRate()
   if (address == PENDYST_ERC20) return getPenDystUsdRate()
+  if (address == STMATIC_ERC20) return getStMaticUsdRate()
 
   if (
     address == FRAX_ERC20 ||

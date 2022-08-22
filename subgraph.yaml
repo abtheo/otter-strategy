@@ -573,7 +573,6 @@ dataSources:
           file: ./abis/ClamPlus.json
         - name: PearlBank
           file: ./abis/PearlBank.json
-        
         #=== protocolMetrics ===
         - name: UsdPlus
           file: ./abis/UsdPlus.json

@@ -5,13 +5,10 @@ import { getClamUsdRate } from './utils/Price'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { loadOrCreateTreasuryRevenue, setTreasuryRevenueTotals } from './utils/TreasuryRevenue'
 import { BuyProduct } from '../generated/schema'
-import { updateProtocolMetrics } from './utils/ProtocolMetrics'
 
 export function handleBuyProduct(buy: BuyProductEvent): void {
   //Save the buy transaction
   let transaction = loadOrCreateTransaction(buy.transaction, buy.block)
-  //trigger a ProtocolMetrics update
-  updateProtocolMetrics(transaction)
 
   let entity = new BuyProduct(transaction.id)
   entity.product_id = buy.params.id

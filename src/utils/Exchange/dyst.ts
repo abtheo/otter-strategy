@@ -1,5 +1,5 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts'
-import { DystRouter } from '../../../generated/OtterQiLocker/DystRouter'
+import { DystRouter } from '../../../generated/OtterClamERC20V2/DystRouter'
 import { Exchange } from './exchange'
 
 export class DystExchange implements Exchange {

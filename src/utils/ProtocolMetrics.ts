@@ -1,18 +1,18 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { ClamCirculatingSupply } from '../../generated/OtterQiLocker/ClamCirculatingSupply'
-import { QiFarmV3 } from '../../generated/OtterQiLocker/QiFarmV3'
-import { xTetuQi } from '../../generated/OtterQiLocker/xTetuQi'
-import { ERC20 } from '../../generated/OtterQiLocker/ERC20'
-import { OtterClamERC20V2 } from '../../generated/OtterQiLocker/OtterClamERC20V2'
-import { OtterQiDAOInvestment } from '../../generated/OtterQiLocker/OtterQiDAOInvestment'
-import { QiFarm } from '../../generated/OtterQiLocker/QiFarm'
-import { veDyst } from '../../generated/OtterQiLocker/veDyst'
-import { PenLens } from '../../generated/OtterQiLocker/PenLens'
-import { UniswapV2Pair } from '../../generated/OtterQiLocker/UniswapV2Pair'
-import { PenDystRewards } from '../../generated/OtterQiLocker/PenDystRewards'
-import { PenrosePartnerRewards } from '../../generated/OtterQiLocker/PenrosePartnerRewards'
-import { PenLockerV2 } from '../../generated/OtterQiLocker/PenLockerV2'
-import { UsdPlus } from '../../generated/OtterQiLocker/UsdPlus'
+import { ClamCirculatingSupply } from '../../generated/OtterClamERC20V2/ClamCirculatingSupply'
+import { QiFarmV3 } from '../../generated/OtterClamERC20V2/QiFarmV3'
+import { xTetuQi } from '../../generated/OtterClamERC20V2/xTetuQi'
+import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
+import { OtterClamERC20V2 } from '../../generated/OtterClamERC20V2/OtterClamERC20V2'
+import { OtterQiDAOInvestment } from '../../generated/OtterClamERC20V2/OtterQiDAOInvestment'
+import { QiFarm } from '../../generated/OtterClamERC20V2/QiFarm'
+import { veDyst } from '../../generated/OtterClamERC20V2/veDyst'
+import { PenLens } from '../../generated/OtterClamERC20V2/PenLens'
+import { UniswapV2Pair } from '../../generated/OtterClamERC20V2/UniswapV2Pair'
+import { PenDystRewards } from '../../generated/OtterClamERC20V2/PenDystRewards'
+import { PenrosePartnerRewards } from '../../generated/OtterClamERC20V2/PenrosePartnerRewards'
+import { PenLockerV2 } from '../../generated/OtterClamERC20V2/PenLockerV2'
+import { UsdPlus } from '../../generated/OtterClamERC20V2/UsdPlus'
 import { ProtocolMetric, Transaction, VotePosition, Vote, GovernanceMetric } from '../../generated/schema'
 import {
   CIRCULATING_SUPPLY_CONTRACT,
@@ -35,10 +35,6 @@ import {
   UNI_QI_WMATIC_INVESTMENT_PAIR_BLOCK,
   UNI_QI_WMATIC_PAIR,
   UNI_QI_WMATIC_PAIR_BLOCK,
-  CURVE_MAI_3POOL_PAIR,
-  CURVE_MAI_3POOL_PAIR_BLOCK,
-  CURVE_MAI_3POOL_INVESTMENT_PAIR,
-  CURVE_MAI_3POOL_INVESTMENT_PAIR_BLOCK,
   OTTER_QI_LOCKER,
   QI_FARM,
   DYST_ERC20,
@@ -78,6 +74,7 @@ import {
   QI_MATIC_INVESTMENT_STRATEGY,
   DYSTOPIA_PAIR_USDPLUS_STMATIC,
   PENROSE_REWARD_USDPLUS_STMATIC,
+  USDPLUS_STMATIC_PENROSE_USER_PROXY,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -96,7 +93,7 @@ import {
   getUniPairUSD,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
-import { DystPair } from '../../generated/OtterQiLocker/DystPair'
+import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
 import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
@@ -410,7 +407,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
       if (pair_address == DYSTOPIA_PAIR_USDPLUS_STMATIC) {
         let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_STMATIC).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
+          USDPLUS_STMATIC_PENROSE_USER_PROXY,
         )
         penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
 

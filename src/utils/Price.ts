@@ -18,11 +18,11 @@ import {
   STMATIC_ERC20,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { UniswapV2Pair } from '../../generated/OtterQiLocker/UniswapV2Pair'
-import { AggregatorV3InterfaceABI } from '../../generated/OtterQiLocker/AggregatorV3InterfaceABI'
+import { UniswapV2Pair } from '../../generated/OtterClamERC20V2/UniswapV2Pair'
+import { AggregatorV3InterfaceABI } from '../../generated/OtterClamERC20V2/AggregatorV3InterfaceABI'
 import { toDecimal } from './Decimals'
-import { DystPair } from '../../generated/OtterQiLocker/DystPair'
-import { ERC20 } from '../../generated/OtterQiLocker/ERC20'
+import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
+import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
 import { dyst, quickSwap, Exchange } from './Exchange'
 
 function findTokenPrice(exchange: Exchange, inTokenAddress: Address, outTokenAddress: Address): BigDecimal {

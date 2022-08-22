@@ -8,6 +8,8 @@ import { getClamUsdRate } from './utils/Price'
 import { Address, BigDecimal, log } from '@graphprotocol/graph-ts'
 import { AllStakedBalance, StakedBalance } from '../generated/schema'
 import { ClamPlus } from '../generated/OtterRewardManager/ClamPlus'
+import { updateProtocolMetrics } from './utils/ProtocolMetrics'
+import { loadOrCreateTransaction } from './utils/Transactions'
 
 export function handlePayout(payout: Payout): void {
   let pearlBank = PearlBank.bind(PEARL_BANK)
@@ -60,6 +62,7 @@ export function handlePayout(payout: Payout): void {
   let newBalanceIds: string[] = []
   for (let i = 0; i < allBalances.balances.length; i++) {
     let userBalance = loadOrCreateStakedBalance(Address.fromString(allBalances.balances[i]))
+
     userBalance.pearlBankLastPayout = userBalance.pearlBankBalance.times(rewardRate).times(clamPrice)
     userBalance.clamPondLastPayout = userBalance.clamPondBalance.times(rewardRate)
     userBalance.clamPondLastPayoutUsd = userBalance.clamPondBalance.times(rewardRate).times(clamPrice)
@@ -70,12 +73,11 @@ export function handlePayout(payout: Payout): void {
 
     newBalanceIds.push(userBalance.id)
   }
-  log.debug('AllBalances, Old len: {} New len: {}', [
-    allBalances.balances.length.toString(),
-    newBalanceIds.length.toString(),
-  ])
   allBalances.balances = newBalanceIds
   allBalances.save()
+
+  let transaction = loadOrCreateTransaction(payout.transaction, payout.block)
+  updateProtocolMetrics(transaction)
 }
 
 export function loadOrCreateStakedBalance(address: Address): StakedBalance {

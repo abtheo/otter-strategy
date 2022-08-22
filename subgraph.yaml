@@ -15,7 +15,6 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Transaction
-        - ProtocolMetric
         - Transfer
         - TreasuryRevenue
         - Vote
@@ -28,45 +27,6 @@ dataSources:
       abis:
         - name: OtterQiLocker
           file: ./abis/OtterQiLocker.json
-        #=== protocolMetrics ===
-        - name: UsdPlus
-          file: ./abis/UsdPlus.json
-        - name: OtterClamERC20V2
-          file: ./abis/OtterClamERC20V2.json
-        - name: OtterStaking
-          file: ./abis/OtterStaking.json
-        - name: OtterStakingDistributor
-          file: './abis/OtterStakingDistributor.json'
-        - name: ClamCirculatingSupply
-          file: ./abis/ClamCirculatingSupply.json
-        - name: xTetuQi
-          file: ./abis/xTetuQi.json
-        - name: OtterQiDAOInvestment
-          file: ./abis/OtterQiDAOInvestment.json
-        - name: QiFarm
-          file: ./abis/QiFarm.json
-        - name: QiFarmV3
-          file: ./abis/QiFarmV3.json
-        - name: PearlNote
-          file: ./abis/PearlNote.json
-        - name: OtterPearlERC20
-          file: ./abis/OtterPearlERC20.json
-        - name: CurveMai3poolContract
-          file: ./abis/CurveMai3poolContract.json        
-        - name: Dyst
-          file: ./abis/Dyst.json      
-        - name: veDyst
-          file: ./abis/veDyst.json
-        - name: PenDystRewards
-          file: ./abis/PenDystRewards.json
-        - name: PenLockerV2
-          file: ./abis/PenLockerV2.json
-        - name: PenLens
-          file: ./abis/PenLens.json
-        - name: PenrosePartnerRewards
-          file: ./abis/PenrosePartnerRewards.json
-        - name: PenroseMultiRewards
-          file: ./abis/PenroseMultiRewards.json
         #====== getPrice() required contracts======
         - name: ERC20
           file: ./abis/ERC20.json
@@ -143,7 +103,6 @@ dataSources:
         - BuyProduct
         - Transaction
         - TreasuryRevenue
-        - ProtocolMetric
         - Transfer
         - TreasuryRevenue
         - Vote
@@ -154,47 +113,6 @@ dataSources:
       abis:
         - name: OttopiaStore
           file: ./abis/OttopiaStore.json
-        #=== protocolMetrics ===
-        - name: UsdPlus
-          file: ./abis/UsdPlus.json
-        - name: OtterQiLocker
-          file: ./abis/OtterQiLocker.json
-        - name: OtterClamERC20V2
-          file: ./abis/OtterClamERC20V2.json
-        - name: OtterStaking
-          file: ./abis/OtterStaking.json
-        - name: OtterStakingDistributor
-          file: './abis/OtterStakingDistributor.json'
-        - name: ClamCirculatingSupply
-          file: ./abis/ClamCirculatingSupply.json
-        - name: xTetuQi
-          file: ./abis/xTetuQi.json
-        - name: OtterQiDAOInvestment
-          file: ./abis/OtterQiDAOInvestment.json
-        - name: QiFarm
-          file: ./abis/QiFarm.json
-        - name: QiFarmV3
-          file: ./abis/QiFarmV3.json
-        - name: PearlNote
-          file: ./abis/PearlNote.json
-        - name: OtterPearlERC20
-          file: ./abis/OtterPearlERC20.json
-        - name: CurveMai3poolContract
-          file: ./abis/CurveMai3poolContract.json        
-        - name: Dyst
-          file: ./abis/Dyst.json      
-        - name: veDyst
-          file: ./abis/veDyst.json
-        - name: PenDystRewards
-          file: ./abis/PenDystRewards.json
-        - name: PenLockerV2
-          file: ./abis/PenLockerV2.json
-        - name: PenLens
-          file: ./abis/PenLens.json
-        - name: PenrosePartnerRewards
-          file: ./abis/PenrosePartnerRewards.json
-        - name: PenroseMultiRewards
-          file: ./abis/PenroseMultiRewards.json
         #====== getPrice() required contracts======
         - name: ERC20
           file: ./abis/ERC20.json
@@ -647,6 +565,7 @@ dataSources:
         - CumulativeValues
         - StakedBalance
         - AllStakedBalance
+        - ProtocolMetric
       abis:
         - name: OtterRewardManager
           file: ./abis/OtterRewardManager.json
@@ -654,6 +573,46 @@ dataSources:
           file: ./abis/ClamPlus.json
         - name: PearlBank
           file: ./abis/PearlBank.json
+        
+        #=== protocolMetrics ===
+        - name: UsdPlus
+          file: ./abis/UsdPlus.json
+        - name: OtterClamERC20V2
+          file: ./abis/OtterClamERC20V2.json
+        - name: OtterStaking
+          file: ./abis/OtterStaking.json
+        - name: OtterStakingDistributor
+          file: './abis/OtterStakingDistributor.json'
+        - name: ClamCirculatingSupply
+          file: ./abis/ClamCirculatingSupply.json
+        - name: xTetuQi
+          file: ./abis/xTetuQi.json
+        - name: OtterQiDAOInvestment
+          file: ./abis/OtterQiDAOInvestment.json
+        - name: QiFarm
+          file: ./abis/QiFarm.json
+        - name: QiFarmV3
+          file: ./abis/QiFarmV3.json
+        - name: PearlNote
+          file: ./abis/PearlNote.json
+        - name: OtterPearlERC20
+          file: ./abis/OtterPearlERC20.json
+        - name: CurveMai3poolContract
+          file: ./abis/CurveMai3poolContract.json        
+        - name: Dyst
+          file: ./abis/Dyst.json      
+        - name: veDyst
+          file: ./abis/veDyst.json
+        - name: PenDystRewards
+          file: ./abis/PenDystRewards.json
+        - name: PenLockerV2
+          file: ./abis/PenLockerV2.json
+        - name: PenLens
+          file: ./abis/PenLens.json
+        - name: PenrosePartnerRewards
+          file: ./abis/PenrosePartnerRewards.json
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
         #====== getPrice() required contracts======
         - name: ERC20
           file: ./abis/ERC20.json
@@ -777,9 +736,49 @@ dataSources:
         - Transaction
         - Transfer
         - TotalBurnedClam
+        - ProtocolMetric
       abis:
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
+        #=== protocolMetrics ===
+        - name: UsdPlus
+          file: ./abis/UsdPlus.json
+        - name: OtterClamERC20V2
+          file: ./abis/OtterClamERC20V2.json
+        - name: OtterStaking
+          file: ./abis/OtterStaking.json
+        - name: OtterStakingDistributor
+          file: './abis/OtterStakingDistributor.json'
+        - name: ClamCirculatingSupply
+          file: ./abis/ClamCirculatingSupply.json
+        - name: xTetuQi
+          file: ./abis/xTetuQi.json
+        - name: OtterQiDAOInvestment
+          file: ./abis/OtterQiDAOInvestment.json
+        - name: QiFarm
+          file: ./abis/QiFarm.json
+        - name: QiFarmV3
+          file: ./abis/QiFarmV3.json
+        - name: PearlNote
+          file: ./abis/PearlNote.json
+        - name: OtterPearlERC20
+          file: ./abis/OtterPearlERC20.json
+        - name: CurveMai3poolContract
+          file: ./abis/CurveMai3poolContract.json        
+        - name: Dyst
+          file: ./abis/Dyst.json      
+        - name: veDyst
+          file: ./abis/veDyst.json
+        - name: PenDystRewards
+          file: ./abis/PenDystRewards.json
+        - name: PenLockerV2
+          file: ./abis/PenLockerV2.json
+        - name: PenLens
+          file: ./abis/PenLens.json
+        - name: PenrosePartnerRewards
+          file: ./abis/PenrosePartnerRewards.json
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
         #====== getPrice() required contracts======
         - name: ERC20
           file: ./abis/ERC20.json

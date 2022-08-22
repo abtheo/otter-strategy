@@ -367,6 +367,10 @@ export class ProtocolMetric extends Entity {
       Value.fromBigDecimal(BigDecimal.zero())
     );
     this.set(
+      "treasuryDystopiaPairUsdplusStMaticMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set(
       "treasuryDystMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
@@ -671,6 +675,18 @@ export class ProtocolMetric extends Entity {
   set treasuryDystopiaPairUsdplusUsdcMarketValue(value: BigDecimal) {
     this.set(
       "treasuryDystopiaPairUsdplusUsdcMarketValue",
+      Value.fromBigDecimal(value)
+    );
+  }
+
+  get treasuryDystopiaPairUsdplusStMaticMarketValue(): BigDecimal {
+    let value = this.get("treasuryDystopiaPairUsdplusStMaticMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryDystopiaPairUsdplusStMaticMarketValue(value: BigDecimal) {
+    this.set(
+      "treasuryDystopiaPairUsdplusStMaticMarketValue",
       Value.fromBigDecimal(value)
     );
   }

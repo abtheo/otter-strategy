@@ -76,6 +76,8 @@ import {
   MAI_USDC_INVESTMENT_STRATEGY,
   QI_FARM_CHANGE_BLOCK,
   QI_MATIC_INVESTMENT_STRATEGY,
+  DYSTOPIA_PAIR_USDPLUS_STMATIC,
+  PENROSE_REWARD_USDPLUS_STMATIC,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -337,6 +339,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let penMarketValue = BigDecimal.zero()
   let vlPenMarketValue = BigDecimal.zero()
   let penDystMarketValue = BigDecimal.zero()
+  let usdplusStMaticValue = BigDecimal.zero()
 
   let clamMaiDystLpOwned = BigInt.zero()
   let clamUsdPlusDystLpOwned = BigInt.zero()
@@ -403,6 +406,17 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
         penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
 
         usdplusUsdcValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
+      }
+
+      if (pair_address == DYSTOPIA_PAIR_USDPLUS_STMATIC) {
+        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_STMATIC).try_balanceOf(
+          DAO_WALLET_PENROSE_USER_PROXY,
+        )
+        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
+
+        usdplusStMaticValue = pairValue.plus(
+          getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address),
+        )
       }
     }
 
@@ -474,6 +488,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(usdcMaiDystValue)
     .plus(usdcFraxDystValue)
     .plus(wMaticPenValue)
+    .plus(usdplusStMaticValue)
 
   let lpValue_noClam = lpValue.plus(clamMai_MaiOnlyValue).plus(clamUsdPlus_UsdPlusOnlyValue)
   let lpValue_Clam = lpValue.plus(clamMai_value).plus(clamUsdplusDystValue)
@@ -511,6 +526,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryDystopiaPairUSDPLUSClamMarketValue = clamUsdplusDystValue
   protocolMetric.treasuryDystopiaPairUsdcTusdMarketValue = usdcTusdValue
   protocolMetric.treasuryDystopiaPairUsdplusUsdcMarketValue = usdplusUsdcValue
+  protocolMetric.treasuryDystopiaPairUsdplusStMaticMarketValue = usdplusStMaticValue
   protocolMetric.treasuryDystMarketValue = dystMarketValue
   protocolMetric.treasuryVeDystMarketValue = veDystMarketValue
   protocolMetric.treasuryPenMarketValue = penMarketValue

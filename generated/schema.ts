@@ -387,6 +387,10 @@ export class ProtocolMetric extends Entity {
       "treasuryPenDystMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
+    this.set(
+      "treasuryMaiStMaticMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
     this.set("totalBurnedClam", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalBurnedClamMarketValue",
@@ -736,6 +740,15 @@ export class ProtocolMetric extends Entity {
     this.set("treasuryPenDystMarketValue", Value.fromBigDecimal(value));
   }
 
+  get treasuryMaiStMaticMarketValue(): BigDecimal {
+    let value = this.get("treasuryMaiStMaticMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryMaiStMaticMarketValue(value: BigDecimal) {
+    this.set("treasuryMaiStMaticMarketValue", Value.fromBigDecimal(value));
+  }
+
   get totalBurnedClam(): BigDecimal {
     let value = this.get("totalBurnedClam");
     return value!.toBigDecimal();
@@ -882,7 +895,7 @@ export class Harvest extends Entity {
   }
 }
 
-export class ClaimReward extends Entity {
+export class ClaimRewardQi extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -895,19 +908,19 @@ export class ClaimReward extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save ClaimReward entity without an ID");
+    assert(id != null, "Cannot save ClaimRewardQi entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save ClaimReward entity with non-string ID. " +
+        "Cannot save ClaimRewardQi entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("ClaimReward", id.toString(), this);
+      store.set("ClaimRewardQi", id.toString(), this);
     }
   }
 
-  static load(id: string): ClaimReward | null {
-    return changetype<ClaimReward | null>(store.get("ClaimReward", id));
+  static load(id: string): ClaimRewardQi | null {
+    return changetype<ClaimRewardQi | null>(store.get("ClaimRewardQi", id));
   }
 
   get id(): string {
@@ -956,6 +969,80 @@ export class ClaimReward extends Entity {
   }
 }
 
+export class ClaimRewardLdo extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("transaction", Value.fromString(""));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("amountUsd", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("amountLdo", Value.fromBigDecimal(BigDecimal.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save ClaimRewardLdo entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ClaimRewardLdo entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ClaimRewardLdo", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ClaimRewardLdo | null {
+    return changetype<ClaimRewardLdo | null>(store.get("ClaimRewardLdo", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get transaction(): string {
+    let value = this.get("transaction");
+    return value!.toString();
+  }
+
+  set transaction(value: string) {
+    this.set("transaction", Value.fromString(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get amountUsd(): BigDecimal {
+    let value = this.get("amountUsd");
+    return value!.toBigDecimal();
+  }
+
+  set amountUsd(value: BigDecimal) {
+    this.set("amountUsd", Value.fromBigDecimal(value));
+  }
+
+  get amountLdo(): BigDecimal {
+    let value = this.get("amountLdo");
+    return value!.toBigDecimal();
+  }
+
+  set amountLdo(value: BigDecimal) {
+    this.set("amountLdo", Value.fromBigDecimal(value));
+  }
+}
+
 export class TreasuryRevenue extends Entity {
   constructor(id: string) {
     super();
@@ -972,6 +1059,8 @@ export class TreasuryRevenue extends Entity {
     this.set("penDystMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ottopiaMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("ldoClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("ldoMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("totalRevenueClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalRevenueMarketValue",
@@ -1102,6 +1191,24 @@ export class TreasuryRevenue extends Entity {
 
   set ottopiaMarketValue(value: BigDecimal) {
     this.set("ottopiaMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get ldoClamAmount(): BigDecimal {
+    let value = this.get("ldoClamAmount");
+    return value!.toBigDecimal();
+  }
+
+  set ldoClamAmount(value: BigDecimal) {
+    this.set("ldoClamAmount", Value.fromBigDecimal(value));
+  }
+
+  get ldoMarketValue(): BigDecimal {
+    let value = this.get("ldoMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set ldoMarketValue(value: BigDecimal) {
+    this.set("ldoMarketValue", Value.fromBigDecimal(value));
   }
 
   get totalRevenueClamAmount(): BigDecimal {

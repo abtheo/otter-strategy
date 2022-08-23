@@ -61,6 +61,7 @@ type ProtocolMetric @entity {
   treasuryPenMarketValue: BigDecimal!
   treasuryVlPenMarketValue: BigDecimal!
   treasuryPenDystMarketValue: BigDecimal!
+  treasuryMaiStMaticMarketValue: BigDecimal!
 
   totalBurnedClam: BigDecimal!
   totalBurnedClamMarketValue: BigDecimal!
@@ -79,12 +80,20 @@ type Harvest @entity {
   timestamp: BigInt!
   amount: BigInt!
 }
-type ClaimReward @entity {
+type ClaimRewardQi @entity {
   id: ID!
   transaction: Transaction!
   timestamp: BigInt!
   amountUsd: BigDecimal!
   amountQi: BigDecimal!
+}
+
+type ClaimRewardLdo @entity {
+  id: ID!
+  transaction: Transaction!
+  timestamp: BigInt!
+  amountUsd: BigDecimal!
+  amountLdo: BigDecimal!
 }
 
 type TreasuryRevenue @entity {
@@ -100,6 +109,8 @@ type TreasuryRevenue @entity {
   penDystMarketValue: BigDecimal!
   ottopiaClamAmount: BigDecimal!
   ottopiaMarketValue: BigDecimal!
+  ldoClamAmount: BigDecimal!
+  ldoMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
 }

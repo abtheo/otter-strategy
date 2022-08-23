@@ -75,6 +75,10 @@ import {
   DYSTOPIA_PAIR_USDPLUS_STMATIC,
   PENROSE_REWARD_USDPLUS_STMATIC,
   USDPLUS_STMATIC_PENROSE_USER_PROXY,
+  MAI_STMATIC_BLOCK,
+  MAI_STMATIC_QIDAO_FARM,
+  MAI_STMATIC_INVESTMENT_STRATEGY,
+  ARRAKIS_MAI_STMATIC_PAIR,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -91,6 +95,7 @@ import {
   getDystPairHalfReserveUSD,
   ReserveToken,
   getUniPairUSD,
+  getArrakisPairUSD,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
 import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
@@ -469,6 +474,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
       vlPenMarketValue.toString(),
     ])
   }
+
+  let maiStMaticMarketValue = BigDecimal.zero()
+  if (transaction.blockNumber.gt(BigInt.fromI32(MAI_STMATIC_BLOCK))) {
+    let qiFarm = QiFarmV3.bind(MAI_STMATIC_QIDAO_FARM)
+    let maiStMaticLPamount = qiFarm.deposited(BigInt.zero(), MAI_STMATIC_INVESTMENT_STRATEGY)
+    maiStMaticMarketValue = getArrakisPairUSD(transaction.blockNumber, maiStMaticLPamount, ARRAKIS_MAI_STMATIC_PAIR)
+  }
+
   let stableValueDecimal = maiBalance
     .plus(daiBalance)
     .plus(maiUsdcQiInvestmentValueDecimal)
@@ -486,6 +499,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(usdcFraxDystValue)
     .plus(wMaticPenValue)
     .plus(usdplusStMaticValue)
+    .plus(maiStMaticMarketValue)
 
   let lpValue_noClam = lpValue.plus(clamMai_MaiOnlyValue).plus(clamUsdPlus_UsdPlusOnlyValue)
   let lpValue_Clam = lpValue.plus(clamMai_value).plus(clamUsdplusDystValue)
@@ -529,6 +543,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryPenMarketValue = penMarketValue
   protocolMetric.treasuryVlPenMarketValue = vlPenMarketValue
   protocolMetric.treasuryPenDystMarketValue = penDystMarketValue
+  protocolMetric.treasuryMaiStMaticMarketValue = maiStMaticMarketValue
   protocolMetric.totalClamUsdPlusRebaseValue = clamUsdPlusRebases
 
   return protocolMetric

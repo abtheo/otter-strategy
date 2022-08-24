@@ -16,9 +16,11 @@ import {
   TETU_QI_ERC20,
   TUSD_ERC20,
   STMATIC_ERC20,
+  LDO_ERC20,
 } from './Constants'
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { UniswapV2Pair } from '../../generated/OtterClamERC20V2/UniswapV2Pair'
+import { ArrakisVault } from '../../generated/OtterClamERC20V2/ArrakisVault'
 import { AggregatorV3InterfaceABI } from '../../generated/OtterClamERC20V2/AggregatorV3InterfaceABI'
 import { toDecimal } from './Decimals'
 import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
@@ -50,6 +52,14 @@ export function getQiUsdRate(): BigDecimal {
 
   return usdPerQi
 }
+
+export function getLdoUsdRate(): BigDecimal {
+  let wmaticPerLdo = findTokenPrice(quickSwap, LDO_ERC20, MATIC_ERC20)
+  let usdPerLdo = wmaticPerLdo.times(getwMaticUsdRate())
+
+  return usdPerLdo
+}
+
 export function getTetuQiUsdRate(blockNumber: BigInt): BigDecimal {
   let qiPerTetuQi = BigDecimal.fromString('1')
 
@@ -130,6 +140,38 @@ export function getUniPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_addre
 }
 
 /**
+Calculates the USD value of an LP investment position on Arrakis from the number of owned LP tokens and the pair address.
+*/
+export function getArrakisPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {
+  let pair = ArrakisVault.bind(pair_address)
+  let total_lp = pair.totalSupply()
+
+  let token0 = ERC20.bind(pair.token0())
+  let token1 = ERC20.bind(pair.token1())
+
+  let underlying = pair.getUnderlyingBalances()
+  let lp_token_0 = underlying.value0
+  let lp_token_1 = underlying.value1
+
+  let ownedLP = toDecimal(lp_amount, 18).div(toDecimal(total_lp, 18))
+
+  let usd_value_0 = toDecimal(lp_token_0, token0.decimals()).times(findPrice(blockNumber, pair.token0()))
+  let usd_value_1 = toDecimal(lp_token_1, token1.decimals()).times(findPrice(blockNumber, pair.token1()))
+
+  let totalUsd = usd_value_0.plus(usd_value_1)
+
+  let final_value = ownedLP.times(totalUsd)
+
+  log.debug('Arrakis Pair USD Value: pair {} is {} owned with a total value of {}, final value {}', [
+    pair_address.toHexString(),
+    ownedLP.toString(),
+    totalUsd.toString(),
+    final_value.toString(),
+  ])
+
+  return final_value
+}
+/**
 Calculates the USD value of an LP investment position on Dystopia from the number of owned LP tokens and the pair address.
 */
 export function getDystPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {
@@ -204,6 +246,7 @@ export function findPrice(blockNumber: BigInt, address: Address): BigDecimal {
   if (address == WETH_ERC20) return getwEthUsdRate()
   if (address == PENDYST_ERC20) return getPenDystUsdRate()
   if (address == STMATIC_ERC20) return getStMaticUsdRate()
+  if (address == LDO_ERC20) return getLdoUsdRate()
 
   if (
     address == FRAX_ERC20 ||

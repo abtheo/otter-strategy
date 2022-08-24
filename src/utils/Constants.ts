@@ -25,6 +25,7 @@ export const DYST_ERC20 = Address.fromString('0x39aB6574c289c3Ae4d88500eEc792AB5
 export const TETU_QI_ERC20 = Address.fromString('0x4cd44ced63d9a6fef595f6ad3f7ced13fceac768')
 export const TUSD_ERC20 = Address.fromString('0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756')
 export const STMATIC_ERC20 = Address.fromString('0x3A58a54C066FdC0f2D55FC9C89F0415C92eBf3C4')
+export const LDO_ERC20 = Address.fromString('0xc3c7d422809852031b44ab29eec9f1eff2a58756')
 
 export const OCQI_CONTRACT = Address.fromString('0x0906ee253B2cD6737A3CD3838490Cb0b90fD68be')
 export const QCQI_START_BLOCK = '25443072'
@@ -153,3 +154,7 @@ export const QI_FARM_V3 = Address.fromString('0xFFD2AA58Cca3A44120aaA42CEA285234
 export const QI_FARM_CHANGE_BLOCK = 31831179
 
 export const USDPLUS_STMATIC_PENROSE_USER_PROXY = Address.fromString('0xeFc4947BBBecDAd9b83BCebC7485d7c120DB699f')
+export const MAI_STMATIC_BLOCK = 32213139
+export const MAI_STMATIC_QIDAO_FARM = Address.fromString('0xBD9e831826786D9F2561695a140231F3353C608c')
+export const MAI_STMATIC_INVESTMENT_STRATEGY = Address.fromString('0x7E253B145543fA38BF90a110338c2249824eA2b5')
+export const ARRAKIS_MAI_STMATIC_PAIR = Address.fromString('0x5246B430E62B73bD17248b6e9D4A5cc2c1aA5823')

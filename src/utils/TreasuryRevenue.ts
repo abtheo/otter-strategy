@@ -1,7 +1,7 @@
 import { toDecimal } from './Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { dayFromTimestamp } from './Dates'
-import { TreasuryRevenue, Harvest, Transfer, Transaction, ClaimReward } from '../../generated/schema'
+import { TreasuryRevenue, Harvest, Transfer, Transaction, ClaimRewardQi, ClaimRewardLdo } from '../../generated/schema'
 import { getClamUsdRate, getDystUsdRate, getPenDystUsdRate, getPenUsdRate, getQiUsdRate } from '../utils/Price'
 
 export function loadOrCreateTreasuryRevenue(timestamp: BigInt): TreasuryRevenue {
@@ -22,12 +22,14 @@ export function setTreasuryRevenueTotals(revenue: TreasuryRevenue): TreasuryReve
     .plus(revenue.dystClamAmount)
     .plus(revenue.penDystClamAmount)
     .plus(revenue.penClamAmount)
+    .plus(revenue.ldoClamAmount)
 
   revenue.totalRevenueMarketValue = revenue.qiMarketValue
     .plus(revenue.ottopiaMarketValue)
     .plus(revenue.dystMarketValue)
     .plus(revenue.penDystMarketValue)
     .plus(revenue.penMarketValue)
+    .plus(revenue.ldoMarketValue)
 
   return revenue
 }
@@ -52,7 +54,7 @@ export function updateTreasuryRevenueHarvest(block: BigInt, harvest: Harvest): v
   treasuryRevenue.save()
 }
 
-export function updateTreasuryRevenueClaimQiReward(block: BigInt, claim: ClaimReward): void {
+export function updateTreasuryRevenueClaimQiReward(block: BigInt, claim: ClaimRewardQi): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(claim.timestamp)
 
   let clamAmount = claim.amountUsd.div(getClamUsdRate(block))
@@ -65,6 +67,25 @@ export function updateTreasuryRevenueClaimQiReward(block: BigInt, claim: ClaimRe
   //Aggregate over day with +=
   treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
   treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(claim.amountUsd)
+
+  treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
+
+  treasuryRevenue.save()
+}
+
+export function updateTreasuryRevenueClaimLdoReward(block: BigInt, claim: ClaimRewardLdo): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(claim.timestamp)
+
+  let clamAmount = claim.amountUsd.div(getClamUsdRate(block))
+  log.debug('ClaimRewardLdo event, txid: {}, ldoMarketValue {}, clamAmount {}', [
+    claim.id,
+    claim.amountUsd.toString(),
+    clamAmount.toString(),
+  ])
+
+  //Aggregate over day with +=
+  treasuryRevenue.ldoClamAmount = treasuryRevenue.ldoClamAmount.plus(clamAmount)
+  treasuryRevenue.ldoMarketValue = treasuryRevenue.ldoMarketValue.plus(claim.amountUsd)
 
   treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
 

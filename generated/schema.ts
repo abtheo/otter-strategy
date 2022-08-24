@@ -895,7 +895,7 @@ export class Harvest extends Entity {
   }
 }
 
-export class ClaimRewardQi extends Entity {
+export class ClaimReward extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -903,24 +903,25 @@ export class ClaimRewardQi extends Entity {
     this.set("transaction", Value.fromString(""));
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
     this.set("amountUsd", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("amountQi", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("amountToken", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("token", Value.fromBytes(Bytes.empty()));
   }
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save ClaimRewardQi entity without an ID");
+    assert(id != null, "Cannot save ClaimReward entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save ClaimRewardQi entity with non-string ID. " +
+        "Cannot save ClaimReward entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("ClaimRewardQi", id.toString(), this);
+      store.set("ClaimReward", id.toString(), this);
     }
   }
 
-  static load(id: string): ClaimRewardQi | null {
-    return changetype<ClaimRewardQi | null>(store.get("ClaimRewardQi", id));
+  static load(id: string): ClaimReward | null {
+    return changetype<ClaimReward | null>(store.get("ClaimReward", id));
   }
 
   get id(): string {
@@ -959,87 +960,22 @@ export class ClaimRewardQi extends Entity {
     this.set("amountUsd", Value.fromBigDecimal(value));
   }
 
-  get amountQi(): BigDecimal {
-    let value = this.get("amountQi");
+  get amountToken(): BigDecimal {
+    let value = this.get("amountToken");
     return value!.toBigDecimal();
   }
 
-  set amountQi(value: BigDecimal) {
-    this.set("amountQi", Value.fromBigDecimal(value));
-  }
-}
-
-export class ClaimRewardLdo extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("transaction", Value.fromString(""));
-    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
-    this.set("amountUsd", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("amountLdo", Value.fromBigDecimal(BigDecimal.zero()));
+  set amountToken(value: BigDecimal) {
+    this.set("amountToken", Value.fromBigDecimal(value));
   }
 
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save ClaimRewardLdo entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save ClaimRewardLdo entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("ClaimRewardLdo", id.toString(), this);
-    }
+  get token(): Bytes {
+    let value = this.get("token");
+    return value!.toBytes();
   }
 
-  static load(id: string): ClaimRewardLdo | null {
-    return changetype<ClaimRewardLdo | null>(store.get("ClaimRewardLdo", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get transaction(): string {
-    let value = this.get("transaction");
-    return value!.toString();
-  }
-
-  set transaction(value: string) {
-    this.set("transaction", Value.fromString(value));
-  }
-
-  get timestamp(): BigInt {
-    let value = this.get("timestamp");
-    return value!.toBigInt();
-  }
-
-  set timestamp(value: BigInt) {
-    this.set("timestamp", Value.fromBigInt(value));
-  }
-
-  get amountUsd(): BigDecimal {
-    let value = this.get("amountUsd");
-    return value!.toBigDecimal();
-  }
-
-  set amountUsd(value: BigDecimal) {
-    this.set("amountUsd", Value.fromBigDecimal(value));
-  }
-
-  get amountLdo(): BigDecimal {
-    let value = this.get("amountLdo");
-    return value!.toBigDecimal();
-  }
-
-  set amountLdo(value: BigDecimal) {
-    this.set("amountLdo", Value.fromBigDecimal(value));
+  set token(value: Bytes) {
+    this.set("token", Value.fromBytes(value));
   }
 }
 
@@ -1061,6 +997,8 @@ export class TreasuryRevenue extends Entity {
     this.set("ottopiaMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ldoClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("ldoMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("usdPlusClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("usdPlusMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("totalRevenueClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalRevenueMarketValue",
@@ -1209,6 +1147,24 @@ export class TreasuryRevenue extends Entity {
 
   set ldoMarketValue(value: BigDecimal) {
     this.set("ldoMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get usdPlusClamAmount(): BigDecimal {
+    let value = this.get("usdPlusClamAmount");
+    return value!.toBigDecimal();
+  }
+
+  set usdPlusClamAmount(value: BigDecimal) {
+    this.set("usdPlusClamAmount", Value.fromBigDecimal(value));
+  }
+
+  get usdPlusMarketValue(): BigDecimal {
+    let value = this.get("usdPlusMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set usdPlusMarketValue(value: BigDecimal) {
+    this.set("usdPlusMarketValue", Value.fromBigDecimal(value));
   }
 
   get totalRevenueClamAmount(): BigDecimal {

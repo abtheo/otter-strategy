@@ -80,20 +80,13 @@ type Harvest @entity {
   timestamp: BigInt!
   amount: BigInt!
 }
-type ClaimRewardQi @entity {
+type ClaimReward @entity {
   id: ID!
   transaction: Transaction!
   timestamp: BigInt!
   amountUsd: BigDecimal!
-  amountQi: BigDecimal!
-}
-
-type ClaimRewardLdo @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  amountUsd: BigDecimal!
-  amountLdo: BigDecimal!
+  amountToken: BigDecimal!
+  token: Bytes!
 }
 
 type TreasuryRevenue @entity {
@@ -111,6 +104,8 @@ type TreasuryRevenue @entity {
   ottopiaMarketValue: BigDecimal!
   ldoClamAmount: BigDecimal!
   ldoMarketValue: BigDecimal!
+  usdPlusClamAmount: BigDecimal!
+  usdPlusMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
 }

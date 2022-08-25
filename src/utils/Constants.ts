@@ -1,4 +1,4 @@
-import { Address } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 //Tokens definition
 export const UNI_CLAM_MAI_PAIR = Address.fromString('0x1581802317f32A2665005109444233ca6E3e2D68')
@@ -28,59 +28,56 @@ export const STMATIC_ERC20 = Address.fromString('0x3A58a54C066FdC0f2D55FC9C89F04
 export const LDO_ERC20 = Address.fromString('0xc3c7d422809852031b44ab29eec9f1eff2a58756')
 
 export const OCQI_CONTRACT = Address.fromString('0x0906ee253B2cD6737A3CD3838490Cb0b90fD68be')
-export const QCQI_START_BLOCK = '25443072'
+export const QCQI_START_BLOCK = BigInt.fromI32(25443072)
 
-export const TETU_QI_START_BLOCK = '26184969'
+export const TETU_QI_START_BLOCK = BigInt.fromI32(26184969)
 export const XTETU_QI_CONTRACT = Address.fromString('0x8f1505C8F3B45Cb839D09c607939095a4195738e')
-export const XTETU_QI_START_BLOCK = '26184969'
+export const XTETU_QI_START_BLOCK = BigInt.fromI32(26184969)
 
 export const UNI_CLAM_FRAX_PAIR = Address.fromString('0x1f847e05afaf47ec54626928d0e6c235663e938f')
-export const UNI_CLAM_FRAX_PAIR_BLOCK = '22040167'
+export const UNI_CLAM_FRAX_PAIR_BLOCK = BigInt.fromI32(22040167)
 
 export const UNI_WETH_USDC_PAIR = Address.fromString('0x853ee4b2a13f8a742d64c8f088be7ba2131f670d')
 
 export const UNI_CLAM_WMATIC_PAIR = Address.fromString('0x3fcc446c70489610462be9d61528c51151aca49f')
-export const UNI_CLAM_WMATIC_PAIR_BLOCK = '22307377'
+export const UNI_CLAM_WMATIC_PAIR_BLOCK = BigInt.fromI32(22307377)
 
 export const UNI_PEARL_WMATIC_PAIR = Address.fromString('0x52aacffa4d36e3d0f28f1fe20fa12d9e67ef24eb')
-export const UNI_PEARL_WMATIC_PAIR_BLOCK = '24379463'
+export const UNI_PEARL_WMATIC_PAIR_BLOCK = BigInt.fromI32(24379463)
 
 export const UNI_MAI_USDC_PAIR = Address.fromString('0x160532D2536175d65C03B97b0630A9802c274daD')
-export const UNI_MAI_USDC_PAIR_BLOCK = '23899173'
+export const UNI_MAI_USDC_PAIR_BLOCK = BigInt.fromI32(23899173)
 
 export const UNI_QI_WMATIC_PAIR = Address.fromString('0x9A8b2601760814019B7E6eE0052E25f1C623D1E6')
-export const UNI_QI_WMATIC_PAIR_BLOCK = '24724405'
+export const UNI_QI_WMATIC_PAIR_BLOCK = BigInt.fromI32(24724405)
 
 export const UNI_QUICK_WMATIC_PAIR = Address.fromString('0x019ba0325f1988213d448b3472fa1cf8d07618d7')
 
 export const UNI_MAI_USDC_QI_INVESTMENT_PAIR = Address.fromString('0x07DB6BFbD71E9DE0AfF3ab3eAe4CBC7B13EEF952')
-export const UNI_MAI_USDC_QI_INVESTMENT_PAIR_BLOCK = '23932247'
-
-export const UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR = Address.fromString('0x4933A7e336d91d0fc48773b99BA89bEf4106F7D3')
-export const UNI_MAI_CLAM_DQUICK_INVESTMENT_PAIR_BLOCK = '24691894'
+export const UNI_MAI_USDC_QI_INVESTMENT_PAIR_BLOCK = BigInt.fromI32(23932247)
 
 export const UNI_QI_WMATIC_INVESTMENT_PAIR = Address.fromString('0xC3356D852330e947144400d237563288c59F3539')
-export const UNI_QI_WMATIC_INVESTMENT_PAIR_BLOCK = '24724405'
+export const UNI_QI_WMATIC_INVESTMENT_PAIR_BLOCK = BigInt.fromI32(24724405)
 
 export const CURVE_MAI_3POOL_PAIR = Address.fromString('0x447646e84498552e62ecf097cc305eabfff09308')
-export const CURVE_MAI_3POOL_PAIR_BLOCK = '25810765'
+export const CURVE_MAI_3POOL_PAIR_BLOCK = BigInt.fromI32(25810765)
 
 export const CURVE_MAI_3POOL_INVESTMENT_PAIR = Address.fromString('0xC94efd5D41ac32ccBe793f764930A5E6955CA31E')
-export const CURVE_MAI_3POOL_INVESTMENT_PAIR_BLOCK = '25810765'
+export const CURVE_MAI_3POOL_INVESTMENT_PAIR_BLOCK = BigInt.fromI32(25810765)
 
 export const USDC_MATIC_AGGREGATOR = Address.fromString('0xAB594600376Ec9fD91F8e885dADF0CE036862dE0')
 
 export const CIRCULATING_SUPPLY_CONTRACT = Address.fromString('0x99ee91871cf39A44E3Fc842541274d7eA05AE4b3')
-export const CIRCULATING_SUPPLY_CONTRACT_BLOCK = '21431527'
+export const CIRCULATING_SUPPLY_CONTRACT_BLOCK = BigInt.fromI32(21431527)
 
 export const STAKING_CONTRACT = Address.fromString('0xC8B0243F350AA5F8B979b228fAe522DAFC61221a')
 export const STAKING_DISTRIBUTOR_CONTRACT = Address.fromString('0x0dd015889df6f50d39e9d7a52711d0b86e43fc62')
 
 export const OTTER_LAKE_ADDRESS = Address.fromString('0xc67aBdA25D0421FE9Dc1afd64183b179A426a256')
-export const PEARL_CHEST_BLOCK = '23569724'
+export const PEARL_CHEST_BLOCK = BigInt.fromI32(23569724)
 
 export const OTTER_BUYBACK_ADDRESS = Address.fromString('0x155d21b6d7eb5dd1035a9ae57201c20ff1ea90d2')
-export const OTTER_BUYBACK_BLOCK = '24954592'
+export const OTTER_BUYBACK_BLOCK = BigInt.fromI32(24954592)
 
 export const OTTER_QI_LOCKER = Address.fromString('0x69f6c4Fa150F9F0b3037612CF8FadDAeDbd46Bb8')
 export const QI_FARM = Address.fromString('0x574fe4e8120c4da1741b5fd45584de7a5b521f0f')
@@ -91,7 +88,7 @@ export const OTTO_PORTAL_MINTING = Address.fromString('0xcb8ba0c08e746ca6fa79fe5
 export const OTTOPIA_STORE = Address.fromString('0xc1b43121e0946adef2ad169d6cb994064e275085')
 
 export const DYSTOPIA_veDYST = Address.fromString('0x060fa7aD32C510F12550c7a967999810dafC5697')
-export const DYSTOPIA_veDYST_ERC721_ID = '30'
+export const DYSTOPIA_veDYST_ERC721_ID = BigInt.fromI32(30)
 export const VLPEN_LOCKER = Address.fromString('0x55ca76e0341ccd35c2e3f34cbf767c6102aea70f')
 
 export const DYSTOPIA_PAIR_MAI_CLAM = Address.fromString('0x40705378b468b357435be7302ee22918ee4c4d24')
@@ -136,28 +133,31 @@ export const PENROSE_REWARDS_GAUGE = Address.fromString('0x4edc2f4368179be77e5e8
 export const PENROSE_LENS_PROXY = Address.fromString('0x1432c3553fdf7fbd593a84b3a4d380c643cbf7a2')
 
 export const QIDAO_TREASURY = Address.fromString('0x3feacf904b152b1880bde8bf04ac9eb636fee4d8')
-export const QIDAO_veDYST_ERC721_ID = 4
+export const QIDAO_veDYST_ERC721_ID = BigInt.fromI32(4)
 
 export const PEARL_BANK = Address.fromString('0x845eb7730a8d37e8d190fb8bb9c582038331b48a')
 export const DYST_ROUTER = Address.fromString('0xbe75dd16d029c6b32b7ad57a0fd9c1c20dd2862e')
 export const QUICKSWAP_ROUTER = Address.fromString('0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff')
 
-export const DYST_POOL_TRANSITION_BLOCK = 30393227
-export const DYST_START_BLOCK = 28773233
-export const PEN_START_BLOCK = 29401160
+export const DYST_POOL_TRANSITION_BLOCK = BigInt.fromI32(30393227)
+export const DYST_START_BLOCK = BigInt.fromI32(28773233)
+export const PEN_START_BLOCK = BigInt.fromI32(29401160)
 
 export const CLAM_PLUS = Address.fromString('0xF2A8705D327534E334d09BC28e5C97b5c356Aa01')
 
 export const MAI_USDC_INVESTMENT_STRATEGY = Address.fromString('0x31e79E57fE7287dCa5285354338caB63A3C2b830')
 export const QI_MATIC_INVESTMENT_STRATEGY = Address.fromString('0x69f6c4Fa150F9F0b3037612CF8FadDAeDbd46Bb8')
 export const QI_FARM_V3 = Address.fromString('0xFFD2AA58Cca3A44120aaA42CEA2852348A9c2eA6')
-export const QI_FARM_CHANGE_BLOCK = 31831179
+export const QI_FARM_CHANGE_BLOCK = BigInt.fromI32(31831179)
 
 export const USDPLUS_STMATIC_PENROSE_USER_PROXY = Address.fromString('0xeFc4947BBBecDAd9b83BCebC7485d7c120DB699f')
-export const MAI_STMATIC_BLOCK = 32213139
+export const MAI_STMATIC_BLOCK = BigInt.fromI32(32213139)
 export const MAI_STMATIC_QIDAO_FARM = Address.fromString('0xBD9e831826786D9F2561695a140231F3353C608c')
 export const MAI_STMATIC_INVESTMENT_STRATEGY = Address.fromString('0x7E253B145543fA38BF90a110338c2249824eA2b5')
 export const ARRAKIS_MAI_STMATIC_PAIR = Address.fromString('0x5246B430E62B73bD17248b6e9D4A5cc2c1aA5823')
 
-export const USD_PLUS_INVESTMENT_START_BLOCK = 32256016
+export const USD_PLUS_INVESTMENT_START_BLOCK = BigInt.fromI32(32256016)
 export const USDPLUS_INVESTMENT_STRATEGY = Address.fromString('0x32470D6b534e7343ECB05069d1D3336A8424beA0')
+
+export const GAINS_DAI_INVESTMENT_STRATEGY = Address.fromString('0x397b681bD7D9E8E10a577574586e2cEeb475793C')
+export const GAINS_DAI_START_BLOCK = BigInt.fromI32(32300283)

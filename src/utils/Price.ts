@@ -103,7 +103,7 @@ export function getwEthUsdRate(): BigDecimal {
 export function getClamUsdRate(block: BigInt): BigDecimal {
   let rate: BigDecimal
 
-  if (block.gt(BigInt.fromI32(DYST_POOL_TRANSITION_BLOCK))) {
+  if (block.gt(DYST_POOL_TRANSITION_BLOCK)) {
     rate = findTokenPrice(dyst, CLAM_ERC20, USDPLUS_ERC20)
   } else {
     rate = findTokenPrice(quickSwap, CLAM_ERC20, MAI_ERC20)
@@ -175,7 +175,7 @@ export function getArrakisPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_a
 Calculates the USD value of an LP investment position on Dystopia from the number of owned LP tokens and the pair address.
 */
 export function getDystPairUSD(blockNumber: BigInt, lp_amount: BigInt, pair_address: Address): BigDecimal {
-  if (lp_amount == BigInt.fromString('0')) return BigDecimal.zero()
+  if (lp_amount == BigInt.zero()) return BigDecimal.zero()
   let pair = DystPair.bind(pair_address)
 
   let token0 = ERC20.bind(pair.token0())
@@ -212,7 +212,7 @@ export function getDystPairHalfReserveUSD(
   pair_address: Address,
   reserve: ReserveToken,
 ): BigDecimal {
-  if (lp_amount == BigInt.fromString('0')) return BigDecimal.zero()
+  if (lp_amount == BigInt.zero()) return BigDecimal.zero()
   let pair = DystPair.bind(pair_address)
 
   let token0 = ERC20.bind(pair.token0())

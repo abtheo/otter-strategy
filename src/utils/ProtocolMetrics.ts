@@ -432,13 +432,11 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   }
 
   //add stablecoin-only half of Dystopia CLAM-X LPs
-  clamMai_MaiOnlyValue = clamMai_MaiOnlyValue.plus(
-    getDystPairHalfReserveUSD(
-      transaction.blockNumber,
-      clamMaiDystLpOwned,
-      DYSTOPIA_PAIR_MAI_CLAM,
-      ReserveToken.TokenZero, //MAI is token0
-    ),
+  let clamMaiDyst_MaiOnlyValue = getDystPairHalfReserveUSD(
+    transaction.blockNumber,
+    clamMaiDystLpOwned,
+    DYSTOPIA_PAIR_MAI_CLAM,
+    ReserveToken.TokenZero, //MAI is token0
   )
 
   let clamUsdPlus_UsdPlusOnlyValue = getDystPairHalfReserveUSD(
@@ -505,8 +503,15 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(wMaticDystValue)
     .plus(usdplusStMaticValue)
 
-  let lpValue_noClam = lpValue.plus(clamMai_MaiOnlyValue).plus(clamUsdPlus_UsdPlusOnlyValue)
-  let lpValue_Clam = lpValue.plus(clamMai_value).plus(clamUsdplusDystValue)
+  let lpValue_noClam = lpValue
+    .plus(clamMai_MaiOnlyValue)
+    .plus(clamUsdPlus_UsdPlusOnlyValue)
+    .plus(clamMaiDyst_MaiOnlyValue)
+
+  let lpValue_Clam = lpValue
+    .plus(clamMai_value)
+    .plus(clamUsdplusDystValue)
+    .plus(clamMaiDystValue)
 
   let tokenValues = wmaticValue
     .plus(qiMarketValue)

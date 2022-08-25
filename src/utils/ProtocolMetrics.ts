@@ -79,6 +79,7 @@ import {
   MAI_STMATIC_QIDAO_FARM,
   MAI_STMATIC_INVESTMENT_STRATEGY,
   ARRAKIS_MAI_STMATIC_PAIR,
+  USDPLUS_INVESTMENT_STRATEGY,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -333,9 +334,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let wMaticDystValue = BigDecimal.zero()
   let clamMaiDystValue = BigDecimal.zero()
   let clamUsdplusDystValue = BigDecimal.zero()
-  let usdcMaiDystValue = BigDecimal.zero()
-  let usdcFraxDystValue = BigDecimal.zero()
-  let wMaticPenValue = BigDecimal.zero()
   let dystMarketValue = BigDecimal.zero()
   let veDystMarketValue = BigDecimal.zero()
   let penMarketValue = BigDecimal.zero()
@@ -482,24 +480,26 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     maiStMaticMarketValue = getArrakisPairUSD(transaction.blockNumber, maiStMaticLPamount, ARRAKIS_MAI_STMATIC_PAIR)
   }
 
+  let usdPlusMarketValue = BigDecimal.zero()
+  if (transaction.blockNumber.gt(BigInt.fromI32(MAI_STMATIC_BLOCK))) {
+    usdPlusMarketValue = toDecimal(ERC20.bind(USDPLUS_ERC20).balanceOf(USDPLUS_INVESTMENT_STRATEGY), 6)
+  }
+
   let stableValueDecimal = maiBalance
     .plus(daiBalance)
     .plus(maiUsdcQiInvestmentValueDecimal)
     .plus(maiUsdcMarketValue)
     .plus(usdcTusdValue)
     .plus(usdplusUsdcValue)
+    .plus(usdPlusMarketValue)
 
-  let lpValue = clamMai_value
-    .plus(qiWmaticMarketValue)
+  let lpValue = qiWmaticMarketValue
     .plus(qiWmaticQiInvestmentMarketValue)
+    .plus(maiStMaticMarketValue)
     //dystopia
     .plus(qiTetuQiValue)
     .plus(wMaticDystValue)
-    .plus(usdcMaiDystValue)
-    .plus(usdcFraxDystValue)
-    .plus(wMaticPenValue)
     .plus(usdplusStMaticValue)
-    .plus(maiStMaticMarketValue)
 
   let lpValue_noClam = lpValue.plus(clamMai_MaiOnlyValue).plus(clamUsdPlus_UsdPlusOnlyValue)
   let lpValue_Clam = lpValue.plus(clamMai_value).plus(clamUsdplusDystValue)
@@ -515,7 +515,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(penDystMarketValue)
 
   let mv = stableValueDecimal.plus(lpValue_Clam).plus(tokenValues)
-
   let mv_noClam = stableValueDecimal.plus(lpValue_noClam).plus(tokenValues)
 
   protocolMetric.treasuryMarketValue = mv
@@ -545,6 +544,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryPenDystMarketValue = penDystMarketValue
   protocolMetric.treasuryMaiStMaticMarketValue = maiStMaticMarketValue
   protocolMetric.totalClamUsdPlusRebaseValue = clamUsdPlusRebases
+  protocolMetric.treasuryUsdPlusMarketValue = usdPlusMarketValue
 
   return protocolMetric
 }

@@ -1,4 +1,3 @@
-import { BigDecimal } from '@graphprotocol/graph-ts'
 import { ClaimReward as ClaimRewardEvent } from '../generated/MaiUsdcStrategy/MaiUsdcStrategy'
 import { ClaimReward } from '../generated/schema'
 import { LDO_ERC20 } from './utils/Constants'

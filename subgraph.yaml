@@ -657,6 +657,47 @@ dataSources:
       file: ./src/UsdPlusStrategy.ts
 
   - kind: ethereum/contract
+    name: GainsDaiStrategy
+    network: matic
+    source:
+      address: '0x397b681bd7d9e8e10a577574586e2ceeb475793c'
+      abi: GainsDaiStrategy
+      startBlock: 32300283 
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: GainsDaiStrategy
+          file: ./abis/GainsDaiStrategy.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: ClaimReward(uint256)
+          handler: handleClaimReward
+      file: ./src/GainsDaiStrategy.ts
+
+  - kind: ethereum/contract
     name: OtterRewardManager
     network: matic
     source:

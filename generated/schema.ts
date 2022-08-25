@@ -1012,6 +1012,8 @@ export class TreasuryRevenue extends Entity {
     this.set("ldoMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("usdPlusClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("usdPlusMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("daiClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("daiMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("totalRevenueClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalRevenueMarketValue",
@@ -1178,6 +1180,24 @@ export class TreasuryRevenue extends Entity {
 
   set usdPlusMarketValue(value: BigDecimal) {
     this.set("usdPlusMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get daiClamAmount(): BigDecimal {
+    let value = this.get("daiClamAmount");
+    return value!.toBigDecimal();
+  }
+
+  set daiClamAmount(value: BigDecimal) {
+    this.set("daiClamAmount", Value.fromBigDecimal(value));
+  }
+
+  get daiMarketValue(): BigDecimal {
+    let value = this.get("daiMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set daiMarketValue(value: BigDecimal) {
+    this.set("daiMarketValue", Value.fromBigDecimal(value));
   }
 
   get totalRevenueClamAmount(): BigDecimal {

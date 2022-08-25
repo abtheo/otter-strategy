@@ -107,6 +107,8 @@ type TreasuryRevenue @entity {
   ldoMarketValue: BigDecimal!
   usdPlusClamAmount: BigDecimal!
   usdPlusMarketValue: BigDecimal!
+  daiClamAmount: BigDecimal!
+  daiMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
 }

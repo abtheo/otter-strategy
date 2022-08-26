@@ -619,7 +619,7 @@ dataSources:
     name: UsdPlusStrategy
     network: matic
     source:
-      address: '0x7E253B145543fA38BF90a110338c2249824eA2b5'
+      address: '0x32470D6b534e7343ECB05069d1D3336A8424beA0'
       abi: UsdPlusStrategy
       startBlock: 32256016 
     mapping:

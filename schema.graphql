@@ -41,6 +41,7 @@ type ProtocolMetric @entity {
   treasuryMaiUsdcQiInvestmentValue: BigDecimal!
   treasuryMaiMarketValue: BigDecimal!
   treasuryDaiMarketValue: BigDecimal!
+  treasuryUsdPlusMarketValue: BigDecimal!
   treasuryClamMaiMarketValue: BigDecimal!
   treasuryWmaticMarketValue: BigDecimal!
   treasuryQiMarketValue: BigDecimal!
@@ -80,20 +81,13 @@ type Harvest @entity {
   timestamp: BigInt!
   amount: BigInt!
 }
-type ClaimRewardQi @entity {
+type ClaimReward @entity {
   id: ID!
   transaction: Transaction!
   timestamp: BigInt!
   amountUsd: BigDecimal!
-  amountQi: BigDecimal!
-}
-
-type ClaimRewardLdo @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  amountUsd: BigDecimal!
-  amountLdo: BigDecimal!
+  amountToken: BigDecimal!
+  token: Bytes!
 }
 
 type TreasuryRevenue @entity {
@@ -111,6 +105,10 @@ type TreasuryRevenue @entity {
   ottopiaMarketValue: BigDecimal!
   ldoClamAmount: BigDecimal!
   ldoMarketValue: BigDecimal!
+  usdPlusClamAmount: BigDecimal!
+  usdPlusMarketValue: BigDecimal!
+  daiClamAmount: BigDecimal!
+  daiMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
 }

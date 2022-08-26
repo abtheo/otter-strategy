@@ -79,6 +79,9 @@ import {
   MAI_STMATIC_QIDAO_FARM,
   MAI_STMATIC_INVESTMENT_STRATEGY,
   ARRAKIS_MAI_STMATIC_PAIR,
+  USDPLUS_INVESTMENT_STRATEGY,
+  GAINS_DAI_START_BLOCK,
+  GAINS_DAI_INVESTMENT_STRATEGY,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -135,7 +138,7 @@ function getTotalSupply(): BigDecimal {
 
 function getCirculatingSupply(transaction: Transaction, total_supply: BigDecimal): BigDecimal {
   let circ_supply = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromString(CIRCULATING_SUPPLY_CONTRACT_BLOCK))) {
+  if (transaction.blockNumber.gt(CIRCULATING_SUPPLY_CONTRACT_BLOCK)) {
     let circulatingSupply_contract = ClamCirculatingSupply.bind(CIRCULATING_SUPPLY_CONTRACT)
     circ_supply = toDecimal(circulatingSupply_contract.CLAMCirculatingSupply(), 9)
   } else {
@@ -250,6 +253,10 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let maiBalance = toDecimal(maiERC20.balanceOf(TREASURY_ADDRESS), 18)
   let daiBalance = toDecimal(daiERC20.balanceOf(TREASURY_ADDRESS), 18)
+  if (transaction.blockNumber.gt(GAINS_DAI_START_BLOCK)) {
+    let gainsDaiBalance = toDecimal(daiERC20.balanceOf(GAINS_DAI_INVESTMENT_STRATEGY), 18)
+    daiBalance = daiBalance.plus(gainsDaiBalance)
+  }
 
   let wmaticBalance = maticERC20.balanceOf(TREASURY_ADDRESS)
   let wmaticValue = toDecimal(wmaticBalance, 18).times(getwMaticUsdRate())
@@ -269,11 +276,11 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let qiMarketValue = BigDecimal.zero()
   let maiUsdcQiInvestmentValueDecimal = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromString(UNI_MAI_USDC_QI_INVESTMENT_PAIR_BLOCK))) {
+  if (transaction.blockNumber.gt(UNI_MAI_USDC_QI_INVESTMENT_PAIR_BLOCK)) {
     maiUsdcQiInvestmentValueDecimal = getMaiUsdcInvestmentValue()
     qiMarketValue = getQiUsdRate().times(toDecimal(qiERC20.balanceOf(TREASURY_ADDRESS), qiERC20.decimals()))
   }
-  if (transaction.blockNumber.gt(BigInt.fromI32(QI_FARM_CHANGE_BLOCK))) {
+  if (transaction.blockNumber.gt(QI_FARM_CHANGE_BLOCK)) {
     maiUsdcQiInvestmentValueDecimal = maiUsdcQiInvestmentValueDecimal.plus(
       getMaiUsdcInvestmentValueFarmV3(transaction.blockNumber),
     )
@@ -285,14 +292,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   )
 
   let tetuQiMarketValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromString(TETU_QI_START_BLOCK))) {
+  if (transaction.blockNumber.gt(TETU_QI_START_BLOCK)) {
     tetuQiMarketValue = tetuQiMarketValue.plus(
       getTetuQiUsdRate(transaction.blockNumber).times(
         toDecimal(tetuQiERC20.balanceOf(TREASURY_ADDRESS), tetuQiERC20.decimals()),
       ),
     )
   }
-  if (transaction.blockNumber.gt(BigInt.fromString(XTETU_QI_START_BLOCK))) {
+  if (transaction.blockNumber.gt(XTETU_QI_START_BLOCK)) {
     tetuQiMarketValue = tetuQiMarketValue.plus(
       getTetuQiUsdRate(transaction.blockNumber).times(
         toDecimal(xTetuQiERC20.underlyingBalanceWithInvestmentForHolder(TREASURY_ADDRESS), xTetuQiERC20.decimals()),
@@ -301,26 +308,26 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   }
 
   let qiWmaticMarketValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromString(UNI_QI_WMATIC_PAIR_BLOCK))) {
+  if (transaction.blockNumber.gt(UNI_QI_WMATIC_PAIR_BLOCK)) {
     qiWmaticMarketValue = getQiWmaticMarketValue()
   }
   let qiWmaticQiInvestmentMarketValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromString(UNI_QI_WMATIC_INVESTMENT_PAIR_BLOCK))) {
+  if (transaction.blockNumber.gt(UNI_QI_WMATIC_INVESTMENT_PAIR_BLOCK)) {
     qiWmaticQiInvestmentMarketValue = getQiWmaticInvestmentMarketValue()
   }
-  if (transaction.blockNumber.gt(BigInt.fromI32(QI_FARM_CHANGE_BLOCK))) {
+  if (transaction.blockNumber.gt(QI_FARM_CHANGE_BLOCK)) {
     qiWmaticQiInvestmentMarketValue = qiWmaticQiInvestmentMarketValue.plus(
       geQiWmaticInvestmentValueFarmV3(transaction.blockNumber),
     )
   }
 
   let ocQiMarketValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromString(QCQI_START_BLOCK))) {
+  if (transaction.blockNumber.gt(QCQI_START_BLOCK)) {
     ocQiMarketValue = getTreasuryTokenValue(transaction.blockNumber, OCQI_CONTRACT)
   }
 
   let clamUsdPlusRebases = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromI32(DYST_POOL_TRANSITION_BLOCK))) {
+  if (transaction.blockNumber.gt(DYST_POOL_TRANSITION_BLOCK)) {
     let usdPlus = UsdPlus.bind(USDPLUS_ERC20)
     clamUsdPlusRebases = toDecimal(usdPlus.balanceOf(DYSTOPIA_PAIR_USDPLUS_CLAM), 6).minus(
       toDecimal(usdPlus.scaledBalanceOf(DYSTOPIA_PAIR_USDPLUS_CLAM), 15),
@@ -333,9 +340,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let wMaticDystValue = BigDecimal.zero()
   let clamMaiDystValue = BigDecimal.zero()
   let clamUsdplusDystValue = BigDecimal.zero()
-  let usdcMaiDystValue = BigDecimal.zero()
-  let usdcFraxDystValue = BigDecimal.zero()
-  let wMaticPenValue = BigDecimal.zero()
   let dystMarketValue = BigDecimal.zero()
   let veDystMarketValue = BigDecimal.zero()
   let penMarketValue = BigDecimal.zero()
@@ -345,7 +349,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let clamMaiDystLpOwned = BigInt.zero()
   let clamUsdPlusDystLpOwned = BigInt.zero()
-  if (transaction.blockNumber.gt(BigInt.fromI32(DYST_START_BLOCK))) {
+  if (transaction.blockNumber.gt(DYST_START_BLOCK)) {
     dystMarketValue = getTreasuryTokenValue(transaction.blockNumber, DYST_ERC20)
 
     for (let i = 0; i < DYSTOPIA_TRACKED_PAIRS.length; i++) {
@@ -424,19 +428,15 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
     //plus the locked veDyst inside NFT
     let veDystContract = veDyst.bind(DYSTOPIA_veDYST)
-    veDystMarketValue = toDecimal(veDystContract.balanceOfNFT(BigInt.fromString(DYSTOPIA_veDYST_ERC721_ID)), 18).times(
-      getDystUsdRate(),
-    )
+    veDystMarketValue = toDecimal(veDystContract.balanceOfNFT(DYSTOPIA_veDYST_ERC721_ID), 18).times(getDystUsdRate())
   }
 
   //add stablecoin-only half of Dystopia CLAM-X LPs
-  clamMai_MaiOnlyValue = clamMai_MaiOnlyValue.plus(
-    getDystPairHalfReserveUSD(
-      transaction.blockNumber,
-      clamMaiDystLpOwned,
-      DYSTOPIA_PAIR_MAI_CLAM,
-      ReserveToken.TokenZero, //MAI is token0
-    ),
+  let clamMaiDyst_MaiOnlyValue = getDystPairHalfReserveUSD(
+    transaction.blockNumber,
+    clamMaiDystLpOwned,
+    DYSTOPIA_PAIR_MAI_CLAM,
+    ReserveToken.TokenZero, //MAI is token0
   )
 
   let clamUsdPlus_UsdPlusOnlyValue = getDystPairHalfReserveUSD(
@@ -446,7 +446,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     ReserveToken.TokenZero, //USD+ is token0
   )
 
-  if (transaction.blockNumber.gt(BigInt.fromI32(PEN_START_BLOCK))) {
+  if (transaction.blockNumber.gt(PEN_START_BLOCK)) {
     penMarketValue = getTreasuryTokenValue(transaction.blockNumber, PEN_ERC20)
     let penDyst = ERC20.bind(PENDYST_ERC20)
     let penDystStaking = PenDystRewards.bind(PEN_DYST_REWARD_PROXY)
@@ -476,10 +476,15 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   }
 
   let maiStMaticMarketValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(BigInt.fromI32(MAI_STMATIC_BLOCK))) {
+  if (transaction.blockNumber.gt(MAI_STMATIC_BLOCK)) {
     let qiFarm = QiFarmV3.bind(MAI_STMATIC_QIDAO_FARM)
     let maiStMaticLPamount = qiFarm.deposited(BigInt.zero(), MAI_STMATIC_INVESTMENT_STRATEGY)
     maiStMaticMarketValue = getArrakisPairUSD(transaction.blockNumber, maiStMaticLPamount, ARRAKIS_MAI_STMATIC_PAIR)
+  }
+
+  let usdPlusMarketValue = BigDecimal.zero()
+  if (transaction.blockNumber.gt(MAI_STMATIC_BLOCK)) {
+    usdPlusMarketValue = toDecimal(ERC20.bind(USDPLUS_ERC20).balanceOf(USDPLUS_INVESTMENT_STRATEGY), 6)
   }
 
   let stableValueDecimal = maiBalance
@@ -488,21 +493,25 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(maiUsdcMarketValue)
     .plus(usdcTusdValue)
     .plus(usdplusUsdcValue)
+    .plus(usdPlusMarketValue)
 
-  let lpValue = clamMai_value
-    .plus(qiWmaticMarketValue)
+  let lpValue = qiWmaticMarketValue
     .plus(qiWmaticQiInvestmentMarketValue)
+    .plus(maiStMaticMarketValue)
     //dystopia
     .plus(qiTetuQiValue)
     .plus(wMaticDystValue)
-    .plus(usdcMaiDystValue)
-    .plus(usdcFraxDystValue)
-    .plus(wMaticPenValue)
     .plus(usdplusStMaticValue)
-    .plus(maiStMaticMarketValue)
 
-  let lpValue_noClam = lpValue.plus(clamMai_MaiOnlyValue).plus(clamUsdPlus_UsdPlusOnlyValue)
-  let lpValue_Clam = lpValue.plus(clamMai_value).plus(clamUsdplusDystValue)
+  let lpValue_noClam = lpValue
+    .plus(clamMai_MaiOnlyValue)
+    .plus(clamUsdPlus_UsdPlusOnlyValue)
+    .plus(clamMaiDyst_MaiOnlyValue)
+
+  let lpValue_Clam = lpValue
+    .plus(clamMai_value)
+    .plus(clamUsdplusDystValue)
+    .plus(clamMaiDystValue)
 
   let tokenValues = wmaticValue
     .plus(qiMarketValue)
@@ -515,7 +524,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(penDystMarketValue)
 
   let mv = stableValueDecimal.plus(lpValue_Clam).plus(tokenValues)
-
   let mv_noClam = stableValueDecimal.plus(lpValue_noClam).plus(tokenValues)
 
   protocolMetric.treasuryMarketValue = mv
@@ -545,6 +553,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryPenDystMarketValue = penDystMarketValue
   protocolMetric.treasuryMaiStMaticMarketValue = maiStMaticMarketValue
   protocolMetric.totalClamUsdPlusRebaseValue = clamUsdPlusRebases
+  protocolMetric.treasuryUsdPlusMarketValue = usdPlusMarketValue
 
   return protocolMetric
 }
@@ -622,7 +631,7 @@ export function updateGovernanceMetrics(transaction: Transaction): void {
   percentVlPenOwned = percentVlPenOwned.times(BigDecimal.fromString('100'))
 
   //QiDAO veDYST votes
-  let qiDaoVeDystAmt = toDecimal(veDyst.bind(DYSTOPIA_veDYST).balanceOfNFT(BigInt.fromI32(QIDAO_veDYST_ERC721_ID)), 18)
+  let qiDaoVeDystAmt = toDecimal(veDyst.bind(DYSTOPIA_veDYST).balanceOfNFT(QIDAO_veDYST_ERC721_ID), 18)
   // funnel chart
   governanceMetric.dystMarketCap = toDecimal(ERC20.bind(DYST_ERC20).totalSupply(), 18).times(getDystUsdRate())
   governanceMetric.veDystMarketCap = veDystTotalSupply.times(getDystUsdRate())

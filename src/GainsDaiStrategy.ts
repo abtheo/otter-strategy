@@ -1,11 +1,9 @@
-import { BigDecimal } from '@graphprotocol/graph-ts'
-import { ClaimReward as ClaimRewardEvent } from '../generated/MaiUsdcStrategy/MaiUsdcStrategy'
+import { ClaimReward as ClaimRewardEvent } from '../generated/GainsDaiStrategy/GainsDaiStrategy'
 import { ClaimReward } from '../generated/schema'
-import { QI_ERC20 } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
-import { getQiUsdRate } from './utils/Price'
 import { loadOrCreateTransaction } from './utils/Transactions'
-import { updateTreasuryRevenueClaimQiReward } from './utils/TreasuryRevenue'
+import { updateTreasuryRevenueClaimDaiReward } from './utils/TreasuryRevenue'
+import { DAI_ERC20 } from './utils/Constants'
 
 export function handleClaimReward(event: ClaimRewardEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
@@ -13,9 +11,9 @@ export function handleClaimReward(event: ClaimRewardEvent): void {
   claim.transaction = transaction.id
   claim.timestamp = transaction.timestamp
   claim.amountUsd = toDecimal(event.params.amount, 6) //Claim in USDC (6 decimals)
-  claim.amountToken = toDecimal(event.params.amount, 6).div(getQiUsdRate())
-  claim.token = QI_ERC20
+  claim.amountToken = toDecimal(event.params.amount, 18)
+  claim.token = DAI_ERC20
   claim.save()
 
-  updateTreasuryRevenueClaimQiReward(event.block.number, claim)
+  updateTreasuryRevenueClaimDaiReward(event.block.number, claim)
 }

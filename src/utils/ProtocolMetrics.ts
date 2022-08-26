@@ -1,5 +1,6 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { ClamCirculatingSupply } from '../../generated/OtterClamERC20V2/ClamCirculatingSupply'
+import { GainsDaiVault } from '../../generated/OtterClamERC20V2/GainsDaiVault'
 import { QiFarmV3 } from '../../generated/OtterClamERC20V2/QiFarmV3'
 import { xTetuQi } from '../../generated/OtterClamERC20V2/xTetuQi'
 import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
@@ -82,6 +83,7 @@ import {
   USDPLUS_INVESTMENT_STRATEGY,
   GAINS_DAI_START_BLOCK,
   GAINS_DAI_INVESTMENT_STRATEGY,
+  GAINS_DAI_VAULT,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -254,7 +256,9 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let maiBalance = toDecimal(maiERC20.balanceOf(TREASURY_ADDRESS), 18)
   let daiBalance = toDecimal(daiERC20.balanceOf(TREASURY_ADDRESS), 18)
   if (transaction.blockNumber.gt(GAINS_DAI_START_BLOCK)) {
-    let gainsDaiBalance = toDecimal(daiERC20.balanceOf(GAINS_DAI_INVESTMENT_STRATEGY), 18)
+    let gainsDaiVault = GainsDaiVault.bind(GAINS_DAI_VAULT)
+    // values: daiDeposited uint256, maxDaiDeposited uint256, withdrawBlock uint256, debtDai uint256, debtMatic uint256
+    let gainsDaiBalance = toDecimal(gainsDaiVault.users(GAINS_DAI_INVESTMENT_STRATEGY).value0, 18)
     daiBalance = daiBalance.plus(gainsDaiBalance)
   }
 

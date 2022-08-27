@@ -1,0 +1,67 @@
+[
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "users",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "daiDeposited",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "maxDaiDeposited",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "withdrawBlock",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "debtDai",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "debtMatic",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "withdrawDai",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "withdrawTimelock",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]

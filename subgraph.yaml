@@ -722,6 +722,8 @@ dataSources:
         - name: PearlBank
           file: ./abis/PearlBank.json
         #=== protocolMetrics ===
+        - name: GainsDaiVault
+          file: ./abis/GainsDaiVault.json
         - name: UsdPlus
           file: ./abis/UsdPlus.json
         - name: OtterClamERC20V2
@@ -894,6 +896,8 @@ dataSources:
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
         #=== protocolMetrics ===
+        - name: GainsDaiVault
+          file: ./abis/GainsDaiVault.json
         - name: UsdPlus
           file: ./abis/UsdPlus.json
         - name: OtterClamERC20V2

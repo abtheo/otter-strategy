@@ -63,7 +63,7 @@ type ProtocolMetric @entity {
   treasuryVlPenMarketValue: BigDecimal!
   treasuryPenDystMarketValue: BigDecimal!
   treasuryMaiStMaticMarketValue: BigDecimal!
-
+  treasuryPenroseHedgedMaticMarketValue: BigDecimal!
   totalBurnedClam: BigDecimal!
   totalBurnedClamMarketValue: BigDecimal!
   totalClamUsdPlusRebaseValue: BigDecimal!

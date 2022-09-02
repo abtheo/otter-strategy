@@ -84,6 +84,8 @@ import {
   GAINS_DAI_START_BLOCK,
   GAINS_DAI_INVESTMENT_STRATEGY,
   GAINS_DAI_VAULT,
+  PENROSE_HEDGED_MATIC_STRATEGY,
+  PENROSE_HEDGE_START_BLOCK,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -105,6 +107,7 @@ import {
 import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
 import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
 import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
+import { PenroseHedgeLpStrategy } from '../../generated/PenroseHedgeLpStrategy/PenroseHedgeLpStrategy'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -491,6 +494,11 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     usdPlusMarketValue = toDecimal(ERC20.bind(USDPLUS_ERC20).balanceOf(USDPLUS_INVESTMENT_STRATEGY), 6)
   }
 
+  let penroseHedgedLpValue = BigDecimal.zero()
+  if (transaction.blockNumber.gt(PENROSE_HEDGE_START_BLOCK)) {
+    penroseHedgedLpValue = toDecimal(PenroseHedgeLpStrategy.bind(PENROSE_HEDGED_MATIC_STRATEGY).netAssetValue(), 6)
+  }
+
   let stableValueDecimal = maiBalance
     .plus(daiBalance)
     .plus(maiUsdcQiInvestmentValueDecimal)
@@ -558,6 +566,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryMaiStMaticMarketValue = maiStMaticMarketValue
   protocolMetric.totalClamUsdPlusRebaseValue = clamUsdPlusRebases
   protocolMetric.treasuryUsdPlusMarketValue = usdPlusMarketValue
+  protocolMetric.treasuryPenroseHedgedMaticMarketValue = penroseHedgedLpValue
 
   return protocolMetric
 }

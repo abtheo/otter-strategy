@@ -514,6 +514,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(qiTetuQiValue)
     .plus(wMaticDystValue)
     .plus(usdplusStMaticValue)
+    //ets
+    .plus(penroseHedgedLpValue)
 
   let lpValue_noClam = lpValue
     .plus(clamMai_MaiOnlyValue)

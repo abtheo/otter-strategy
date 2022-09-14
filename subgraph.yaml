@@ -703,7 +703,7 @@ dataSources:
     source:
       address: '0x397b681bd7d9e8e10a577574586e2ceeb475793c'
       abi: KyberswapMaticStMaticHedgedLpStrategy
-      startBlock: 32300283 
+      startBlock: 33084754 
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -734,8 +734,8 @@ dataSources:
         - name: ArrakisVault
           file: ./abis/ArrakisVault.json
       eventHandlers:
-        - event: ClaimReward(uint256)
-          handler: handleClaimReward
+        - event: ClaimRewardToken(indexed address,uint256,uint256)
+          handler: handleClaimRewardToken
       file: ./src/KyberswapMaticStMaticHedgedLpStrategy.ts
 
   - kind: ethereum/contract

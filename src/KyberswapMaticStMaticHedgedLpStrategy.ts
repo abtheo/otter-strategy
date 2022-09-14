@@ -6,7 +6,7 @@ import { toDecimal } from './utils/Decimals'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateTreasuryRevenueClaimKncReward, updateTreasuryRevenueClaimLdoReward } from './utils/TreasuryRevenue'
 
-export function handleClaimReward(event: ClaimRewardTokenEvent): void {
+export function handleClaimRewardToken(event: ClaimRewardTokenEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
   let claim = new ClaimReward(transaction.id)
   claim.transaction = transaction.id

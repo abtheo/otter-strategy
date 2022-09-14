@@ -86,6 +86,8 @@ import {
   GAINS_DAI_VAULT,
   PENROSE_HEDGED_MATIC_STRATEGY,
   PENROSE_HEDGE_START_BLOCK,
+  KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY,
+  KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -107,7 +109,8 @@ import {
 import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
 import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
 import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
-import { PenroseHedgeLpStrategy } from '../../generated/PenroseHedgeLpStrategy/PenroseHedgeLpStrategy'
+import { PenroseHedgeLpStrategy } from '../../generated/OtterClamERC20V2/PenroseHedgeLpStrategy'
+import { KyberswapMaticStMaticHedgedLpStrategy } from '../../generated/OtterClamERC20V2/KyberswapMaticStMaticHedgedLpStrategy'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -499,6 +502,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     penroseHedgedLpValue = toDecimal(PenroseHedgeLpStrategy.bind(PENROSE_HEDGED_MATIC_STRATEGY).netAssetValue(), 6)
   }
 
+  let kyberHedgedMaticStMaticValue = BigDecimal.zero()
+  if (transaction.blockNumber.gt(KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK)) {
+    kyberHedgedMaticStMaticValue = toDecimal(
+      KyberswapMaticStMaticHedgedLpStrategy.bind(KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY).netAssetValue(),
+      6,
+    )
+  }
+
   let stableValueDecimal = maiBalance
     .plus(daiBalance)
     .plus(maiUsdcQiInvestmentValueDecimal)
@@ -516,6 +527,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     .plus(usdplusStMaticValue)
     //ets
     .plus(penroseHedgedLpValue)
+    .plus(kyberHedgedMaticStMaticValue)
 
   let lpValue_noClam = lpValue
     .plus(clamMai_MaiOnlyValue)
@@ -569,6 +581,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.totalClamUsdPlusRebaseValue = clamUsdPlusRebases
   protocolMetric.treasuryUsdPlusMarketValue = usdPlusMarketValue
   protocolMetric.treasuryPenroseHedgedMaticMarketValue = penroseHedgedLpValue
+  protocolMetric.treasuryKyberswapMaticStMaticHedgedMarketValue = kyberHedgedMaticStMaticValue
 
   return protocolMetric
 }

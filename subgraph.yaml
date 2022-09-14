@@ -804,6 +804,8 @@ dataSources:
         - name: PearlBank
           file: ./abis/PearlBank.json
         #=== protocolMetrics ===
+        - name: KyberswapMaticStMaticHedgedLpStrategy
+          file: ./abis/KyberswapMaticStMaticHedgedLpStrategy.json
         - name: PenroseHedgeLpStrategy
           file: ./abis/PenroseHedgeLpStrategy.json
         - name: GainsDaiVault
@@ -980,6 +982,8 @@ dataSources:
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
         #=== protocolMetrics ===
+        - name: KyberswapMaticStMaticHedgedLpStrategy
+          file: ./abis/KyberswapMaticStMaticHedgedLpStrategy.json
         - name: PenroseHedgeLpStrategy
           file: ./abis/PenroseHedgeLpStrategy.json
         - name: GainsDaiVault

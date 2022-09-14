@@ -26,6 +26,7 @@ export const TETU_QI_ERC20 = Address.fromString('0x4cd44ced63d9a6fef595f6ad3f7ce
 export const TUSD_ERC20 = Address.fromString('0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756')
 export const STMATIC_ERC20 = Address.fromString('0x3A58a54C066FdC0f2D55FC9C89F0415C92eBf3C4')
 export const LDO_ERC20 = Address.fromString('0xc3c7d422809852031b44ab29eec9f1eff2a58756')
+export const KNC_ERC20 = Address.fromString('0x1C954E8fe737F99f68Fa1CCda3e51ebDB291948C')
 
 export const OCQI_CONTRACT = Address.fromString('0x0906ee253B2cD6737A3CD3838490Cb0b90fD68be')
 export const QCQI_START_BLOCK = BigInt.fromI32(25443072)

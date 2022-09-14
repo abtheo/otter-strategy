@@ -399,6 +399,10 @@ export class ProtocolMetric extends Entity {
       "treasuryPenroseHedgedMaticMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
+    this.set(
+      "treasuryKyberswapMaticStMaticHedgedMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
     this.set("totalBurnedClam", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalBurnedClamMarketValue",
@@ -778,6 +782,18 @@ export class ProtocolMetric extends Entity {
     );
   }
 
+  get treasuryKyberswapMaticStMaticHedgedMarketValue(): BigDecimal {
+    let value = this.get("treasuryKyberswapMaticStMaticHedgedMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryKyberswapMaticStMaticHedgedMarketValue(value: BigDecimal) {
+    this.set(
+      "treasuryKyberswapMaticStMaticHedgedMarketValue",
+      Value.fromBigDecimal(value)
+    );
+  }
+
   get totalBurnedClam(): BigDecimal {
     let value = this.get("totalBurnedClam");
     return value!.toBigDecimal();
@@ -1030,6 +1046,8 @@ export class TreasuryRevenue extends Entity {
     this.set("usdPlusMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("daiClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("daiMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("kncClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("kncMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("totalRevenueClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalRevenueMarketValue",
@@ -1214,6 +1232,24 @@ export class TreasuryRevenue extends Entity {
 
   set daiMarketValue(value: BigDecimal) {
     this.set("daiMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get kncClamAmount(): BigDecimal {
+    let value = this.get("kncClamAmount");
+    return value!.toBigDecimal();
+  }
+
+  set kncClamAmount(value: BigDecimal) {
+    this.set("kncClamAmount", Value.fromBigDecimal(value));
+  }
+
+  get kncMarketValue(): BigDecimal {
+    let value = this.get("kncMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set kncMarketValue(value: BigDecimal) {
+    this.set("kncMarketValue", Value.fromBigDecimal(value));
   }
 
   get totalRevenueClamAmount(): BigDecimal {

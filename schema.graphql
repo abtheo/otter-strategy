@@ -64,6 +64,7 @@ type ProtocolMetric @entity {
   treasuryPenDystMarketValue: BigDecimal!
   treasuryMaiStMaticMarketValue: BigDecimal!
   treasuryPenroseHedgedMaticMarketValue: BigDecimal!
+  treasuryKyberswapMaticStMaticHedgedMarketValue: BigDecimal!
   totalBurnedClam: BigDecimal!
   totalBurnedClamMarketValue: BigDecimal!
   totalClamUsdPlusRebaseValue: BigDecimal!
@@ -109,6 +110,8 @@ type TreasuryRevenue @entity {
   usdPlusMarketValue: BigDecimal!
   daiClamAmount: BigDecimal!
   daiMarketValue: BigDecimal!
+  kncClamAmount: BigDecimal!
+  kncMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
 }

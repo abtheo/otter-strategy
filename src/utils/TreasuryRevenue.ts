@@ -25,6 +25,7 @@ export function setTreasuryRevenueTotals(revenue: TreasuryRevenue): TreasuryReve
     .plus(revenue.ldoClamAmount)
     .plus(revenue.usdPlusClamAmount)
     .plus(revenue.daiClamAmount)
+    .plus(revenue.kncClamAmount)
 
   revenue.totalRevenueMarketValue = revenue.qiMarketValue
     .plus(revenue.ottopiaMarketValue)
@@ -34,6 +35,7 @@ export function setTreasuryRevenueTotals(revenue: TreasuryRevenue): TreasuryReve
     .plus(revenue.ldoMarketValue)
     .plus(revenue.usdPlusMarketValue)
     .plus(revenue.daiMarketValue)
+    .plus(revenue.kncMarketValue)
 
   return revenue
 }
@@ -134,6 +136,24 @@ export function updateTreasuryRevenueClaimLdoReward(block: BigInt, claim: ClaimR
   treasuryRevenue.save()
 }
 
+export function updateTreasuryRevenueClaimKncReward(block: BigInt, claim: ClaimReward): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(claim.timestamp)
+
+  let clamAmount = claim.amountUsd.div(getClamUsdRate(block))
+  log.debug('ClaimRewardKnc event, txid: {}, kncMarketValue {}, clamAmount {}', [
+    claim.id,
+    claim.amountUsd.toString(),
+    clamAmount.toString(),
+  ])
+
+  //Aggregate over day with +=
+  treasuryRevenue.kncClamAmount = treasuryRevenue.kncClamAmount.plus(clamAmount)
+  treasuryRevenue.kncMarketValue = treasuryRevenue.kncMarketValue.plus(claim.amountUsd)
+
+  treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
+
+  treasuryRevenue.save()
+}
 export function updateTreasuryRevenueQiTransfer(block: BigInt, transfer: Transfer): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(transfer.timestamp)
 
@@ -153,6 +173,7 @@ export function updateTreasuryRevenueQiTransfer(block: BigInt, transfer: Transfe
 
   treasuryRevenue.save()
 }
+
 export function updateTreasuryRevenueDystRewardPaid(transaction: Transaction, amount: BigInt): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(transaction.timestamp)
 

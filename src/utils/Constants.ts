@@ -26,6 +26,7 @@ export const TETU_QI_ERC20 = Address.fromString('0x4cd44ced63d9a6fef595f6ad3f7ce
 export const TUSD_ERC20 = Address.fromString('0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756')
 export const STMATIC_ERC20 = Address.fromString('0x3A58a54C066FdC0f2D55FC9C89F0415C92eBf3C4')
 export const LDO_ERC20 = Address.fromString('0xc3c7d422809852031b44ab29eec9f1eff2a58756')
+export const KNC_ERC20 = Address.fromString('0x1C954E8fe737F99f68Fa1CCda3e51ebDB291948C')
 
 export const OCQI_CONTRACT = Address.fromString('0x0906ee253B2cD6737A3CD3838490Cb0b90fD68be')
 export const QCQI_START_BLOCK = BigInt.fromI32(25443072)
@@ -72,6 +73,8 @@ export const CIRCULATING_SUPPLY_CONTRACT_BLOCK = BigInt.fromI32(21431527)
 
 export const STAKING_CONTRACT = Address.fromString('0xC8B0243F350AA5F8B979b228fAe522DAFC61221a')
 export const STAKING_DISTRIBUTOR_CONTRACT = Address.fromString('0x0dd015889df6f50d39e9d7a52711d0b86e43fc62')
+
+export const GOVERNANCE_START_BLOCK = BigInt.fromI32(29400000)
 
 export const OTTER_LAKE_ADDRESS = Address.fromString('0xc67aBdA25D0421FE9Dc1afd64183b179A426a256')
 export const PEARL_CHEST_BLOCK = BigInt.fromI32(23569724)
@@ -165,3 +168,6 @@ export const GAINS_DAI_START_BLOCK = BigInt.fromI32(32300283)
 
 export const PENROSE_HEDGED_MATIC_STRATEGY = Address.fromString('0xc8a2cbd3dda4ea728546cef1e7cadfe9755714e9')
 export const PENROSE_HEDGE_START_BLOCK = BigInt.fromI32(32513909)
+
+export const KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY = Address.fromString('0xb00029d883E5EEA2f71dFBCE8941B15F4ec36120')
+export const KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK = BigInt.fromI32(33084754)

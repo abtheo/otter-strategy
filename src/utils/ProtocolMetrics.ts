@@ -88,6 +88,7 @@ import {
   PENROSE_HEDGE_START_BLOCK,
   KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY,
   KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK,
+  GOVERNANCE_START_BLOCK,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -616,7 +617,7 @@ export function updateGovernanceMetrics(transaction: Transaction): void {
   but there has been activity during June 2022, 
   so fingers crossed this will be fixed before we need a function of that signature.
   */
-  if (transaction.blockNumber.lt(BigInt.fromString('29400000'))) return
+  if (transaction.blockNumber.lt(GOVERNANCE_START_BLOCK)) return
 
   let governanceMetric = loadOrCreateGovernanceMetric(transaction.timestamp)
   let voteSingleton = loadOrCreateVotePositionSingleton()

@@ -504,10 +504,10 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let kyberHedgedMaticStMaticValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK)) {
-    kyberHedgedMaticStMaticValue = toDecimal(
-      KyberswapMaticStMaticHedgedLpStrategy.bind(KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY).netAssetValue(),
-      6,
-    )
+    let tryNAV = KyberswapMaticStMaticHedgedLpStrategy.bind(KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY).try_netAssetValue()
+    let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
+
+    kyberHedgedMaticStMaticValue = toDecimal(netAssetVal, 6)
   }
 
   let stableValueDecimal = maiBalance

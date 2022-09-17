@@ -81,7 +81,6 @@ import {
   MAI_STMATIC_INVESTMENT_STRATEGY,
   ARRAKIS_MAI_STMATIC_PAIR,
   USDPLUS_INVESTMENT_STRATEGY,
-  GAINS_DAI_START_BLOCK,
   GAINS_DAI_INVESTMENT_STRATEGY,
   GAINS_DAI_VAULT,
   PENROSE_HEDGED_MATIC_STRATEGY,
@@ -112,6 +111,7 @@ import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
 import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
 import { PenroseHedgeLpStrategy } from '../../generated/OtterClamERC20V2/PenroseHedgeLpStrategy'
 import { KyberswapMaticStMaticHedgedLpStrategy } from '../../generated/OtterClamERC20V2/KyberswapMaticStMaticHedgedLpStrategy'
+import { GainsDaiInvestment } from '../Investments/GainsDai'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -262,12 +262,10 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let maiBalance = toDecimal(maiERC20.balanceOf(TREASURY_ADDRESS), 18)
   let daiBalance = toDecimal(daiERC20.balanceOf(TREASURY_ADDRESS), 18)
-  if (transaction.blockNumber.gt(GAINS_DAI_START_BLOCK)) {
-    let gainsDaiVault = GainsDaiVault.bind(GAINS_DAI_VAULT)
-    // values: daiDeposited uint256, maxDaiDeposited uint256, withdrawBlock uint256, debtDai uint256, debtMatic uint256
-    let gainsDaiBalance = toDecimal(gainsDaiVault.users(GAINS_DAI_INVESTMENT_STRATEGY).value0, 18)
-    daiBalance = daiBalance.plus(gainsDaiBalance)
-  }
+
+  // Gains DAI
+  let gainsDai = new GainsDaiInvestment(transaction)
+  daiBalance = daiBalance.plus(gainsDai.netAssetValue(transaction.blockNumber))
 
   let wmaticBalance = maticERC20.balanceOf(TREASURY_ADDRESS)
   let wmaticValue = toDecimal(wmaticBalance, 18).times(getwMaticUsdRate())

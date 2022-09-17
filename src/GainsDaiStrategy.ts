@@ -4,6 +4,7 @@ import { toDecimal } from './utils/Decimals'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateTreasuryRevenueClaimDaiReward } from './utils/TreasuryRevenue'
 import { DAI_ERC20 } from './utils/Constants'
+import { GainsDaiInvestment } from './Investments/GainsDai'
 
 export function handleClaimReward(event: ClaimRewardEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
@@ -16,4 +17,7 @@ export function handleClaimReward(event: ClaimRewardEvent): void {
   claim.save()
 
   updateTreasuryRevenueClaimDaiReward(event.block.number, claim)
+
+  let investment = new GainsDaiInvestment(transaction)
+  investment.addRevenue(claim)
 }

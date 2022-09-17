@@ -164,7 +164,6 @@ export const USDPLUS_INVESTMENT_STRATEGY = Address.fromString('0x32470D6b534e734
 
 export const GAINS_DAI_INVESTMENT_STRATEGY = Address.fromString('0x397b681bD7D9E8E10a577574586e2cEeb475793C')
 export const GAINS_DAI_VAULT = Address.fromString('0xd7052EC0Fe1fe25b20B7D65F6f3d490fCE58804f')
-export const GAINS_DAI_START_BLOCK = BigInt.fromI32(32300283)
 
 export const PENROSE_HEDGED_MATIC_STRATEGY = Address.fromString('0xc8a2cbd3dda4ea728546cef1e7cadfe9755714e9')
 export const PENROSE_HEDGE_START_BLOCK = BigInt.fromI32(32513909)

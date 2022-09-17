@@ -82,6 +82,7 @@ type Harvest @entity {
   timestamp: BigInt!
   amount: BigInt!
 }
+
 type ClaimReward @entity {
   id: ID!
   transaction: Transaction!
@@ -89,6 +90,7 @@ type ClaimReward @entity {
   amountUsd: BigDecimal!
   amountToken: BigDecimal!
   token: Bytes!
+  lastBlock: BigInt!
 }
 
 type TreasuryRevenue @entity {
@@ -189,4 +191,18 @@ type StakedBalance @entity {
 type AllStakedBalance @entity {
   id: ID!
   balances: [StakedBalance!]!
+}
+
+type Investment @entity {
+  id: ID!
+  timestamp: BigInt!
+  netAssetValue: BigDecimal!
+  # TODO: Enums?
+  protocol: String!
+  strategy: String!
+
+  harvestValue: BigDecimal!
+  rewardRate: BigDecimal!
+  apr: BigDecimal!
+  apy: BigDecimal!
 }

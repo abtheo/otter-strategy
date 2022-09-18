@@ -88,6 +88,7 @@ import {
   KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY,
   KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK,
   GOVERNANCE_START_BLOCK,
+  GAINS_DAI_START_BLOCK,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -264,8 +265,10 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let daiBalance = toDecimal(daiERC20.balanceOf(TREASURY_ADDRESS), 18)
 
   // Gains DAI
-  let gainsDai = new GainsDaiInvestment(transaction)
-  daiBalance = daiBalance.plus(gainsDai.netAssetValue(transaction.blockNumber))
+  if (transaction.blockNumber.gt(GAINS_DAI_START_BLOCK)) {
+    let gainsDai = new GainsDaiInvestment(transaction)
+    daiBalance = daiBalance.plus(gainsDai.netAssetValue(transaction.blockNumber))
+  }
 
   let wmaticBalance = maticERC20.balanceOf(TREASURY_ADDRESS)
   let wmaticValue = toDecimal(wmaticBalance, 18).times(getwMaticUsdRate())

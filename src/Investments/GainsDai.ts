@@ -36,7 +36,7 @@ export class GainsDaiInvestment implements InvestmentInterface {
     this.investment.harvestValue = dayTotal
 
     let rewardRate = claim.amountUsd.div(this.netAssetValue(claim.timestamp))
-    this.investment.harvestRewardRate = rewardRate
+    this.investment.rewardRate = rewardRate
 
     // (payout*365 / stakedValue) * 100% = APR%
     this.investment.apr = rewardRate.times(BigDecimal.fromString('365')).times(BigDecimal.fromString('100'))

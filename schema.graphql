@@ -204,5 +204,4 @@ type Investment @entity {
   harvestValue: BigDecimal!
   rewardRate: BigDecimal!
   apr: BigDecimal!
-  apy: BigDecimal!
 }

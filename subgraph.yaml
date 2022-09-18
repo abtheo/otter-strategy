@@ -675,6 +675,8 @@ dataSources:
       abis:
         - name: GainsDaiStrategy
           file: ./abis/GainsDaiStrategy.json
+        - name: GainsDaiVault
+          file: ./abis/GainsDaiVault.json
         #====== getPrice() required contracts======
         - name: ERC20
           file: ./abis/ERC20.json

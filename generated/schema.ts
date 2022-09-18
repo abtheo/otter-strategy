@@ -1968,9 +1968,8 @@ export class Investment extends Entity {
     this.set("protocol", Value.fromString(""));
     this.set("strategy", Value.fromString(""));
     this.set("harvestValue", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("harvestRewardRate", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("rewardRate", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("apr", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("apy", Value.fromBigDecimal(BigDecimal.zero()));
   }
 
   save(): void {
@@ -2044,13 +2043,13 @@ export class Investment extends Entity {
     this.set("harvestValue", Value.fromBigDecimal(value));
   }
 
-  get harvestRewardRate(): BigDecimal {
-    let value = this.get("harvestRewardRate");
+  get rewardRate(): BigDecimal {
+    let value = this.get("rewardRate");
     return value!.toBigDecimal();
   }
 
-  set harvestRewardRate(value: BigDecimal) {
-    this.set("harvestRewardRate", Value.fromBigDecimal(value));
+  set rewardRate(value: BigDecimal) {
+    this.set("rewardRate", Value.fromBigDecimal(value));
   }
 
   get apr(): BigDecimal {
@@ -2060,14 +2059,5 @@ export class Investment extends Entity {
 
   set apr(value: BigDecimal) {
     this.set("apr", Value.fromBigDecimal(value));
-  }
-
-  get apy(): BigDecimal {
-    let value = this.get("apy");
-    return value!.toBigDecimal();
-  }
-
-  set apy(value: BigDecimal) {
-    this.set("apy", Value.fromBigDecimal(value));
   }
 }

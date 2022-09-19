@@ -81,14 +81,7 @@ import {
   MAI_STMATIC_INVESTMENT_STRATEGY,
   ARRAKIS_MAI_STMATIC_PAIR,
   USDPLUS_INVESTMENT_STRATEGY,
-  GAINS_DAI_INVESTMENT_STRATEGY,
-  GAINS_DAI_VAULT,
-  PENROSE_HEDGED_MATIC_STRATEGY,
-  PENROSE_HEDGE_START_BLOCK,
-  KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY,
-  KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK,
   GOVERNANCE_START_BLOCK,
-  GAINS_DAI_START_BLOCK,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -110,10 +103,9 @@ import {
 import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
 import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
 import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
-import { PenroseHedgeLpStrategy } from '../../generated/OtterClamERC20V2/PenroseHedgeLpStrategy'
-import { KyberswapMaticStMaticHedgedLpStrategy } from '../../generated/OtterClamERC20V2/KyberswapMaticStMaticHedgedLpStrategy'
 import { GainsDaiInvestment } from '../Investments/GainsDai'
 import { PenroseHedgedMaticUsdcInvestment } from '../Investments/PenroseHedgedMaticUsdc'
+import { KyberHedgedMaticStMaticInvestment } from '../Investments/KyberHedgedMaticStMatic'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -500,13 +492,9 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let penroseHedgedLpValue = new PenroseHedgedMaticUsdcInvestment(transaction).netAssetValue(transaction.blockNumber)
 
-  let kyberHedgedMaticStMaticValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK)) {
-    let tryNAV = KyberswapMaticStMaticHedgedLpStrategy.bind(KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY).try_netAssetValue()
-    let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
-
-    kyberHedgedMaticStMaticValue = toDecimal(netAssetVal, 6)
-  }
+  let kyberHedgedMaticStMaticValue = new KyberHedgedMaticStMaticInvestment(transaction).netAssetValue(
+    transaction.blockNumber,
+  )
 
   let stableValueDecimal = maiBalance
     .plus(daiBalance)

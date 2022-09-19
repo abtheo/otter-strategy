@@ -1,15 +1,15 @@
 import { Investment, ClaimReward, Transaction } from '../../generated/schema'
 import { toDecimal } from '../utils/Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { PENROSE_HEDGED_MATIC_STRATEGY } from '../utils/Constants'
+import { KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY } from '../utils/Constants'
 import { InvestmentInterface, loadOrCreateInvestment } from '.'
-import { PenroseHedgeLpStrategy } from '../../generated/OtterClamERC20V2/PenroseHedgeLpStrategy'
+import { KyberswapMaticStMaticHedgedLpStrategy } from '../../generated/KyberswapMaticStMaticHedgedLpStrategy/KyberswapMaticStMaticHedgedLpStrategy'
 
-export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
+export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
   public investment!: Investment
-  private readonly strategy: string = 'Hedged MATIC/USDC'
-  private readonly protocol: string = 'Penrose'
-  private readonly startBlock: BigInt = BigInt.fromI32(32513909)
+  private readonly strategy: string = 'Hedged MATIC/stMATIC'
+  private readonly protocol: string = 'Kyberswap'
+  private readonly startBlock: BigInt = BigInt.fromI32(33084754)
 
   constructor(transaction: Transaction) {
     let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
@@ -21,7 +21,12 @@ export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
 
   netAssetValue(block: BigInt): BigDecimal {
     if (block.gt(this.startBlock)) {
-      return toDecimal(PenroseHedgeLpStrategy.bind(PENROSE_HEDGED_MATIC_STRATEGY).netAssetValue(), 6)
+      let tryNAV = KyberswapMaticStMaticHedgedLpStrategy.bind(
+        KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY,
+      ).try_netAssetValue()
+      let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
+
+      return toDecimal(netAssetVal, 6)
     }
     return BigDecimal.zero()
   }

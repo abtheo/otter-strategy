@@ -18,15 +18,6 @@ type Transfer @entity {
   value: BigInt! # uint256
 }
 
-type Buyback @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  token: Bytes! # address
-  tokenAmount: BigInt! # uint256
-  clamAmount: BigInt! # uint256
-}
-
 type ProtocolMetric @entity {
   id: ID!
   timestamp: BigInt!
@@ -197,11 +188,12 @@ type Investment @entity {
   id: ID!
   timestamp: BigInt!
   netAssetValue: BigDecimal!
-  # TODO: Enums?
   protocol: String!
   strategy: String!
 
   harvestValue: BigDecimal!
   rewardRate: BigDecimal!
   apr: BigDecimal!
+
+  rewardTokens: [ClaimReward!]!
 }

@@ -1,15 +1,16 @@
 import { Investment, ClaimReward, Transaction } from '../../generated/schema'
 import { toDecimal } from '../utils/Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { GAINS_DAI_INVESTMENT_STRATEGY, GAINS_DAI_VAULT } from '../utils/Constants'
+import { GAINS_DAI_INVESTMENT_STRATEGY, GAINS_DAI_VAULT, PENROSE_HEDGED_MATIC_STRATEGY } from '../utils/Constants'
 import { GainsDaiVault } from '../../generated/OtterClamERC20V2/GainsDaiVault'
 import { InvestmentInterface, loadOrCreateInvestment } from '.'
+import { PenroseHedgeLpStrategy } from '../../generated/OtterClamERC20V2/PenroseHedgeLpStrategy'
 
-export class GainsDaiInvestment implements InvestmentInterface {
+export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
   public investment!: Investment
-  private readonly strategy: string = 'DAI Vault'
-  private readonly protocol: string = 'Gains'
-  private readonly startBlock: BigInt = BigInt.fromI32(32300283)
+  private readonly strategy: string = 'Hedged MATIC/USDC'
+  private readonly protocol: string = 'Penrose'
+  private readonly startBlock: BigInt = BigInt.fromI32(32513909)
 
   constructor(transaction: Transaction) {
     let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
@@ -21,11 +22,7 @@ export class GainsDaiInvestment implements InvestmentInterface {
 
   netAssetValue(block: BigInt): BigDecimal {
     if (block.gt(this.startBlock)) {
-      let gainsDaiVault = GainsDaiVault.bind(GAINS_DAI_VAULT)
-      // values: daiDeposited uint256, maxDaiDeposited uint256, withdrawBlock uint256, debtDai uint256, debtMatic uint256
-      let gainsDaiBalance = toDecimal(gainsDaiVault.users(GAINS_DAI_INVESTMENT_STRATEGY).value0, 18)
-
-      return gainsDaiBalance
+      return toDecimal(PenroseHedgeLpStrategy.bind(PENROSE_HEDGED_MATIC_STRATEGY).netAssetValue(), 6)
     }
     return BigDecimal.zero()
   }

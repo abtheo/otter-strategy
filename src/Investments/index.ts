@@ -4,11 +4,11 @@ import { ClaimReward, Investment } from '../../generated/schema'
 
 export function loadOrCreateInvestment(strategy: string, timestamp: BigInt): Investment {
   let ts = dayFromTimestamp(timestamp)
-
-  let investment = Investment.load(`${strategy}_${ts}`)
+  let id = `${strategy}_${ts}`
+  let investment = Investment.load(id)
   if (investment == null) {
-    investment = new Investment(ts)
-    investment.timestamp = timestamp
+    investment = new Investment(id)
+    investment.timestamp = BigInt.fromString(ts)
     investment.strategy = strategy
     investment.save()
   }

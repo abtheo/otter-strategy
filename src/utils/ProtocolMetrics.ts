@@ -113,6 +113,7 @@ import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/Penro
 import { PenroseHedgeLpStrategy } from '../../generated/OtterClamERC20V2/PenroseHedgeLpStrategy'
 import { KyberswapMaticStMaticHedgedLpStrategy } from '../../generated/OtterClamERC20V2/KyberswapMaticStMaticHedgedLpStrategy'
 import { GainsDaiInvestment } from '../Investments/GainsDai'
+import { PenroseHedgedMaticUsdcInvestment } from '../Investments/PenroseHedgedMaticUsdc'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -265,10 +266,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   let daiBalance = toDecimal(daiERC20.balanceOf(TREASURY_ADDRESS), 18)
 
   // Gains DAI
-  if (transaction.blockNumber.gt(GAINS_DAI_START_BLOCK)) {
-    let gainsDai = new GainsDaiInvestment(transaction)
-    daiBalance = daiBalance.plus(gainsDai.netAssetValue(transaction.blockNumber))
-  }
+  let gainsDai = new GainsDaiInvestment(transaction)
+  daiBalance = daiBalance.plus(gainsDai.netAssetValue(transaction.blockNumber))
 
   let wmaticBalance = maticERC20.balanceOf(TREASURY_ADDRESS)
   let wmaticValue = toDecimal(wmaticBalance, 18).times(getwMaticUsdRate())
@@ -499,10 +498,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     usdPlusMarketValue = toDecimal(ERC20.bind(USDPLUS_ERC20).balanceOf(USDPLUS_INVESTMENT_STRATEGY), 6)
   }
 
-  let penroseHedgedLpValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(PENROSE_HEDGE_START_BLOCK)) {
-    penroseHedgedLpValue = toDecimal(PenroseHedgeLpStrategy.bind(PENROSE_HEDGED_MATIC_STRATEGY).netAssetValue(), 6)
-  }
+  let penroseHedgedLpValue = new PenroseHedgedMaticUsdcInvestment(transaction).netAssetValue(transaction.blockNumber)
 
   let kyberHedgedMaticStMaticValue = BigDecimal.zero()
   if (transaction.blockNumber.gt(KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK)) {

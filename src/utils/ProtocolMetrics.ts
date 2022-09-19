@@ -259,7 +259,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   // Gains DAI
   let gainsDai = new GainsDaiInvestment(transaction)
-  daiBalance = daiBalance.plus(gainsDai.netAssetValue(transaction.blockNumber))
+  daiBalance = daiBalance.plus(gainsDai.netAssetValue())
 
   let wmaticBalance = maticERC20.balanceOf(TREASURY_ADDRESS)
   let wmaticValue = toDecimal(wmaticBalance, 18).times(getwMaticUsdRate())
@@ -490,11 +490,9 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     usdPlusMarketValue = toDecimal(ERC20.bind(USDPLUS_ERC20).balanceOf(USDPLUS_INVESTMENT_STRATEGY), 6)
   }
 
-  let penroseHedgedLpValue = new PenroseHedgedMaticUsdcInvestment(transaction).netAssetValue(transaction.blockNumber)
+  let penroseHedgedLpValue = new PenroseHedgedMaticUsdcInvestment(transaction).netAssetValue()
 
-  let kyberHedgedMaticStMaticValue = new KyberHedgedMaticStMaticInvestment(transaction).netAssetValue(
-    transaction.blockNumber,
-  )
+  let kyberHedgedMaticStMaticValue = new KyberHedgedMaticStMaticInvestment(transaction).netAssetValue()
 
   let stableValueDecimal = maiBalance
     .plus(daiBalance)

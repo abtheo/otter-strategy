@@ -10,17 +10,19 @@ export class GainsDaiInvestment implements InvestmentInterface {
   private readonly strategy: string = 'DAI Vault'
   private readonly protocol: string = 'Gains'
   private readonly startBlock: BigInt = BigInt.fromI32(32300283)
+  private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {
     let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
     _investment.protocol = this.protocol
-    _investment.netAssetValue = this.netAssetValue(transaction.blockNumber)
+    _investment.netAssetValue = this.netAssetValue()
     this.investment = _investment
     this.investment.save()
+    this.currentBlock = transaction.blockNumber
   }
 
-  netAssetValue(block: BigInt): BigDecimal {
-    if (block.gt(this.startBlock)) {
+  netAssetValue(): BigDecimal {
+    if (this.currentBlock.gt(this.startBlock)) {
       let gainsDaiVault = GainsDaiVault.bind(GAINS_DAI_VAULT)
       // values: daiDeposited uint256, maxDaiDeposited uint256, withdrawBlock uint256, debtDai uint256, debtMatic uint256
       let gainsDaiBalance = toDecimal(gainsDaiVault.users(GAINS_DAI_INVESTMENT_STRATEGY).value0, 18)
@@ -35,7 +37,7 @@ export class GainsDaiInvestment implements InvestmentInterface {
     let dayTotal = this.investment.harvestValue.plus(claim.amountUsd)
     this.investment.harvestValue = dayTotal
 
-    let rewardRate = dayTotal.div(this.netAssetValue(claim.timestamp))
+    let rewardRate = dayTotal.div(this.netAssetValue())
     this.investment.rewardRate = rewardRate
 
     // (payout*365 / stakedValue) * 100% = APR%

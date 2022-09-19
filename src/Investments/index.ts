@@ -16,6 +16,6 @@ export function loadOrCreateInvestment(strategy: string, timestamp: BigInt): Inv
 }
 
 export interface InvestmentInterface {
-  netAssetValue(block: BigInt): BigDecimal
+  netAssetValue(): BigDecimal
   addRevenue(claim: ClaimReward): void
 }

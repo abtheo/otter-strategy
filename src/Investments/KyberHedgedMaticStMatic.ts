@@ -10,17 +10,19 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
   private readonly strategy: string = 'Hedged MATIC/stMATIC'
   private readonly protocol: string = 'Kyberswap'
   private readonly startBlock: BigInt = BigInt.fromI32(33084754)
+  private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {
     let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
     _investment.protocol = this.protocol
-    _investment.netAssetValue = this.netAssetValue(transaction.blockNumber)
+    _investment.netAssetValue = this.netAssetValue()
     this.investment = _investment
     this.investment.save()
+    this.currentBlock = transaction.blockNumber
   }
 
-  netAssetValue(block: BigInt): BigDecimal {
-    if (block.gt(this.startBlock)) {
+  netAssetValue(): BigDecimal {
+    if (this.currentBlock.gt(this.startBlock)) {
       let tryNAV = KyberswapMaticStMaticHedgedLpStrategy.bind(
         KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY,
       ).try_netAssetValue()
@@ -36,7 +38,7 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
     let dayTotal = this.investment.harvestValue.plus(claim.amountUsd)
     this.investment.harvestValue = dayTotal
 
-    let rewardRate = dayTotal.div(this.netAssetValue(claim.timestamp))
+    let rewardRate = dayTotal.div(this.netAssetValue())
     this.investment.rewardRate = rewardRate
 
     // (payout*365 / stakedValue) * 100% = APR%

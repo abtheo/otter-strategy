@@ -10,17 +10,19 @@ export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
   private readonly strategy: string = 'Hedged MATIC/USDC'
   private readonly protocol: string = 'Penrose'
   private readonly startBlock: BigInt = BigInt.fromI32(32513909)
+  private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {
     let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
     _investment.protocol = this.protocol
-    _investment.netAssetValue = this.netAssetValue(transaction.blockNumber)
+    _investment.netAssetValue = this.netAssetValue()
     this.investment = _investment
     this.investment.save()
+    this.currentBlock = transaction.blockNumber
   }
 
-  netAssetValue(block: BigInt): BigDecimal {
-    if (block.gt(this.startBlock)) {
+  netAssetValue(): BigDecimal {
+    if (this.startBlock.gt(this.startBlock)) {
       return toDecimal(PenroseHedgeLpStrategy.bind(PENROSE_HEDGED_MATIC_STRATEGY).netAssetValue(), 6)
     }
     return BigDecimal.zero()
@@ -31,7 +33,7 @@ export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
     let dayTotal = this.investment.harvestValue.plus(claim.amountUsd)
     this.investment.harvestValue = dayTotal
 
-    let rewardRate = dayTotal.div(this.netAssetValue(claim.timestamp))
+    let rewardRate = dayTotal.div(this.netAssetValue())
     this.investment.rewardRate = rewardRate
 
     // (payout*365 / stakedValue) * 100% = APR%

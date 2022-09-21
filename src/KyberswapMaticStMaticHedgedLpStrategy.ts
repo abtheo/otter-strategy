@@ -1,9 +1,12 @@
 import { log } from '@graphprotocol/graph-ts'
-import { ClaimRewardToken as ClaimRewardTokenEvent } from '../generated/KyberswapMaticStMaticHedgedLpStrategy/KyberswapMaticStMaticHedgedLpStrategy'
+import {
+  PayoutReward as PayoutRewardEvent,
+  ClaimRewardToken as ClaimRewardTokenEvent,
+} from '../generated/KyberswapMaticStMaticHedgedLpStrategy/KyberswapMaticStMaticHedgedLpStrategy'
 import { ERC20 } from '../generated/OtterClamERC20V2/ERC20'
 import { ClaimReward } from '../generated/schema'
 import { KyberHedgedMaticStMaticInvestment } from './Investments/KyberHedgedMaticStMatic'
-import { KNC_ERC20, LDO_ERC20 } from './utils/Constants'
+import { KNC_ERC20, LDO_ERC20, USDC_ERC20 } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateTreasuryRevenueClaimKncReward, updateTreasuryRevenueClaimLdoReward } from './utils/TreasuryRevenue'
@@ -24,7 +27,18 @@ export function handleClaimRewardToken(event: ClaimRewardTokenEvent): void {
   if (event.params.token == LDO_ERC20) {
     updateTreasuryRevenueClaimLdoReward(event.block.number, claim)
   }
-  log.warning('Got to KyberInvest ${}', [claim.amountUsd.toString()])
+}
+
+export function handlePayoutReward(event: PayoutRewardEvent): void {
+  let transaction = loadOrCreateTransaction(event.transaction, event.block)
+  let claim = new ClaimReward(`${transaction.id}_${event.address.toHexString()}`)
+  claim.transaction = transaction.id
+  claim.timestamp = transaction.timestamp
+  claim.amountUsd = toDecimal(event.params.revenue, 6) //Claim in USDC (6 decimals)
+  claim.amountToken = toDecimal(event.params.revenue, 6)
+  claim.token = USDC_ERC20
+  claim.save()
+
   let investment = new KyberHedgedMaticStMaticInvestment(transaction)
   investment.addRevenue(claim)
 }

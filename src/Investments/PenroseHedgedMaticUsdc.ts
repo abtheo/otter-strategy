@@ -9,20 +9,22 @@ export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
   public investment!: Investment
   private readonly strategy: string = 'Hedged MATIC/USDC'
   private readonly protocol: string = 'Penrose'
-  private readonly startBlock: BigInt = BigInt.fromI32(32513909)
+  private readonly startBlock: BigInt = BigInt.fromI32(33348683) // actual start: 32513909
   private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {
-    let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
-    _investment.protocol = this.protocol
-    _investment.netAssetValue = this.netAssetValue()
-    this.investment = _investment
-    this.investment.save()
     this.currentBlock = transaction.blockNumber
+    if (transaction.blockNumber.ge(this.startBlock)) {
+      let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
+      _investment.protocol = this.protocol
+      _investment.netAssetValue = this.netAssetValue()
+      this.investment = _investment
+      this.investment.save()
+    }
   }
 
   netAssetValue(): BigDecimal {
-    if (this.startBlock.gt(this.startBlock)) {
+    if (this.currentBlock.ge(this.startBlock)) {
       return toDecimal(PenroseHedgeLpStrategy.bind(PENROSE_HEDGED_MATIC_STRATEGY).netAssetValue(), 6)
     }
     return BigDecimal.zero()
@@ -33,11 +35,11 @@ export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
     let dayTotal = this.investment.harvestValue.plus(claim.amountUsd)
     this.investment.harvestValue = dayTotal
 
-    let rewardRate = dayTotal.div(this.netAssetValue())
+    let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))
     this.investment.rewardRate = rewardRate
 
     // (payout*365 / stakedValue) * 100% = APR%
-    this.investment.apr = rewardRate.times(BigDecimal.fromString('365')).times(BigDecimal.fromString('100'))
+    this.investment.apr = rewardRate.times(BigDecimal.fromString('365'))
 
     this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
     this.investment.save()

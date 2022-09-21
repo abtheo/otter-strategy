@@ -1,15 +1,20 @@
 import { Investment, ClaimReward, Transaction } from '../../generated/schema'
 import { toDecimal } from '../utils/Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { GAINS_DAI_INVESTMENT_STRATEGY, GAINS_DAI_VAULT } from '../utils/Constants'
-import { GainsDaiVault } from '../../generated/OtterClamERC20V2/GainsDaiVault'
+import {
+  DAO_WALLET_PENROSE_USER_PROXY,
+  DYSTOPIA_PAIR_USDPLUS_CLAM,
+  PENROSE_REWARD_USDPLUS_CLAM,
+} from '../utils/Constants'
 import { InvestmentInterface, loadOrCreateInvestment } from '.'
+import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
+import { getDystPairUSD } from '../utils/Price'
 
-export class GainsDaiInvestment implements InvestmentInterface {
+export class PenroseClamUsdPlusInvestment implements InvestmentInterface {
   public investment!: Investment
-  private readonly strategy: string = 'DAI Vault'
-  private readonly protocol: string = 'Gains'
-  private readonly startBlock: BigInt = BigInt.fromI32(32300283)
+  private readonly strategy: string = 'CLAM/USD+'
+  private readonly protocol: string = 'Penrose'
+  private readonly startBlock: BigInt = BigInt.fromI32(30393227) //29069971
   private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {
@@ -24,12 +29,12 @@ export class GainsDaiInvestment implements InvestmentInterface {
   }
 
   netAssetValue(): BigDecimal {
-    if (this.currentBlock.gt(this.startBlock)) {
-      let gainsDaiVault = GainsDaiVault.bind(GAINS_DAI_VAULT)
-      // values: daiDeposited uint256, maxDaiDeposited uint256, withdrawBlock uint256, debtDai uint256, debtMatic uint256
-      let gainsDaiBalance = toDecimal(gainsDaiVault.users(GAINS_DAI_INVESTMENT_STRATEGY).value0, 18)
-
-      return gainsDaiBalance
+    if (this.currentBlock.ge(this.startBlock)) {
+      let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_CLAM).try_balanceOf(
+        DAO_WALLET_PENROSE_USER_PROXY,
+      )
+      let penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
+      return getDystPairUSD(this.currentBlock, penroseRewardBalance, DYSTOPIA_PAIR_USDPLUS_CLAM)
     }
     return BigDecimal.zero()
   }

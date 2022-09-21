@@ -156,6 +156,54 @@ export class InvestToken__Params {
   }
 }
 
+export class NetAssetValueUpdated extends ethereum.Event {
+  get params(): NetAssetValueUpdated__Params {
+    return new NetAssetValueUpdated__Params(this);
+  }
+}
+
+export class NetAssetValueUpdated__Params {
+  _event: NetAssetValueUpdated;
+
+  constructor(event: NetAssetValueUpdated) {
+    this._event = event;
+  }
+
+  get from(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get to(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class PayoutReward extends ethereum.Event {
+  get params(): PayoutReward__Params {
+    return new PayoutReward__Params(this);
+  }
+}
+
+export class PayoutReward__Params {
+  _event: PayoutReward;
+
+  constructor(event: PayoutReward) {
+    this._event = event;
+  }
+
+  get nav(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get revenue(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get payout(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
 export class PortfolioManagerUpdated extends ethereum.Event {
   get params(): PortfolioManagerUpdated__Params {
     return new PortfolioManagerUpdated__Params(this);
@@ -360,6 +408,14 @@ export class PenroseHedgeLpStrategy__getDeltaResultDeltaStruct extends ethereum.
 
   get aaveRepayMaticNeeded(): BigInt {
     return this[3].toBigInt();
+  }
+
+  get wmaticPrice(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get usdcPrice(): BigInt {
+    return this[5].toBigInt();
   }
 }
 
@@ -644,13 +700,11 @@ export class PenroseHedgeLpStrategy extends ethereum.SmartContract {
     );
   }
 
-  getDelta(
-    withdrawAmount_: BigInt
-  ): PenroseHedgeLpStrategy__getDeltaResultDeltaStruct {
+  getDelta(): PenroseHedgeLpStrategy__getDeltaResultDeltaStruct {
     let result = super.call(
       "getDelta",
-      "getDelta(uint256):((uint256,uint256,uint256,uint256))",
-      [ethereum.Value.fromUnsignedBigInt(withdrawAmount_)]
+      "getDelta():((uint256,uint256,uint256,uint256,uint256,uint256))",
+      []
     );
 
     return changetype<PenroseHedgeLpStrategy__getDeltaResultDeltaStruct>(
@@ -658,13 +712,13 @@ export class PenroseHedgeLpStrategy extends ethereum.SmartContract {
     );
   }
 
-  try_getDelta(
-    withdrawAmount_: BigInt
-  ): ethereum.CallResult<PenroseHedgeLpStrategy__getDeltaResultDeltaStruct> {
+  try_getDelta(): ethereum.CallResult<
+    PenroseHedgeLpStrategy__getDeltaResultDeltaStruct
+  > {
     let result = super.tryCall(
       "getDelta",
-      "getDelta(uint256):((uint256,uint256,uint256,uint256))",
-      [ethereum.Value.fromUnsignedBigInt(withdrawAmount_)]
+      "getDelta():((uint256,uint256,uint256,uint256,uint256,uint256))",
+      []
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -733,6 +787,29 @@ export class PenroseHedgeLpStrategy extends ethereum.SmartContract {
       ethereum.Value.fromAddress(token_),
       ethereum.Value.fromUnsignedBigInt(amount_)
     ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  lastNetAssetValue(): BigInt {
+    let result = super.call(
+      "lastNetAssetValue",
+      "lastNetAssetValue():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_lastNetAssetValue(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "lastNetAssetValue",
+      "lastNetAssetValue():(uint256)",
+      []
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1134,6 +1211,32 @@ export class InitializeCall__Outputs {
   }
 }
 
+export class InitializeNavCall extends ethereum.Call {
+  get inputs(): InitializeNavCall__Inputs {
+    return new InitializeNavCall__Inputs(this);
+  }
+
+  get outputs(): InitializeNavCall__Outputs {
+    return new InitializeNavCall__Outputs(this);
+  }
+}
+
+export class InitializeNavCall__Inputs {
+  _call: InitializeNavCall;
+
+  constructor(call: InitializeNavCall) {
+    this._call = call;
+  }
+}
+
+export class InitializeNavCall__Outputs {
+  _call: InitializeNavCall;
+
+  constructor(call: InitializeNavCall) {
+    this._call = call;
+  }
+}
+
 export class InvestCall extends ethereum.Call {
   get inputs(): InvestCall__Inputs {
     return new InvestCall__Inputs(this);
@@ -1169,6 +1272,32 @@ export class InvestCall__Outputs {
 
   get usdcAmount_(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class RebalanceCall extends ethereum.Call {
+  get inputs(): RebalanceCall__Inputs {
+    return new RebalanceCall__Inputs(this);
+  }
+
+  get outputs(): RebalanceCall__Outputs {
+    return new RebalanceCall__Outputs(this);
+  }
+}
+
+export class RebalanceCall__Inputs {
+  _call: RebalanceCall;
+
+  constructor(call: RebalanceCall) {
+    this._call = call;
+  }
+}
+
+export class RebalanceCall__Outputs {
+  _call: RebalanceCall;
+
+  constructor(call: RebalanceCall) {
+    this._call = call;
   }
 }
 

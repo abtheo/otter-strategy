@@ -44,7 +44,6 @@ import {
   DYSTOPIA_PAIR_MAI_CLAM,
   DYSTOPIA_veDYST,
   DYSTOPIA_veDYST_ERC721_ID,
-  DYSTOPIA_TRACKED_PAIRS,
   DYSTOPIA_PAIR_USDPLUS_CLAM,
   PEN_ERC20,
   PENDYST_ERC20,
@@ -242,6 +241,13 @@ export function getTreasuryTokenValue(blockNumber: BigInt, address: Address): Bi
   return marketValue
 }
 
+function getPenroseRewardBalance(block: BigInt, multiRewards: Address, pair: Address): BigDecimal {
+  let penroseRewards = PenroseMultiRewards.bind(multiRewards).try_balanceOf(DAO_WALLET_PENROSE_USER_PROXY)
+  if (penroseRewards.reverted) return BigDecimal.zero()
+  let penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
+  return getDystPairUSD(block, penroseRewardBalance, pair)
+}
+
 /* Mutates the provided ProtocolMetric by setting the relevant properties*/
 function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: ProtocolMetric): ProtocolMetric {
   let maiERC20 = ERC20.bind(MAI_ERC20)
@@ -330,12 +336,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   }
 
   let clamUsdPlusRebases = BigDecimal.zero()
-  if (transaction.blockNumber.gt(DYST_POOL_TRANSITION_BLOCK)) {
-    let usdPlus = UsdPlus.bind(USDPLUS_ERC20)
-    clamUsdPlusRebases = toDecimal(usdPlus.balanceOf(DYSTOPIA_PAIR_USDPLUS_CLAM), 6).minus(
-      toDecimal(usdPlus.scaledBalanceOf(DYSTOPIA_PAIR_USDPLUS_CLAM), 15),
-    )
-  }
+
   //DYSTOPIA & PENROSE
   let qiTetuQiValue = BigDecimal.zero()
   let usdcTusdValue = BigDecimal.zero()
@@ -355,79 +356,51 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   if (transaction.blockNumber.gt(DYST_START_BLOCK)) {
     dystMarketValue = getTreasuryTokenValue(transaction.blockNumber, DYST_ERC20)
 
-    for (let i = 0; i < DYSTOPIA_TRACKED_PAIRS.length; i++) {
-      let pair_address = DYSTOPIA_TRACKED_PAIRS[i]
-      //first check if the DAO wallet holds LP tokens directly
-      let dystopiaPair = DystPair.bind(pair_address)
-      let pairDystBalance = dystopiaPair.try_balanceOf(DAO_WALLET)
-      if (pairDystBalance.reverted) continue
-      let pairValue = getDystPairUSD(transaction.blockNumber, pairDystBalance.value, pair_address)
-      //then add the Gauge staked LP balance from Penrose
+    wMaticDystValue = getPenroseRewardBalance(
+      transaction.blockNumber,
+      PENROSE_REWARD_WMATIC_DYST,
+      DYSTOPIA_PAIR_WMATIC_DYST,
+    )
 
-      let penroseRewardBalance = BigInt.zero()
+    //clam-mai
+    let clamMaiRewards = PenroseMultiRewards.bind(PENROSE_REWARD_MAI_CLAM).try_balanceOf(DAO_WALLET_PENROSE_USER_PROXY)
+    clamMaiDystLpOwned = clamMaiRewards.reverted ? BigInt.zero() : clamMaiRewards.value
 
-      //finally, associate with relevant property
-      if (pair_address == DYSTOPIA_PAIR_WMATIC_DYST) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_WMATIC_DYST).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-        wMaticDystValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
-      }
-      if (pair_address == DYSTOPIA_PAIR_MAI_CLAM) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_MAI_CLAM).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-        clamMaiDystValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
-        clamMaiDystLpOwned = pairDystBalance.value.plus(penroseRewardBalance)
-      }
-      if (pair_address == DYSTOPIA_PAIR_USDPLUS_CLAM) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_CLAM).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-        clamUsdplusDystValue = pairValue.plus(
-          getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address),
-        )
-        clamUsdPlusDystLpOwned = pairDystBalance.value.plus(penroseRewardBalance)
-      }
-      if (pair_address == DYSTOPIA_PAIR_QI_TETUQI) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_QI_TETUQI).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
+    clamMaiDystValue = getPenroseRewardBalance(transaction.blockNumber, PENROSE_REWARD_MAI_CLAM, DYSTOPIA_PAIR_MAI_CLAM)
 
-        qiTetuQiValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
-      }
-      if (pair_address == DYSTOPIA_PAIR_USDC_TUSD) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDC_TUSD).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-
-        usdcTusdValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
-      }
-      if (pair_address == DYSTOPIA_PAIR_USDPLUS_USDC) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_USDC).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-
-        usdplusUsdcValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
-      }
-
-      if (pair_address == DYSTOPIA_PAIR_USDPLUS_STMATIC) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_STMATIC).try_balanceOf(
-          USDPLUS_STMATIC_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-
-        usdplusStMaticValue = pairValue.plus(
-          getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address),
-        )
-      }
+    //clam-usd+
+    let clamUsdplusRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_CLAM).try_balanceOf(
+      DAO_WALLET_PENROSE_USER_PROXY,
+    )
+    if (!clamUsdplusRewards.reverted) {
+      clamUsdPlusDystLpOwned = clamUsdplusRewards.value
     }
+
+    clamUsdplusDystValue = getPenroseRewardBalance(
+      transaction.blockNumber,
+      PENROSE_REWARD_USDPLUS_CLAM,
+      DYSTOPIA_PAIR_USDPLUS_CLAM,
+    )
+
+    //qi-tetuqi
+    qiTetuQiValue = getPenroseRewardBalance(transaction.blockNumber, PENROSE_REWARD_QI_TETUQI, DYSTOPIA_PAIR_QI_TETUQI)
+
+    //tusd
+    usdcTusdValue = getPenroseRewardBalance(transaction.blockNumber, PENROSE_REWARD_USDC_TUSD, DYSTOPIA_PAIR_USDC_TUSD)
+
+    //usdc-usd+
+    usdplusUsdcValue = getPenroseRewardBalance(
+      transaction.blockNumber,
+      PENROSE_REWARD_USDPLUS_USDC,
+      DYSTOPIA_PAIR_USDPLUS_USDC,
+    )
+
+    //usd+/stMatic
+    usdplusStMaticValue = getPenroseRewardBalance(
+      transaction.blockNumber,
+      PENROSE_REWARD_USDPLUS_STMATIC,
+      DYSTOPIA_PAIR_USDPLUS_STMATIC,
+    )
 
     //plus the locked veDyst inside NFT
     let veDystContract = veDyst.bind(DYSTOPIA_veDYST)

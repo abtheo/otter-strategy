@@ -575,6 +575,48 @@ dataSources:
       file: ./src/MaiUsdcStrategy.ts
 
   - kind: ethereum/contract
+    name: UniV3UsdcMaiStrategy
+    network: matic
+    source:
+      address: '0x12De7aF6442A0A419B9bDe95f3780765E969F2B7'
+      abi: UniV3UsdcMaiStrategy
+      startBlock: 33379248
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: UniV3UsdcMaiStrategy
+          file: ./abis/UniV3UsdcMaiStrategy.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: ClaimReward(uint256)
+          handler: handleClaimReward
+      file: ./src/UniV3UsdcMaiStrategy.ts
+
+
+  - kind: ethereum/contract
     name: MaiStMaticStrategy
     network: matic
     source:

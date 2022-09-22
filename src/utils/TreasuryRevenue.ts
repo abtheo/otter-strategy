@@ -26,6 +26,7 @@ export function setTreasuryRevenueTotals(revenue: TreasuryRevenue): TreasuryReve
     .plus(revenue.usdPlusClamAmount)
     .plus(revenue.daiClamAmount)
     .plus(revenue.kncClamAmount)
+    .plus(revenue.usdPlusClamAmount)
 
   revenue.totalRevenueMarketValue = revenue.qiMarketValue
     .plus(revenue.ottopiaMarketValue)
@@ -36,6 +37,7 @@ export function setTreasuryRevenueTotals(revenue: TreasuryRevenue): TreasuryReve
     .plus(revenue.usdPlusMarketValue)
     .plus(revenue.daiMarketValue)
     .plus(revenue.kncMarketValue)
+    .plus(revenue.usdPlusMarketValue)
 
   return revenue
 }
@@ -92,6 +94,25 @@ export function updateTreasuryRevenueClaimUsdplusReward(block: BigInt, claim: Cl
   //Aggregate over day with +=
   treasuryRevenue.usdPlusClamAmount = treasuryRevenue.usdPlusClamAmount.plus(clamAmount)
   treasuryRevenue.usdPlusMarketValue = treasuryRevenue.usdPlusMarketValue.plus(claim.amountUsd)
+
+  treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
+
+  treasuryRevenue.save()
+}
+
+export function updateTreasuryRevenueClaimUsdcReward(block: BigInt, claim: ClaimReward): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(claim.timestamp)
+
+  let clamAmount = claim.amountUsd.div(getClamUsdRate(block))
+  log.debug('ClaimRewardUsdc event, txid: {}, usdcMarketValue {}, clamAmount {}', [
+    claim.id,
+    claim.amountUsd.toString(),
+    clamAmount.toString(),
+  ])
+
+  //Aggregate over day with +=
+  treasuryRevenue.usdcClamAmount = treasuryRevenue.usdcClamAmount.plus(clamAmount)
+  treasuryRevenue.usdcMarketValue = treasuryRevenue.usdcMarketValue.plus(claim.amountUsd)
 
   treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
 

@@ -89,6 +89,8 @@ import {
   KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY,
   KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK,
   GOVERNANCE_START_BLOCK,
+  UNIV3_USDC_MAI_START_BLOCK,
+  UNIV3_USDC_MAI_STRATEGY,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -112,6 +114,7 @@ import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
 import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
 import { PenroseHedgeLpStrategy } from '../../generated/OtterClamERC20V2/PenroseHedgeLpStrategy'
 import { KyberswapMaticStMaticHedgedLpStrategy } from '../../generated/OtterClamERC20V2/KyberswapMaticStMaticHedgedLpStrategy'
+import { UniV3UsdcMaiStrategy } from '../../generated/UniV3UsdcMaiStrategy/UniV3UsdcMaiStrategy'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -511,6 +514,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     kyberHedgedMaticStMaticValue = toDecimal(netAssetVal, 6)
   }
 
+  let uniV3UsdcMaiValue = BigDecimal.zero()
+  if (transaction.blockNumber.gt(UNIV3_USDC_MAI_START_BLOCK)) {
+    let tryNAV = UniV3UsdcMaiStrategy.bind(UNIV3_USDC_MAI_STRATEGY).try_netAssetValue()
+    let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
+
+    uniV3UsdcMaiValue = toDecimal(netAssetVal, 6)
+  }
+
   let stableValueDecimal = maiBalance
     .plus(daiBalance)
     .plus(maiUsdcQiInvestmentValueDecimal)
@@ -529,6 +540,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     //ets
     .plus(penroseHedgedLpValue)
     .plus(kyberHedgedMaticStMaticValue)
+    //univ3
+    .plus(uniV3UsdcMaiValue)
 
   let lpValue_noClam = lpValue
     .plus(clamMai_MaiOnlyValue)
@@ -583,6 +596,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryUsdPlusMarketValue = usdPlusMarketValue
   protocolMetric.treasuryPenroseHedgedMaticMarketValue = penroseHedgedLpValue
   protocolMetric.treasuryKyberswapMaticStMaticHedgedMarketValue = kyberHedgedMaticStMaticValue
+  protocolMetric.treasuryUniV3UsdcMaiStrategyMarketValue = uniV3UsdcMaiValue
 
   return protocolMetric
 }

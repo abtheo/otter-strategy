@@ -611,8 +611,8 @@ dataSources:
         - name: ArrakisVault
           file: ./abis/ArrakisVault.json
       eventHandlers:
-        - event: ClaimReward(uint256)
-          handler: handleClaimReward
+        - event: PayoutReward(uint256,int256,uint256)
+          handler: handlePayoutReward
       file: ./src/UniV3UsdcMaiStrategy.ts
 
 

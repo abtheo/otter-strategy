@@ -26,7 +26,7 @@ export function setTreasuryRevenueTotals(revenue: TreasuryRevenue): TreasuryReve
     .plus(revenue.usdPlusClamAmount)
     .plus(revenue.daiClamAmount)
     .plus(revenue.kncClamAmount)
-    .plus(revenue.usdPlusClamAmount)
+    .plus(revenue.usdcClamAmount)
 
   revenue.totalRevenueMarketValue = revenue.qiMarketValue
     .plus(revenue.ottopiaMarketValue)
@@ -37,7 +37,7 @@ export function setTreasuryRevenueTotals(revenue: TreasuryRevenue): TreasuryReve
     .plus(revenue.usdPlusMarketValue)
     .plus(revenue.daiMarketValue)
     .plus(revenue.kncMarketValue)
-    .plus(revenue.usdPlusMarketValue)
+    .plus(revenue.usdcMarketValue)
 
   return revenue
 }

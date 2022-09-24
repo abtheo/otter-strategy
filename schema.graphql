@@ -115,6 +115,8 @@ type TreasuryRevenue @entity {
   kncMarketValue: BigDecimal!
   usdcClamAmount: BigDecimal!
   usdcMarketValue: BigDecimal!
+  maiClamAmount: BigDecimal!
+  maiMarketValue: BigDecimal!
   totalRevenueClamAmount: BigDecimal!
   totalRevenueMarketValue: BigDecimal!
 }

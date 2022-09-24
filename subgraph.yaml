@@ -50,7 +50,7 @@ dataSources:
         - event: HarvestStaking(indexed uint256,uint256)
           handler: handleHarvestStaking
       file: ./src/OtterQiLocker.ts
-  
+
   - kind: ethereum/contract
     name: OttoPortal
     network: matic
@@ -91,7 +91,7 @@ dataSources:
         - event: OttoMinted(indexed address,indexed address,uint256)
           handler: handleOttoMinted
       file: ./src/OttoPortal.ts
-  
+
   - kind: ethereum/contract
     name: OttopiaStore
     network: matic
@@ -140,8 +140,8 @@ dataSources:
   - kind: ethereum/contract
     name: PenroseMaiClamRewards
     network: matic
-    source: 
-      address: '0x4edc2f4368179be77e5e8fba295fff0a82e3df21' 
+    source:
+      address: '0x4edc2f4368179be77e5e8fba295fff0a82e3df21'
       abi: PenroseMultiRewards
       startBlock: 29069971
     mapping:
@@ -180,11 +180,11 @@ dataSources:
         - event: RewardPaid(indexed address,indexed address,uint256)
           handler: handleRewardPaid
       file: ./src/PenroseMultiRewards.ts
-  
+
   - kind: ethereum/contract
     name: PenroseMaticDystRewards
     network: matic
-    source: 
+    source:
       address: '0xbb1bF0980a61Fc5dAf981B33543Fb54c8E04DFa0'
       abi: PenroseMultiRewards
       startBlock: 29069971
@@ -224,11 +224,11 @@ dataSources:
         - event: RewardPaid(indexed address,indexed address,uint256)
           handler: handleRewardPaid
       file: ./src/PenroseMultiRewards.ts
-  
+
   - kind: ethereum/contract
     name: PenroseVlPenRewards
     network: matic
-    source: 
+    source:
       address: '0x55CA76E0341ccD35c2E3F34CbF767C6102aea70f'
       abi: PenroseMultiRewards
       startBlock: 29069971
@@ -272,7 +272,7 @@ dataSources:
   - kind: ethereum/contract
     name: PenroseClamUsdPlusRewards
     network: matic
-    source: 
+    source:
       address: '0x582331EB734D2d81e29Eb54A9890AEED1627e2C2'
       abi: PenroseMultiRewards
       startBlock: 29069971
@@ -312,11 +312,11 @@ dataSources:
         - event: RewardPaid(indexed address,indexed address,uint256)
           handler: handleRewardPaid
       file: ./src/PenroseMultiRewards.ts
-      
+
   - kind: ethereum/contract
     name: PenroseUsdcTusdRewards
     network: matic
-    source: 
+    source:
       address: '0xc1Cc12d610bd71fFdBfE489C941e548Df6f94D14'
       abi: PenroseMultiRewards
       startBlock: 29069971
@@ -360,7 +360,7 @@ dataSources:
   - kind: ethereum/contract
     name: PenroseUsdplusUsdcRewards
     network: matic
-    source: 
+    source:
       address: '0x39b3a36d7d6b2bae6e13d2Ceb00f847Aa3E6990A'
       abi: PenroseMultiRewards
       startBlock: 29069971
@@ -404,7 +404,7 @@ dataSources:
   - kind: ethereum/contract
     name: PenroseQiTetuQiRewards
     network: matic
-    source: 
+    source:
       address: '0x249C0236B0F597EdCE0BF989fdf2EDbB1799FfA8'
       abi: PenroseMultiRewards
       startBlock: 29069971
@@ -444,11 +444,11 @@ dataSources:
         - event: RewardPaid(indexed address,indexed address,uint256)
           handler: handleRewardPaid
       file: ./src/PenroseMultiRewards.ts
-  
+
   - kind: ethereum/contract
     name: PenroseUsdplusStMaticRewards
     network: matic
-    source: 
+    source:
       address: '0x2d64610f5f95ae24b689711599487f9077058ffd'
       abi: PenroseMultiRewards
       startBlock: 31069971
@@ -493,7 +493,7 @@ dataSources:
     name: PenrosePartnerRewards
     network: matic
     source:
-      address: '0x5DD340DD4142D093c1926282CD56B0D4690dEB11' 
+      address: '0x5DD340DD4142D093c1926282CD56B0D4690dEB11'
       abi: PenroseMultiRewards
       startBlock: 29069971
     mapping:
@@ -532,7 +532,7 @@ dataSources:
         - event: RewardPaid(indexed address,indexed address,uint256)
           handler: handleRewardPaid
       file: ./src/PenroseMultiRewards.ts
-      
+
   - kind: ethereum/contract
     name: MaiUsdcStrategy
     network: matic
@@ -611,10 +611,9 @@ dataSources:
         - name: ArrakisVault
           file: ./abis/ArrakisVault.json
       eventHandlers:
-        - event: PayoutReward(uint256,int256,uint256)
-          handler: handlePayoutReward
+        - event: ClaimRewardToken(indexed address,uint256,uint256)
+          handler: handleClaimReward
       file: ./src/UniV3UsdcMaiStrategy.ts
-
 
   - kind: ethereum/contract
     name: MaiStMaticStrategy
@@ -663,7 +662,7 @@ dataSources:
     source:
       address: '0x32470D6b534e7343ECB05069d1D3336A8424beA0'
       abi: UsdPlusStrategy
-      startBlock: 32256016 
+      startBlock: 32256016
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -704,7 +703,7 @@ dataSources:
     source:
       address: '0x397b681bd7d9e8e10a577574586e2ceeb475793c'
       abi: GainsDaiStrategy
-      startBlock: 32300283 
+      startBlock: 32300283
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -786,7 +785,7 @@ dataSources:
     source:
       address: '0xc8a2CbD3dda4EA728546cEf1E7cADfE9755714E9'
       abi: PenroseHedgeLpStrategy
-      startBlock: 32513909 
+      startBlock: 32513909
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -877,9 +876,9 @@ dataSources:
         - name: OtterPearlERC20
           file: ./abis/OtterPearlERC20.json
         - name: CurveMai3poolContract
-          file: ./abis/CurveMai3poolContract.json        
+          file: ./abis/CurveMai3poolContract.json
         - name: Dyst
-          file: ./abis/Dyst.json      
+          file: ./abis/Dyst.json
         - name: veDyst
           file: ./abis/veDyst.json
         - name: PenDystRewards
@@ -1057,9 +1056,9 @@ dataSources:
         - name: OtterPearlERC20
           file: ./abis/OtterPearlERC20.json
         - name: CurveMai3poolContract
-          file: ./abis/CurveMai3poolContract.json        
+          file: ./abis/CurveMai3poolContract.json
         - name: Dyst
-          file: ./abis/Dyst.json      
+          file: ./abis/Dyst.json
         - name: veDyst
           file: ./abis/veDyst.json
         - name: PenDystRewards

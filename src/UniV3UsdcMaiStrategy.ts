@@ -16,10 +16,10 @@ export function handleClaimReward(event: ClaimRewardEvent): void {
   claim.token = event.params.token
   claim.save()
 
-  if (event.params.token === USDC_ERC20) {
+  if (event.params.token == USDC_ERC20) {
     updateTreasuryRevenueClaimUsdcReward(event.block.number, claim)
   }
-  if (event.params.token === MAI_ERC20) {
+  if (event.params.token == MAI_ERC20) {
     updateTreasuryRevenueClaimMaiReward(event.block.number, claim)
   }
 }

@@ -403,6 +403,10 @@ export class ProtocolMetric extends Entity {
       "treasuryKyberswapMaticStMaticHedgedMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
+    this.set(
+      "treasuryUniV3UsdcMaiStrategyMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
     this.set("totalBurnedClam", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalBurnedClamMarketValue",
@@ -794,6 +798,18 @@ export class ProtocolMetric extends Entity {
     );
   }
 
+  get treasuryUniV3UsdcMaiStrategyMarketValue(): BigDecimal {
+    let value = this.get("treasuryUniV3UsdcMaiStrategyMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryUniV3UsdcMaiStrategyMarketValue(value: BigDecimal) {
+    this.set(
+      "treasuryUniV3UsdcMaiStrategyMarketValue",
+      Value.fromBigDecimal(value)
+    );
+  }
+
   get totalBurnedClam(): BigDecimal {
     let value = this.get("totalBurnedClam");
     return value!.toBigDecimal();
@@ -1048,6 +1064,10 @@ export class TreasuryRevenue extends Entity {
     this.set("daiMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("kncClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("kncMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("usdcClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("usdcMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("maiClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("maiMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("totalRevenueClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalRevenueMarketValue",
@@ -1250,6 +1270,42 @@ export class TreasuryRevenue extends Entity {
 
   set kncMarketValue(value: BigDecimal) {
     this.set("kncMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get usdcClamAmount(): BigDecimal {
+    let value = this.get("usdcClamAmount");
+    return value!.toBigDecimal();
+  }
+
+  set usdcClamAmount(value: BigDecimal) {
+    this.set("usdcClamAmount", Value.fromBigDecimal(value));
+  }
+
+  get usdcMarketValue(): BigDecimal {
+    let value = this.get("usdcMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set usdcMarketValue(value: BigDecimal) {
+    this.set("usdcMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get maiClamAmount(): BigDecimal {
+    let value = this.get("maiClamAmount");
+    return value!.toBigDecimal();
+  }
+
+  set maiClamAmount(value: BigDecimal) {
+    this.set("maiClamAmount", Value.fromBigDecimal(value));
+  }
+
+  get maiMarketValue(): BigDecimal {
+    let value = this.get("maiMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set maiMarketValue(value: BigDecimal) {
+    this.set("maiMarketValue", Value.fromBigDecimal(value));
   }
 
   get totalRevenueClamAmount(): BigDecimal {

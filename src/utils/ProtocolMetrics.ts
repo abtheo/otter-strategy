@@ -1,6 +1,5 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { ClamCirculatingSupply } from '../../generated/OtterClamERC20V2/ClamCirculatingSupply'
-import { GainsDaiVault } from '../../generated/OtterClamERC20V2/GainsDaiVault'
 import { QiFarmV3 } from '../../generated/OtterClamERC20V2/QiFarmV3'
 import { xTetuQi } from '../../generated/OtterClamERC20V2/xTetuQi'
 import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
@@ -13,7 +12,6 @@ import { UniswapV2Pair } from '../../generated/OtterClamERC20V2/UniswapV2Pair'
 import { PenDystRewards } from '../../generated/OtterClamERC20V2/PenDystRewards'
 import { PenrosePartnerRewards } from '../../generated/OtterClamERC20V2/PenrosePartnerRewards'
 import { PenLockerV2 } from '../../generated/OtterClamERC20V2/PenLockerV2'
-import { UsdPlus } from '../../generated/OtterClamERC20V2/UsdPlus'
 import { ProtocolMetric, Transaction, VotePosition, Vote, GovernanceMetric } from '../../generated/schema'
 import {
   CIRCULATING_SUPPLY_CONTRACT,
@@ -64,7 +62,6 @@ import {
   UNI_MAI_USDC_PAIR,
   DYSTOPIA_PAIR_USDC_TUSD,
   PENROSE_REWARD_USDC_TUSD,
-  DYST_POOL_TRANSITION_BLOCK,
   USDPLUS_ERC20,
   DYSTOPIA_PAIR_USDPLUS_USDC,
   PENROSE_REWARD_USDPLUS_USDC,
@@ -74,13 +71,14 @@ import {
   QI_MATIC_INVESTMENT_STRATEGY,
   DYSTOPIA_PAIR_USDPLUS_STMATIC,
   PENROSE_REWARD_USDPLUS_STMATIC,
-  USDPLUS_STMATIC_PENROSE_USER_PROXY,
   MAI_STMATIC_BLOCK,
   MAI_STMATIC_QIDAO_FARM,
   MAI_STMATIC_INVESTMENT_STRATEGY,
   ARRAKIS_MAI_STMATIC_PAIR,
   USDPLUS_INVESTMENT_STRATEGY,
   GOVERNANCE_START_BLOCK,
+  UNIV3_USDC_MAI_START_BLOCK,
+  UNIV3_USDC_MAI_STRATEGY,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -100,11 +98,11 @@ import {
   getArrakisPairUSD,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
-import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
 import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
 import { GainsDaiInvestment } from '../Investments/GainsDai'
 import { PenroseHedgedMaticUsdcInvestment } from '../Investments/PenroseHedgedMaticUsdc'
 import { KyberHedgedMaticStMaticInvestment } from '../Investments/KyberHedgedMaticStMatic'
+import { UniV3UsdcMaiStrategy } from '../../generated/UniV3UsdcMaiStrategy/UniV3UsdcMaiStrategy'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -467,6 +465,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let kyberHedgedMaticStMaticValue = new KyberHedgedMaticStMaticInvestment(transaction).netAssetValue()
 
+  let uniV3UsdcMaiValue = BigDecimal.zero()
+  if (transaction.blockNumber.gt(UNIV3_USDC_MAI_START_BLOCK)) {
+    let tryNAV = UniV3UsdcMaiStrategy.bind(UNIV3_USDC_MAI_STRATEGY).try_netAssetValue()
+    let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
+
+    uniV3UsdcMaiValue = toDecimal(netAssetVal, 6)
+  }
+
   let stableValueDecimal = maiBalance
     .plus(daiBalance)
     .plus(maiUsdcQiInvestmentValueDecimal)
@@ -485,6 +491,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     //ets
     .plus(penroseHedgedLpValue)
     .plus(kyberHedgedMaticStMaticValue)
+    //univ3
+    .plus(uniV3UsdcMaiValue)
 
   let lpValue_noClam = lpValue
     .plus(clamMai_MaiOnlyValue)
@@ -539,6 +547,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryUsdPlusMarketValue = usdPlusMarketValue
   protocolMetric.treasuryPenroseHedgedMaticMarketValue = penroseHedgedLpValue
   protocolMetric.treasuryKyberswapMaticStMaticHedgedMarketValue = kyberHedgedMaticStMaticValue
+  protocolMetric.treasuryUniV3UsdcMaiStrategyMarketValue = uniV3UsdcMaiValue
 
   return protocolMetric
 }

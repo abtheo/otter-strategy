@@ -742,7 +742,7 @@ dataSources:
     name: KyberswapMaticStMaticHedgedLpStrategy
     network: matic
     source:
-      address: '0x397b681bd7d9e8e10a577574586e2ceeb475793c'
+      address: '0xb00029d883E5EEA2f71dFBCE8941B15F4ec36120'
       abi: KyberswapMaticStMaticHedgedLpStrategy
       startBlock: 32513909 #33084755
     mapping:

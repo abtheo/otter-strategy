@@ -42,9 +42,9 @@ export function handleRewardPaid(event: RewardPaid): void {
     updateTreasuryRevenuePenDystRewardPaid(transaction, event.params.reward)
     price = getPenDystUsdRate()
   }
+
   // Investments tracking
-  if (event.address.equals(PENROSE_REWARD_USDPLUS_CLAM)) {
-    log.warning('MADE IT', [])
+  if (event.address == PENROSE_REWARD_USDPLUS_CLAM) {
     let claim = new ClaimReward(`${transaction.id}_${event.params.rewardsToken.toHexString()}`)
     claim.transaction = transaction.id
     claim.timestamp = transaction.timestamp

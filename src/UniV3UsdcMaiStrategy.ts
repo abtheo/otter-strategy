@@ -5,6 +5,7 @@ import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateTreasuryRevenueClaimMaiReward, updateTreasuryRevenueClaimUsdcReward } from './utils/TreasuryRevenue'
 import { MAI_ERC20, USDC_ERC20 } from './utils/Constants'
 import { ERC20 } from '../generated/OtterClamERC20V2/ERC20'
+import { UniV3UsdcMaiInvestment } from './Investments/UniV3UsdcMai'
 
 export function handleClaimReward(event: ClaimRewardEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
@@ -22,4 +23,8 @@ export function handleClaimReward(event: ClaimRewardEvent): void {
   if (event.params.token == MAI_ERC20) {
     updateTreasuryRevenueClaimMaiReward(event.block.number, claim)
   }
+
+  // Investments tracking
+  let investment = new UniV3UsdcMaiInvestment(transaction)
+  investment.addRevenue(claim)
 }

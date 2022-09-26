@@ -40,7 +40,6 @@ type ProtocolMetric @entity {
   treasuryOtterClamQiMarketValue: BigDecimal!
   treasuryQiWmaticMarketValue: BigDecimal!
   treasuryQiWmaticQiInvestmentMarketValue: BigDecimal!
-  treasuryClamMaiPOL: BigDecimal!
   treasuryDystopiaPairQiTetuQiMarketValue: BigDecimal!
   treasuryDystopiaPairwMaticDystMarketValue: BigDecimal!
   treasuryDystopiaPairMaiClamMarketValue: BigDecimal!
@@ -195,6 +194,7 @@ type Investment @entity {
   netAssetValue: BigDecimal!
   protocol: String!
   strategy: String!
+  active: Boolean!
 
   harvestValue: BigDecimal!
   rewardRate: BigDecimal!

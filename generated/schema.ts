@@ -261,7 +261,6 @@ export class ProtocolMetric extends Entity {
       "treasuryQiWmaticQiInvestmentMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
-    this.set("treasuryClamMaiPOL", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "treasuryDystopiaPairQiTetuQiMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
@@ -541,15 +540,6 @@ export class ProtocolMetric extends Entity {
       "treasuryQiWmaticQiInvestmentMarketValue",
       Value.fromBigDecimal(value)
     );
-  }
-
-  get treasuryClamMaiPOL(): BigDecimal {
-    let value = this.get("treasuryClamMaiPOL");
-    return value!.toBigDecimal();
-  }
-
-  set treasuryClamMaiPOL(value: BigDecimal) {
-    this.set("treasuryClamMaiPOL", Value.fromBigDecimal(value));
   }
 
   get treasuryDystopiaPairQiTetuQiMarketValue(): BigDecimal {
@@ -1939,6 +1929,7 @@ export class Investment extends Entity {
     this.set("netAssetValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("protocol", Value.fromString(""));
     this.set("strategy", Value.fromString(""));
+    this.set("active", Value.fromBoolean(false));
     this.set("harvestValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("rewardRate", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("apr", Value.fromBigDecimal(BigDecimal.zero()));
@@ -2005,6 +1996,15 @@ export class Investment extends Entity {
 
   set strategy(value: string) {
     this.set("strategy", Value.fromString(value));
+  }
+
+  get active(): boolean {
+    let value = this.get("active");
+    return value!.toBoolean();
+  }
+
+  set active(value: boolean) {
+    this.set("active", Value.fromBoolean(value));
   }
 
   get harvestValue(): BigDecimal {

@@ -103,6 +103,7 @@ import { GainsDaiInvestment } from '../Investments/GainsDai'
 import { PenroseHedgedMaticUsdcInvestment } from '../Investments/PenroseHedgedMaticUsdc'
 import { KyberHedgedMaticStMaticInvestment } from '../Investments/KyberHedgedMaticStMatic'
 import { UniV3UsdcMaiStrategy } from '../../generated/UniV3UsdcMaiStrategy/UniV3UsdcMaiStrategy'
+import { UniV3UsdcMaiInvestment } from '../Investments/UniV3UsdcMai'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -465,13 +466,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let kyberHedgedMaticStMaticValue = new KyberHedgedMaticStMaticInvestment(transaction).netAssetValue()
 
-  let uniV3UsdcMaiValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(UNIV3_USDC_MAI_START_BLOCK)) {
-    let tryNAV = UniV3UsdcMaiStrategy.bind(UNIV3_USDC_MAI_STRATEGY).try_netAssetValue()
-    let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
-
-    uniV3UsdcMaiValue = toDecimal(netAssetVal, 6)
-  }
+  let uniV3UsdcMaiValue = new UniV3UsdcMaiInvestment(transaction).netAssetValue()
 
   let stableValueDecimal = maiBalance
     .plus(daiBalance)
@@ -529,7 +524,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryQiWmaticQiInvestmentMarketValue = qiWmaticQiInvestmentMarketValue
   protocolMetric.treasuryOtterClamQiMarketValue = ocQiMarketValue
   protocolMetric.treasuryTetuQiMarketValue = tetuQiMarketValue
-  protocolMetric.treasuryClamMaiPOL = clamMaiPOL
+  // protocolMetric.treasuryClamMaiPOL = clamMaiPOL
   protocolMetric.treasuryDystopiaPairQiTetuQiMarketValue = qiTetuQiValue
   protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = wMaticDystValue
   protocolMetric.treasuryDystopiaPairMaiClamMarketValue = clamMaiDystValue

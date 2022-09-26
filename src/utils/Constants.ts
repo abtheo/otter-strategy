@@ -35,17 +35,6 @@ export const TETU_QI_START_BLOCK = BigInt.fromI32(26184969)
 export const XTETU_QI_CONTRACT = Address.fromString('0x8f1505C8F3B45Cb839D09c607939095a4195738e')
 export const XTETU_QI_START_BLOCK = BigInt.fromI32(26184969)
 
-export const UNI_CLAM_FRAX_PAIR = Address.fromString('0x1f847e05afaf47ec54626928d0e6c235663e938f')
-export const UNI_CLAM_FRAX_PAIR_BLOCK = BigInt.fromI32(22040167)
-
-export const UNI_WETH_USDC_PAIR = Address.fromString('0x853ee4b2a13f8a742d64c8f088be7ba2131f670d')
-
-export const UNI_CLAM_WMATIC_PAIR = Address.fromString('0x3fcc446c70489610462be9d61528c51151aca49f')
-export const UNI_CLAM_WMATIC_PAIR_BLOCK = BigInt.fromI32(22307377)
-
-export const UNI_PEARL_WMATIC_PAIR = Address.fromString('0x52aacffa4d36e3d0f28f1fe20fa12d9e67ef24eb')
-export const UNI_PEARL_WMATIC_PAIR_BLOCK = BigInt.fromI32(24379463)
-
 export const UNI_MAI_USDC_PAIR = Address.fromString('0x160532D2536175d65C03B97b0630A9802c274daD')
 export const UNI_MAI_USDC_PAIR_BLOCK = BigInt.fromI32(23899173)
 
@@ -60,12 +49,6 @@ export const UNI_MAI_USDC_QI_INVESTMENT_PAIR_BLOCK = BigInt.fromI32(23932247)
 export const UNI_QI_WMATIC_INVESTMENT_PAIR = Address.fromString('0xC3356D852330e947144400d237563288c59F3539')
 export const UNI_QI_WMATIC_INVESTMENT_PAIR_BLOCK = BigInt.fromI32(24724405)
 
-export const CURVE_MAI_3POOL_PAIR = Address.fromString('0x447646e84498552e62ecf097cc305eabfff09308')
-export const CURVE_MAI_3POOL_PAIR_BLOCK = BigInt.fromI32(25810765)
-
-export const CURVE_MAI_3POOL_INVESTMENT_PAIR = Address.fromString('0xC94efd5D41ac32ccBe793f764930A5E6955CA31E')
-export const CURVE_MAI_3POOL_INVESTMENT_PAIR_BLOCK = BigInt.fromI32(25810765)
-
 export const USDC_MATIC_AGGREGATOR = Address.fromString('0xAB594600376Ec9fD91F8e885dADF0CE036862dE0')
 export const USDC_USD_AGGREGATOR = Address.fromString('0xfE4A8cc5b5B2366C1B58Bea3858e81843581b2F7')
 export const DAI_USD_AGGREGATOR = Address.fromString('0x4746DeC9e833A82EC7C2C1356372CcF2cfcD2F3D')
@@ -78,12 +61,6 @@ export const STAKING_CONTRACT = Address.fromString('0xC8B0243F350AA5F8B979b228fA
 export const STAKING_DISTRIBUTOR_CONTRACT = Address.fromString('0x0dd015889df6f50d39e9d7a52711d0b86e43fc62')
 
 export const GOVERNANCE_START_BLOCK = BigInt.fromI32(29400000)
-
-export const OTTER_LAKE_ADDRESS = Address.fromString('0xc67aBdA25D0421FE9Dc1afd64183b179A426a256')
-export const PEARL_CHEST_BLOCK = BigInt.fromI32(23569724)
-
-export const OTTER_BUYBACK_ADDRESS = Address.fromString('0x155d21b6d7eb5dd1035a9ae57201c20ff1ea90d2')
-export const OTTER_BUYBACK_BLOCK = BigInt.fromI32(24954592)
 
 export const OTTER_QI_LOCKER = Address.fromString('0x69f6c4Fa150F9F0b3037612CF8FadDAeDbd46Bb8')
 export const QI_FARM = Address.fromString('0x574fe4e8120c4da1741b5fd45584de7a5b521f0f')

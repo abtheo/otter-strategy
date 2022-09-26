@@ -16,8 +16,10 @@ export class GainsDaiInvestment implements InvestmentInterface {
     this.currentBlock = transaction.blockNumber
     if (transaction.blockNumber.ge(this.startBlock)) {
       let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
+      let nav = this.netAssetValue()
       _investment.protocol = this.protocol
-      _investment.netAssetValue = this.netAssetValue()
+      _investment.netAssetValue = nav
+      _investment.active = nav.ge(BigDecimal.fromString('10'))
       this.investment = _investment
       this.investment.save()
     }

@@ -1,20 +1,16 @@
 import { Investment, ClaimReward, Transaction } from '../../generated/schema'
 import { toDecimal } from '../utils/Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import {
-  DAO_WALLET_PENROSE_USER_PROXY,
-  DYSTOPIA_PAIR_USDPLUS_CLAM,
-  PENROSE_REWARD_USDPLUS_CLAM,
-} from '../utils/Constants'
+import { MAI_USDC_INVESTMENT_STRATEGY, QI_FARM_V3, UNI_MAI_USDC_PAIR } from '../utils/Constants'
 import { InvestmentInterface, loadOrCreateInvestment } from '.'
-import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
-import { getDystPairUSD } from '../utils/Price'
+import { QiFarmV3 } from '../../generated/OtterClamERC20V2/QiFarmV3'
+import { getUniPairUSD } from '../utils/Price'
 
-export class PenroseClamUsdPlusInvestment implements InvestmentInterface {
+export class QiDaoUsdcMaiInvestment implements InvestmentInterface {
   public investment!: Investment
-  private readonly strategy: string = 'CLAM/USD+'
-  private readonly protocol: string = 'Penrose'
-  private readonly startBlock: BigInt = BigInt.fromI32(30393227) //29069971
+  private readonly strategy: string = 'USDC/MAI'
+  private readonly protocol: string = 'QiDAO'
+  private readonly startBlock: BigInt = BigInt.fromI32(23932247)
   private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {
@@ -31,12 +27,11 @@ export class PenroseClamUsdPlusInvestment implements InvestmentInterface {
   }
 
   netAssetValue(): BigDecimal {
-    if (this.currentBlock.ge(this.startBlock)) {
-      let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_CLAM).try_balanceOf(
-        DAO_WALLET_PENROSE_USER_PROXY,
-      )
-      let penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-      return getDystPairUSD(this.currentBlock, penroseRewardBalance, DYSTOPIA_PAIR_USDPLUS_CLAM)
+    if (this.currentBlock.gt(this.startBlock)) {
+      let farm = QiFarmV3.bind(QI_FARM_V3)
+      //pid 0 == mai/usdc
+      let deposited = farm.deposited(BigInt.zero(), MAI_USDC_INVESTMENT_STRATEGY)
+      return getUniPairUSD(this.currentBlock, deposited, UNI_MAI_USDC_PAIR)
     }
     return BigDecimal.zero()
   }

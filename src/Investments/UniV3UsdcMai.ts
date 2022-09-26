@@ -1,7 +1,7 @@
 import { Investment, ClaimReward, Transaction } from '../../generated/schema'
 import { toDecimal } from '../utils/Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { GAINS_DAI_INVESTMENT_STRATEGY, GAINS_DAI_VAULT, UNIV3_USDC_MAI_STRATEGY } from '../utils/Constants'
+import { UNIV3_USDC_MAI_STRATEGY } from '../utils/Constants'
 import { InvestmentInterface, loadOrCreateInvestment } from '.'
 import { UniV3UsdcMaiStrategy } from '../../generated/UniV3UsdcMaiStrategy/UniV3UsdcMaiStrategy'
 

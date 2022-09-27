@@ -4,6 +4,7 @@ import {
   DYST_ERC20,
   PENDYST_ERC20,
   PENROSE_REWARD_USDPLUS_CLAM,
+  PEN_DYST_PARTNER_REWARDS,
   PEN_ERC20,
 } from './utils/Constants'
 import {
@@ -17,10 +18,11 @@ import { PenroseClamUsdPlusInvestment } from './Investments/PenroseClamUsdplus'
 import { ClaimReward } from '../generated/schema'
 import { toDecimal } from './utils/Decimals'
 import { getDystUsdRate, getPenDystUsdRate, getPenUsdRate } from './utils/Price'
+import { PenrosePartnerPenDystInvestment } from './Investments/PenrosePartnerPenDyst'
 
 export function handleRewardPaid(event: RewardPaid): void {
   if (event.params.user != DAO_WALLET_PENROSE_USER_PROXY) return
-  log.warning('Penrose Multi rewards: amount {} of token {} to user {} using address {} from {} ', [
+  log.debug('Penrose Multi rewards: amount {} of token {} to user {} using address {} from {} ', [
     event.params.reward.toString(),
     event.params.rewardsToken.toHexString(),
     event.params.user.toHexString(),
@@ -44,16 +46,20 @@ export function handleRewardPaid(event: RewardPaid): void {
   }
 
   // Investments tracking
-  if (event.address == PENROSE_REWARD_USDPLUS_CLAM) {
-    let claim = new ClaimReward(`${transaction.id}_${event.params.rewardsToken.toHexString()}`)
-    claim.transaction = transaction.id
-    claim.timestamp = transaction.timestamp
-    claim.amountUsd = toDecimal(event.params.reward, 18).times(price) //Claim in USDC (6 decimals)
-    claim.amountToken = toDecimal(event.params.reward, 18)
-    claim.token = event.params.rewardsToken
-    claim.save()
+  let claim = new ClaimReward(`${transaction.id}_${event.params.rewardsToken.toHexString()}`)
+  claim.transaction = transaction.id
+  claim.timestamp = transaction.timestamp
+  claim.amountUsd = toDecimal(event.params.reward, 18).times(price)
+  claim.amountToken = toDecimal(event.params.reward, 18)
+  claim.token = event.params.rewardsToken
+  claim.save()
 
+  if (event.address == PENROSE_REWARD_USDPLUS_CLAM) {
     let investment = new PenroseClamUsdPlusInvestment(transaction)
+    investment.addRevenue(claim)
+  }
+  if (event.address == PEN_DYST_PARTNER_REWARDS) {
+    let investment = new PenrosePartnerPenDystInvestment(transaction)
     investment.addRevenue(claim)
   }
 }

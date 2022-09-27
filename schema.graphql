@@ -201,4 +201,6 @@ type Investment @entity {
   apr: BigDecimal!
 
   rewardTokens: [ClaimReward!]!
+
+  #TODO: Real Daily PnL?
 }

@@ -1,16 +1,24 @@
 import { Investment, ClaimReward, Transaction } from '../../generated/schema'
 import { toDecimal } from '../utils/Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { MAI_USDC_INVESTMENT_STRATEGY, QI_FARM_V3, UNI_MAI_USDC_PAIR } from '../utils/Constants'
+import {
+  DAO_WALLET,
+  DAO_WALLET_PENROSE_USER_PROXY,
+  PENDYST_ERC20,
+  PEN_DYST_PARTNER_REWARDS,
+  PEN_DYST_REWARD_PROXY,
+} from '../utils/Constants'
 import { InvestmentInterface, loadOrCreateInvestment } from '.'
-import { QiFarmV3 } from '../../generated/OtterClamERC20V2/QiFarmV3'
-import { getUniPairUSD } from '../utils/Price'
+import { getPenDystUsdRate } from '../utils/Price'
+import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
+import { PenDystRewards } from '../../generated/OtterClamERC20V2/PenDystRewards'
+import { PenrosePartnerRewards } from '../../generated/OtterClamERC20V2/PenrosePartnerRewards'
 
-export class QiDaoUsdcMaiInvestment implements InvestmentInterface {
+export class PenrosePartnerPenDystInvestment implements InvestmentInterface {
   public investment!: Investment
-  private readonly strategy: string = 'USDC/MAI'
-  private readonly protocol: string = 'QiDAO'
-  private readonly startBlock: BigInt = BigInt.fromI32(31831179)
+  private readonly strategy: string = 'penDYST'
+  private readonly protocol: string = 'Penrose'
+  private readonly startBlock: BigInt = BigInt.fromI32(29069971) //29069971
   private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {
@@ -27,17 +35,27 @@ export class QiDaoUsdcMaiInvestment implements InvestmentInterface {
   }
 
   netAssetValue(): BigDecimal {
-    if (this.currentBlock.gt(this.startBlock)) {
-      let farm = QiFarmV3.bind(QI_FARM_V3)
-      //pid 0 == mai/usdc
-      let deposited = farm.deposited(BigInt.zero(), MAI_USDC_INVESTMENT_STRATEGY)
-      return getUniPairUSD(this.currentBlock, deposited, UNI_MAI_USDC_PAIR)
+    if (this.currentBlock.ge(this.startBlock)) {
+      let penDyst = ERC20.bind(PENDYST_ERC20)
+      let penDystStaking = PenDystRewards.bind(PEN_DYST_REWARD_PROXY)
+      let penDystStaking2 = PenrosePartnerRewards.bind(PEN_DYST_PARTNER_REWARDS)
+
+      let penDystAmount = toDecimal(
+        penDyst
+          .balanceOf(DAO_WALLET)
+          .plus(penDyst.balanceOf(DAO_WALLET_PENROSE_USER_PROXY))
+          .plus(penDystStaking.balanceOf(DAO_WALLET_PENROSE_USER_PROXY))
+          .plus(penDystStaking2.balanceOf(DAO_WALLET_PENROSE_USER_PROXY)),
+        18,
+      )
+
+      return penDystAmount.times(getPenDystUsdRate())
     }
     return BigDecimal.zero()
   }
 
   addRevenue(claim: ClaimReward): void {
-    if (this.currentBlock.gt(this.startBlock)) {
+    if (this.currentBlock.ge(this.startBlock)) {
       //aggregate per day
       let dayTotal = this.investment.harvestValue.plus(claim.amountUsd)
       this.investment.harvestValue = dayTotal

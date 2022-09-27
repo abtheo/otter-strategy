@@ -72,6 +72,7 @@ export const OTTOPIA_STORE = Address.fromString('0xc1b43121e0946adef2ad169d6cb99
 
 export const DYSTOPIA_veDYST = Address.fromString('0x060fa7aD32C510F12550c7a967999810dafC5697')
 export const DYSTOPIA_veDYST_ERC721_ID = BigInt.fromI32(30)
+export const DYSTOPIA_veDYST_MATIC_AIRDROP_ID = BigInt.fromI32(37900)
 export const VLPEN_LOCKER = Address.fromString('0x55ca76e0341ccd35c2e3f34cbf767c6102aea70f')
 
 export const DYSTOPIA_PAIR_MAI_CLAM = Address.fromString('0x40705378b468b357435be7302ee22918ee4c4d24')

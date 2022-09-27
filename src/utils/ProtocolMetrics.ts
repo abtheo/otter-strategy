@@ -404,6 +404,10 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     //plus the locked veDyst inside NFT
     let veDystContract = veDyst.bind(DYSTOPIA_veDYST)
     veDystMarketValue = toDecimal(veDystContract.balanceOfNFT(DYSTOPIA_veDYST_ERC721_ID), 18).times(getDystUsdRate())
+    //and add newest veDYST for airdrop
+    veDystMarketValue = veDystMarketValue.plus(
+      toDecimal(veDystContract.balanceOfNFT(DYSTOPIA_veDYST_ERC721_ID), 18).times(getDystUsdRate()),
+    )
   }
 
   //add stablecoin-only half of Dystopia CLAM-X LPs

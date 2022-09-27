@@ -10,7 +10,7 @@ export class QiDaoUsdcMaiInvestment implements InvestmentInterface {
   public investment!: Investment
   private readonly strategy: string = 'USDC/MAI'
   private readonly protocol: string = 'QiDAO'
-  private readonly startBlock: BigInt = BigInt.fromI32(23932247)
+  private readonly startBlock: BigInt = BigInt.fromI32(31035392)
   private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {

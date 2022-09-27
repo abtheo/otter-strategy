@@ -33,17 +33,19 @@ export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
   }
 
   addRevenue(claim: ClaimReward): void {
-    //aggregate per day
-    let dayTotal = this.investment.harvestValue.plus(claim.amountUsd)
-    this.investment.harvestValue = dayTotal
+    if (this.currentBlock.ge(this.startBlock)) {
+      //aggregate per day
+      let dayTotal = this.investment.harvestValue.plus(claim.amountUsd)
+      this.investment.harvestValue = dayTotal
 
-    let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))
-    this.investment.rewardRate = rewardRate
+      let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))
+      this.investment.rewardRate = rewardRate
 
-    // (payout*365 / stakedValue) * 100% = APR%
-    this.investment.apr = rewardRate.times(BigDecimal.fromString('365'))
+      // (payout*365 / stakedValue) * 100% = APR%
+      this.investment.apr = rewardRate.times(BigDecimal.fromString('365'))
 
-    this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
-    this.investment.save()
+      this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
+      this.investment.save()
+    }
   }
 }

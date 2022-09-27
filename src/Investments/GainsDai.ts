@@ -26,7 +26,7 @@ export class GainsDaiInvestment implements InvestmentInterface {
   }
 
   netAssetValue(): BigDecimal {
-    if (this.currentBlock.gt(this.startBlock)) {
+    if (this.currentBlock.ge(this.startBlock)) {
       let gainsDaiVault = GainsDaiVault.bind(GAINS_DAI_VAULT)
       // values: daiDeposited uint256, maxDaiDeposited uint256, withdrawBlock uint256, debtDai uint256, debtMatic uint256
       let gainsDaiBalance = toDecimal(gainsDaiVault.users(GAINS_DAI_INVESTMENT_STRATEGY).value0, 18)

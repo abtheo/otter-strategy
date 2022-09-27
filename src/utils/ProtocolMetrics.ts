@@ -79,6 +79,7 @@ import {
   GOVERNANCE_START_BLOCK,
   UNIV3_USDC_MAI_START_BLOCK,
   UNIV3_USDC_MAI_STRATEGY,
+  DYSTOPIA_veDYST_MATIC_AIRDROP_ID,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -406,7 +407,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     veDystMarketValue = toDecimal(veDystContract.balanceOfNFT(DYSTOPIA_veDYST_ERC721_ID), 18).times(getDystUsdRate())
     //and add newest veDYST for airdrop
     veDystMarketValue = veDystMarketValue.plus(
-      toDecimal(veDystContract.balanceOfNFT(DYSTOPIA_veDYST_ERC721_ID), 18).times(getDystUsdRate()),
+      toDecimal(veDystContract.balanceOfNFT(DYSTOPIA_veDYST_MATIC_AIRDROP_ID), 18).times(getDystUsdRate()),
     )
   }
 

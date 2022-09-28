@@ -33,6 +33,7 @@ export class UniV3UsdcMaiInvestment implements InvestmentInterface {
     return BigDecimal.zero()
   }
 
+  // Uses the Gross Revenue for Farming APR
   addRevenue(claim: ClaimReward): void {
     //aggregate per day
     let dayTotal = this.investment.harvestValue.plus(claim.amountUsd)
@@ -47,4 +48,7 @@ export class UniV3UsdcMaiInvestment implements InvestmentInterface {
     this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
     this.investment.save()
   }
+
+  // Uses the Net Revenue for PnL (APR?)
+  calculateNetProfit() {}
 }

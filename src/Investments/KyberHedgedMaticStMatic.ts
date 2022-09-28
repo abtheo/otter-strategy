@@ -37,6 +37,7 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
     return BigDecimal.zero()
   }
 
+  // Uses the Gross Revenue for Farming APR
   addRevenue(claim: ClaimReward): void {
     if (this.currentBlock.ge(this.startBlock)) {
       //aggregate per day

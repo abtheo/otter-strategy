@@ -58,7 +58,8 @@ export function handleRewardPaid(event: RewardPaid): void {
     let investment = new PenroseClamUsdPlusInvestment(transaction)
     investment.addRevenue(claim)
   }
-  if (event.address == PEN_DYST_PARTNER_REWARDS) {
+  //Penrose Partnership includes a lot of dust, ignore
+  if (event.address == PEN_DYST_PARTNER_REWARDS && price.gt(BigDecimal.zero())) {
     let investment = new PenrosePartnerPenDystInvestment(transaction)
     investment.addRevenue(claim)
   }

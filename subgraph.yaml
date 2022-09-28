@@ -628,6 +628,8 @@ dataSources:
       eventHandlers:
         - event: ClaimRewardToken(indexed address,uint256,uint256)
           handler: handleClaimReward
+        - event: PayoutReward(uint256,int256,uint256)
+          handler: handlePayoutReward
       file: ./src/UniV3UsdcMaiStrategy.ts
 
   # - kind: ethereum/contract
@@ -794,6 +796,8 @@ dataSources:
       eventHandlers:
         - event: ClaimRewardToken(indexed address,uint256,uint256)
           handler: handleClaimRewardToken
+        - event: PayoutReward(uint256,int256,uint256)
+          handler: handlePayoutReward
       file: ./src/KyberswapMaticStMaticHedgedLpStrategy.ts
 
   # - kind: ethereum/contract

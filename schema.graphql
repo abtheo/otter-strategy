@@ -194,13 +194,12 @@ type Investment @entity {
   netAssetValue: BigDecimal!
   protocol: String!
   strategy: String!
-  active: Boolean!
 
-  harvestValue: BigDecimal!
-  rewardRate: BigDecimal!
-  apr: BigDecimal!
+  grossRevenue: BigDecimal!
+  grossApr: BigDecimal!
+
+  netRevenue: BigDecimal!
+  netApr: BigDecimal!
 
   rewardTokens: [ClaimReward!]!
-
-  #TODO: Real Daily PnL?
 }

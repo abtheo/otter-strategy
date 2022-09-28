@@ -1929,10 +1929,10 @@ export class Investment extends Entity {
     this.set("netAssetValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("protocol", Value.fromString(""));
     this.set("strategy", Value.fromString(""));
-    this.set("active", Value.fromBoolean(false));
-    this.set("harvestValue", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("rewardRate", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("apr", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("grossRevenue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("grossApr", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("netRevenue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("netApr", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("rewardTokens", Value.fromStringArray(new Array(0)));
   }
 
@@ -1998,40 +1998,40 @@ export class Investment extends Entity {
     this.set("strategy", Value.fromString(value));
   }
 
-  get active(): boolean {
-    let value = this.get("active");
-    return value!.toBoolean();
-  }
-
-  set active(value: boolean) {
-    this.set("active", Value.fromBoolean(value));
-  }
-
-  get harvestValue(): BigDecimal {
-    let value = this.get("harvestValue");
+  get grossRevenue(): BigDecimal {
+    let value = this.get("grossRevenue");
     return value!.toBigDecimal();
   }
 
-  set harvestValue(value: BigDecimal) {
-    this.set("harvestValue", Value.fromBigDecimal(value));
+  set grossRevenue(value: BigDecimal) {
+    this.set("grossRevenue", Value.fromBigDecimal(value));
   }
 
-  get rewardRate(): BigDecimal {
-    let value = this.get("rewardRate");
+  get grossApr(): BigDecimal {
+    let value = this.get("grossApr");
     return value!.toBigDecimal();
   }
 
-  set rewardRate(value: BigDecimal) {
-    this.set("rewardRate", Value.fromBigDecimal(value));
+  set grossApr(value: BigDecimal) {
+    this.set("grossApr", Value.fromBigDecimal(value));
   }
 
-  get apr(): BigDecimal {
-    let value = this.get("apr");
+  get netRevenue(): BigDecimal {
+    let value = this.get("netRevenue");
     return value!.toBigDecimal();
   }
 
-  set apr(value: BigDecimal) {
-    this.set("apr", Value.fromBigDecimal(value));
+  set netRevenue(value: BigDecimal) {
+    this.set("netRevenue", Value.fromBigDecimal(value));
+  }
+
+  get netApr(): BigDecimal {
+    let value = this.get("netApr");
+    return value!.toBigDecimal();
+  }
+
+  set netApr(value: BigDecimal) {
+    this.set("netApr", Value.fromBigDecimal(value));
   }
 
   get rewardTokens(): Array<string> {

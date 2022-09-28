@@ -15,13 +15,14 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
   constructor(transaction: Transaction) {
     this.currentBlock = transaction.blockNumber
     if (transaction.blockNumber.ge(this.startBlock)) {
-      let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
       let nav = this.netAssetValue()
-      _investment.protocol = this.protocol
-      _investment.netAssetValue = nav
-      _investment.active = nav.ge(BigDecimal.fromString('10'))
-      this.investment = _investment
-      this.investment.save()
+      if (nav.gt(BigDecimal.fromString('10'))) {
+        let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
+        _investment.protocol = this.protocol
+        _investment.netAssetValue = nav
+        this.investment = _investment
+        this.investment.save()
+      }
     }
   }
 
@@ -41,14 +42,13 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
   addRevenue(claim: ClaimReward): void {
     if (this.currentBlock.ge(this.startBlock)) {
       //aggregate per day
-      let dayTotal = this.investment.harvestValue.plus(claim.amountUsd)
-      this.investment.harvestValue = dayTotal
+      let dayTotal = this.investment.grossRevenue.plus(claim.amountUsd)
+      this.investment.grossRevenue = dayTotal
 
       let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))
-      this.investment.rewardRate = rewardRate
 
       // (payout*365 / stakedValue) * 100% = APR%
-      this.investment.apr = rewardRate.times(BigDecimal.fromString('365'))
+      this.investment.grossApr = rewardRate.times(BigDecimal.fromString('365'))
 
       this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
       this.investment.save()

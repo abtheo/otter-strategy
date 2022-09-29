@@ -7,9 +7,9 @@ import { InvestmentInterface, loadOrCreateInvestment } from '.'
 
 export class GainsDaiInvestment implements InvestmentInterface {
   public investment!: Investment
-  private readonly strategy: string = 'DAI Vault'
-  private readonly protocol: string = 'Gains'
-  private readonly startBlock: BigInt = BigInt.fromI32(32300283)
+  public readonly strategy: string = 'DAI Vault'
+  public readonly protocol: string = 'Gains'
+  public readonly startBlock: BigInt = BigInt.fromI32(32300283)
   private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {

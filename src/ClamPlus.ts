@@ -23,6 +23,8 @@ export function handleWithdrawPearl(withdraw: WithdrawPearl): void {
   updateStakedBalances(withdraw.block, withdraw.params.account)
 }
 
+//TODO: handleTransfer between wallets (not staking contracts)
+
 export function updateStakedBalances(block: ethereum.Block, account: Address): void {
   let pearlBank = PearlBank.bind(PEARL_BANK)
   let clamPlus = ClamPlus.bind(CLAM_PLUS)

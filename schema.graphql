@@ -203,3 +203,11 @@ type Investment @entity {
 
   rewardTokens: [ClaimReward!]!
 }
+
+type PayoutReward @entity {
+  id: ID!
+  transactionHash: Transaction!
+  netAssetValue: BigDecimal!
+  revenue: BigDecimal!
+  payout: BigDecimal!
+}

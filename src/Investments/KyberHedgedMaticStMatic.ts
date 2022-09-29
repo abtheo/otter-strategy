@@ -7,9 +7,9 @@ import { KyberswapMaticStMaticHedgedLpStrategy } from '../../generated/Kyberswap
 
 export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
   public investment!: Investment
-  private readonly strategy: string = 'Hedged MATIC/stMATIC'
-  private readonly protocol: string = 'Kyberswap'
-  private readonly startBlock: BigInt = BigInt.fromI32(33348683) //actual: 33084754
+  public readonly strategy: string = 'Hedged MATIC/stMATIC'
+  public readonly protocol: string = 'Kyberswap'
+  public readonly startBlock: BigInt = BigInt.fromI32(33348683) //actual: 33084754
   private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {

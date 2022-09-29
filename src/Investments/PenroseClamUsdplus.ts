@@ -12,9 +12,9 @@ import { getDystPairUSD } from '../utils/Price'
 
 export class PenroseClamUsdPlusInvestment implements InvestmentInterface {
   public investment!: Investment
-  private readonly strategy: string = 'CLAM/USD+'
-  private readonly protocol: string = 'Penrose'
-  private readonly startBlock: BigInt = BigInt.fromI32(30393227) //29069971
+  public readonly strategy: string = 'CLAM/USD+'
+  public readonly protocol: string = 'Penrose'
+  public readonly startBlock: BigInt = BigInt.fromI32(30393227) //29069971
   private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {

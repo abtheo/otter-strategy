@@ -3,7 +3,7 @@ import { DystRouter } from '../../../generated/OtterClamERC20V2/DystRouter'
 import { Exchange } from './exchange'
 
 export class DystExchange implements Exchange {
-  private readonly router: DystRouter
+  public readonly router: DystRouter
 
   constructor(routerAddress: Address) {
     this.router = DystRouter.bind(routerAddress)

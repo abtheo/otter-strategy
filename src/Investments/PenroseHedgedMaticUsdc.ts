@@ -7,9 +7,9 @@ import { PenroseHedgeLpStrategy } from '../../generated/OtterClamERC20V2/Penrose
 
 export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
   public investment!: Investment
-  private readonly strategy: string = 'Hedged MATIC/USDC'
-  private readonly protocol: string = 'Penrose'
-  private readonly startBlock: BigInt = BigInt.fromI32(33348683) // actual start: 32513909
+  public readonly strategy: string = 'Hedged MATIC/USDC'
+  public readonly protocol: string = 'Penrose'
+  public readonly startBlock: BigInt = BigInt.fromI32(33348683) // actual start: 32513909
   private currentBlock: BigInt = BigInt.zero()
 
   constructor(transaction: Transaction) {

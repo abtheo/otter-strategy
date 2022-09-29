@@ -2043,3 +2043,77 @@ export class Investment extends Entity {
     this.set("rewardTokens", Value.fromStringArray(value));
   }
 }
+
+export class PayoutReward extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("transactionHash", Value.fromString(""));
+    this.set("netAssetValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("revenue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("payout", Value.fromBigDecimal(BigDecimal.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save PayoutReward entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save PayoutReward entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("PayoutReward", id.toString(), this);
+    }
+  }
+
+  static load(id: string): PayoutReward | null {
+    return changetype<PayoutReward | null>(store.get("PayoutReward", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get transactionHash(): string {
+    let value = this.get("transactionHash");
+    return value!.toString();
+  }
+
+  set transactionHash(value: string) {
+    this.set("transactionHash", Value.fromString(value));
+  }
+
+  get netAssetValue(): BigDecimal {
+    let value = this.get("netAssetValue");
+    return value!.toBigDecimal();
+  }
+
+  set netAssetValue(value: BigDecimal) {
+    this.set("netAssetValue", Value.fromBigDecimal(value));
+  }
+
+  get revenue(): BigDecimal {
+    let value = this.get("revenue");
+    return value!.toBigDecimal();
+  }
+
+  set revenue(value: BigDecimal) {
+    this.set("revenue", Value.fromBigDecimal(value));
+  }
+
+  get payout(): BigDecimal {
+    let value = this.get("payout");
+    return value!.toBigDecimal();
+  }
+
+  set payout(value: BigDecimal) {
+    this.set("payout", Value.fromBigDecimal(value));
+  }
+}

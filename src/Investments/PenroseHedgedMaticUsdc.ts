@@ -11,12 +11,14 @@ export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
   public readonly protocol: string = 'Penrose'
   public readonly startBlock: BigInt = BigInt.fromI32(33348683) // actual start: 32513909
   private currentBlock: BigInt = BigInt.zero()
+  private active: boolean = false
 
   constructor(transaction: Transaction) {
     this.currentBlock = transaction.blockNumber
     if (transaction.blockNumber.ge(this.startBlock)) {
       let nav = this.netAssetValue()
       if (nav.gt(BigDecimal.fromString('10'))) {
+        this.active = true
         let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
         _investment.protocol = this.protocol
         _investment.netAssetValue = nav
@@ -27,14 +29,14 @@ export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
   }
 
   netAssetValue(): BigDecimal {
-    if (this.currentBlock.ge(this.startBlock)) {
+    if (this.active) {
       return toDecimal(PenroseHedgeLpStrategy.bind(PENROSE_HEDGED_MATIC_STRATEGY).netAssetValue(), 6)
     }
     return BigDecimal.zero()
   }
 
   addRevenue(claim: ClaimReward): void {
-    if (this.currentBlock.ge(this.startBlock)) {
+    if (this.active) {
       //aggregate per day
       let dayTotal = this.investment.grossRevenue.plus(claim.amountUsd)
       this.investment.grossRevenue = dayTotal

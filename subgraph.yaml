@@ -2,592 +2,592 @@ specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
-  # - kind: ethereum/contract
-  #   name: OtterQiLocker
-  #   network: matic
-  #   source:
-  #     address: '0x69f6c4Fa150F9F0b3037612CF8FadDAeDbd46Bb8'
-  #     abi: OtterQiLocker
-  #     startBlock: 26888468
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - Vote
-  #       - VotePosition
-  #       - GovernanceMetric
-  #       - TotalBurnedClam
-  #       - Harvest
-  #       - HarvestStaking
-  #       - AllStakedBalance
-  #     abis:
-  #       - name: OtterQiLocker
-  #         file: ./abis/OtterQiLocker.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: Harvest(uint256)
-  #         handler: handleHarvest
-  #       - event: HarvestStaking(indexed uint256,uint256)
-  #         handler: handleHarvestStaking
-  #     file: ./src/OtterQiLocker.ts
+  - kind: ethereum/contract
+    name: OtterQiLocker
+    network: matic
+    source:
+      address: '0x69f6c4Fa150F9F0b3037612CF8FadDAeDbd46Bb8'
+      abi: OtterQiLocker
+      startBlock: 26888468
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - Vote
+        - VotePosition
+        - GovernanceMetric
+        - TotalBurnedClam
+        - Harvest
+        - HarvestStaking
+        - AllStakedBalance
+      abis:
+        - name: OtterQiLocker
+          file: ./abis/OtterQiLocker.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: Harvest(uint256)
+          handler: handleHarvest
+        - event: HarvestStaking(indexed uint256,uint256)
+          handler: handleHarvestStaking
+      file: ./src/OtterQiLocker.ts
 
-  # - kind: ethereum/contract
-  #   name: OttoPortal
-  #   network: matic
-  #   source:
-  #     address: '0xCb8Ba0c08e746CA6fa79fe535580f89A8eC082C2'
-  #     abi: OttoPortal
-  #     startBlock: 30747603
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - OttoMinted
-  #       - BuyProduct
-  #       - Transaction
-  #       - TreasuryRevenue
-  #     abis:
-  #       - name: OttoPortal
-  #         file: ./abis/OttoPortal.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: OttoMinted(indexed address,indexed address,uint256)
-  #         handler: handleOttoMinted
-  #     file: ./src/OttoPortal.ts
+  - kind: ethereum/contract
+    name: OttoPortal
+    network: matic
+    source:
+      address: '0xCb8Ba0c08e746CA6fa79fe535580f89A8eC082C2'
+      abi: OttoPortal
+      startBlock: 30747603
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - OttoMinted
+        - BuyProduct
+        - Transaction
+        - TreasuryRevenue
+      abis:
+        - name: OttoPortal
+          file: ./abis/OttoPortal.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: OttoMinted(indexed address,indexed address,uint256)
+          handler: handleOttoMinted
+      file: ./src/OttoPortal.ts
 
-  # - kind: ethereum/contract
-  #   name: OttopiaStore
-  #   network: matic
-  #   source:
-  #     address: '0xc1b43121e0946adef2ad169d6cb994064e275085'
-  #     abi: OttopiaStore
-  #     startBlock: 27752376
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - BuyProduct
-  #       - Transaction
-  #       - TreasuryRevenue
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - Vote
-  #       - VotePosition
-  #       - GovernanceMetric
-  #       - Harvest
-  #       - HarvestStaking
-  #     abis:
-  #       - name: OttopiaStore
-  #         file: ./abis/OttopiaStore.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #     eventHandlers:
-  #       - event: BuyProduct(indexed uint256,indexed address,indexed address,uint256,uint256)
-  #         handler: handleBuyProduct
-  #     file: ./src/OttopiaStore.ts
+  - kind: ethereum/contract
+    name: OttopiaStore
+    network: matic
+    source:
+      address: '0xc1b43121e0946adef2ad169d6cb994064e275085'
+      abi: OttopiaStore
+      startBlock: 27752376
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - BuyProduct
+        - Transaction
+        - TreasuryRevenue
+        - Transfer
+        - TreasuryRevenue
+        - Vote
+        - VotePosition
+        - GovernanceMetric
+        - Harvest
+        - HarvestStaking
+      abis:
+        - name: OttopiaStore
+          file: ./abis/OttopiaStore.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+      eventHandlers:
+        - event: BuyProduct(indexed uint256,indexed address,indexed address,uint256,uint256)
+          handler: handleBuyProduct
+      file: ./src/OttopiaStore.ts
 
-  # - kind: ethereum/contract
-  #   name: PenroseMaiClamRewards
-  #   network: matic
-  #   source:
-  #     address: '0x4edc2f4368179be77e5e8fba295fff0a82e3df21'
-  #     abi: PenroseMultiRewards
-  #     startBlock: 29069971
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: PenroseMultiRewards
-  #         file: ./abis/PenroseMultiRewards.json
-  #       - name: Pen
-  #         file: ./abis/Pen.json
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: RewardPaid(indexed address,indexed address,uint256)
-  #         handler: handleRewardPaid
-  #     file: ./src/PenroseMultiRewards.ts
+  - kind: ethereum/contract
+    name: PenroseMaiClamRewards
+    network: matic
+    source:
+      address: '0x4edc2f4368179be77e5e8fba295fff0a82e3df21'
+      abi: PenroseMultiRewards
+      startBlock: 29069971
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        - name: Pen
+          file: ./abis/Pen.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/PenroseMultiRewards.ts
 
-  # - kind: ethereum/contract
-  #   name: PenroseMaticDystRewards
-  #   network: matic
-  #   source:
-  #     address: '0xbb1bF0980a61Fc5dAf981B33543Fb54c8E04DFa0'
-  #     abi: PenroseMultiRewards
-  #     startBlock: 29069971
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: PenroseMultiRewards
-  #         file: ./abis/PenroseMultiRewards.json
-  #       - name: Pen
-  #         file: ./abis/Pen.json
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: RewardPaid(indexed address,indexed address,uint256)
-  #         handler: handleRewardPaid
-  #     file: ./src/PenroseMultiRewards.ts
+  - kind: ethereum/contract
+    name: PenroseMaticDystRewards
+    network: matic
+    source:
+      address: '0xbb1bF0980a61Fc5dAf981B33543Fb54c8E04DFa0'
+      abi: PenroseMultiRewards
+      startBlock: 29069971
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        - name: Pen
+          file: ./abis/Pen.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/PenroseMultiRewards.ts
 
-  # - kind: ethereum/contract
-  #   name: PenroseVlPenRewards
-  #   network: matic
-  #   source:
-  #     address: '0x55CA76E0341ccD35c2E3F34CbF767C6102aea70f'
-  #     abi: PenroseMultiRewards
-  #     startBlock: 29069971
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: PenroseMultiRewards
-  #         file: ./abis/PenroseMultiRewards.json
-  #       - name: Pen
-  #         file: ./abis/Pen.json
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: RewardPaid(indexed address,indexed address,uint256)
-  #         handler: handleRewardPaid
-  #     file: ./src/PenroseMultiRewards.ts
+  - kind: ethereum/contract
+    name: PenroseVlPenRewards
+    network: matic
+    source:
+      address: '0x55CA76E0341ccD35c2E3F34CbF767C6102aea70f'
+      abi: PenroseMultiRewards
+      startBlock: 29069971
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        - name: Pen
+          file: ./abis/Pen.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/PenroseMultiRewards.ts
 
-  # - kind: ethereum/contract
-  #   name: PenroseClamUsdPlusRewards
-  #   network: matic
-  #   source:
-  #     address: '0x582331EB734D2d81e29Eb54A9890AEED1627e2C2'
-  #     abi: PenroseMultiRewards
-  #     startBlock: 31069971
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: PenroseMultiRewards
-  #         file: ./abis/PenroseMultiRewards.json
-  #       - name: Pen
-  #         file: ./abis/Pen.json
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: RewardPaid(indexed address,indexed address,uint256)
-  #         handler: handleRewardPaid
-  #     file: ./src/PenroseMultiRewards.ts
+  - kind: ethereum/contract
+    name: PenroseClamUsdPlusRewards
+    network: matic
+    source:
+      address: '0x582331EB734D2d81e29Eb54A9890AEED1627e2C2'
+      abi: PenroseMultiRewards
+      startBlock: 31069971
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        - name: Pen
+          file: ./abis/Pen.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/PenroseMultiRewards.ts
 
-  # - kind: ethereum/contract
-  #   name: PenroseUsdcTusdRewards
-  #   network: matic
-  #   source:
-  #     address: '0xc1Cc12d610bd71fFdBfE489C941e548Df6f94D14'
-  #     abi: PenroseMultiRewards
-  #     startBlock: 29069971
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: PenroseMultiRewards
-  #         file: ./abis/PenroseMultiRewards.json
-  #       - name: Pen
-  #         file: ./abis/Pen.json
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: RewardPaid(indexed address,indexed address,uint256)
-  #         handler: handleRewardPaid
-  #     file: ./src/PenroseMultiRewards.ts
+  - kind: ethereum/contract
+    name: PenroseUsdcTusdRewards
+    network: matic
+    source:
+      address: '0xc1Cc12d610bd71fFdBfE489C941e548Df6f94D14'
+      abi: PenroseMultiRewards
+      startBlock: 29069971
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        - name: Pen
+          file: ./abis/Pen.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/PenroseMultiRewards.ts
 
-  # - kind: ethereum/contract
-  #   name: PenroseUsdplusUsdcRewards
-  #   network: matic
-  #   source:
-  #     address: '0x39b3a36d7d6b2bae6e13d2Ceb00f847Aa3E6990A'
-  #     abi: PenroseMultiRewards
-  #     startBlock: 29069971
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: PenroseMultiRewards
-  #         file: ./abis/PenroseMultiRewards.json
-  #       - name: Pen
-  #         file: ./abis/Pen.json
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: RewardPaid(indexed address,indexed address,uint256)
-  #         handler: handleRewardPaid
-  #     file: ./src/PenroseMultiRewards.ts
+  - kind: ethereum/contract
+    name: PenroseUsdplusUsdcRewards
+    network: matic
+    source:
+      address: '0x39b3a36d7d6b2bae6e13d2Ceb00f847Aa3E6990A'
+      abi: PenroseMultiRewards
+      startBlock: 29069971
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        - name: Pen
+          file: ./abis/Pen.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/PenroseMultiRewards.ts
 
-  # - kind: ethereum/contract
-  #   name: PenroseQiTetuQiRewards
-  #   network: matic
-  #   source:
-  #     address: '0x249C0236B0F597EdCE0BF989fdf2EDbB1799FfA8'
-  #     abi: PenroseMultiRewards
-  #     startBlock: 29069971
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: PenroseMultiRewards
-  #         file: ./abis/PenroseMultiRewards.json
-  #       - name: Pen
-  #         file: ./abis/Pen.json
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: RewardPaid(indexed address,indexed address,uint256)
-  #         handler: handleRewardPaid
-  #     file: ./src/PenroseMultiRewards.ts
+  - kind: ethereum/contract
+    name: PenroseQiTetuQiRewards
+    network: matic
+    source:
+      address: '0x249C0236B0F597EdCE0BF989fdf2EDbB1799FfA8'
+      abi: PenroseMultiRewards
+      startBlock: 29069971
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        - name: Pen
+          file: ./abis/Pen.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/PenroseMultiRewards.ts
 
-  # - kind: ethereum/contract
-  #   name: PenroseUsdplusStMaticRewards
-  #   network: matic
-  #   source:
-  #     address: '0x2d64610f5f95ae24b689711599487f9077058ffd'
-  #     abi: PenroseMultiRewards
-  #     startBlock: 31069971
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: PenroseMultiRewards
-  #         file: ./abis/PenroseMultiRewards.json
-  #       - name: Pen
-  #         file: ./abis/Pen.json
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: RewardPaid(indexed address,indexed address,uint256)
-  #         handler: handleRewardPaid
-  #     file: ./src/PenroseMultiRewards.ts
+  - kind: ethereum/contract
+    name: PenroseUsdplusStMaticRewards
+    network: matic
+    source:
+      address: '0x2d64610f5f95ae24b689711599487f9077058ffd'
+      abi: PenroseMultiRewards
+      startBlock: 31069971
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        - name: Pen
+          file: ./abis/Pen.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/PenroseMultiRewards.ts
 
-  # - kind: ethereum/contract
-  #   name: PenrosePartnerRewards
-  #   network: matic
-  #   source:
-  #     address: '0x5DD340DD4142D093c1926282CD56B0D4690dEB11'
-  #     abi: PenroseMultiRewards
-  #     startBlock: 29569971
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: PenroseMultiRewards
-  #         file: ./abis/PenroseMultiRewards.json
-  #       - name: PenrosePartnerRewards
-  #         file: ./abis/PenrosePartnerRewards.json
-  #       - name: PenDystRewards
-  #         file: ./abis/PenDystRewards.json
-  #       - name: Pen
-  #         file: ./abis/Pen.json
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: RewardPaid(indexed address,indexed address,uint256)
-  #         handler: handleRewardPaid
-  #     file: ./src/PenroseMultiRewards.ts
+  - kind: ethereum/contract
+    name: PenrosePartnerRewards
+    network: matic
+    source:
+      address: '0x5DD340DD4142D093c1926282CD56B0D4690dEB11'
+      abi: PenroseMultiRewards
+      startBlock: 29569971
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        - name: PenrosePartnerRewards
+          file: ./abis/PenrosePartnerRewards.json
+        - name: PenDystRewards
+          file: ./abis/PenDystRewards.json
+        - name: Pen
+          file: ./abis/Pen.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/PenroseMultiRewards.ts
 
-  # - kind: ethereum/contract
-  #   name: MaiUsdcStrategy
-  #   network: matic
-  #   source:
-  #     address: '0x31e79E57fE7287dCa5285354338caB63A3C2b830'
-  #     abi: MaiUsdcStrategy
-  #     startBlock: 31035392
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: MaiUsdcStrategy
-  #         file: ./abis/MaiUsdcStrategy.json
-  #       - name: QiFarmV3
-  #         file: ./abis/QiFarmV3.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: ClaimReward(uint256)
-  #         handler: handleClaimReward
-  #     file: ./src/MaiUsdcStrategy.ts
+  - kind: ethereum/contract
+    name: MaiUsdcStrategy
+    network: matic
+    source:
+      address: '0x31e79E57fE7287dCa5285354338caB63A3C2b830'
+      abi: MaiUsdcStrategy
+      startBlock: 31035392
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: MaiUsdcStrategy
+          file: ./abis/MaiUsdcStrategy.json
+        - name: QiFarmV3
+          file: ./abis/QiFarmV3.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: ClaimReward(uint256)
+          handler: handleClaimReward
+      file: ./src/MaiUsdcStrategy.ts
 
   - kind: ethereum/contract
     name: UniV3UsdcMaiStrategy
@@ -632,130 +632,130 @@ dataSources:
           handler: handlePayoutReward
       file: ./src/UniV3UsdcMaiStrategy.ts
 
-  # - kind: ethereum/contract
-  #   name: MaiStMaticStrategy
-  #   network: matic
-  #   source:
-  #     address: '0x7E253B145543fA38BF90a110338c2249824eA2b5'
-  #     abi: MaiStMaticStrategy
-  #     startBlock: 32213139
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: MaiStMaticStrategy
-  #         file: ./abis/MaiStMaticStrategy.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: ClaimReward(uint256)
-  #         handler: handleClaimReward
-  #     file: ./src/MaiStMaticStrategy.ts
+  - kind: ethereum/contract
+    name: MaiStMaticStrategy
+    network: matic
+    source:
+      address: '0x7E253B145543fA38BF90a110338c2249824eA2b5'
+      abi: MaiStMaticStrategy
+      startBlock: 32213139
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: MaiStMaticStrategy
+          file: ./abis/MaiStMaticStrategy.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: ClaimReward(uint256)
+          handler: handleClaimReward
+      file: ./src/MaiStMaticStrategy.ts
 
-  # - kind: ethereum/contract
-  #   name: UsdPlusStrategy
-  #   network: matic
-  #   source:
-  #     address: '0x32470D6b534e7343ECB05069d1D3336A8424beA0'
-  #     abi: UsdPlusStrategy
-  #     startBlock: 32256016
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: UsdPlusStrategy
-  #         file: ./abis/UsdPlusStrategy.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: ClaimReward(uint256)
-  #         handler: handleClaimReward
-  #     file: ./src/UsdPlusStrategy.ts
+  - kind: ethereum/contract
+    name: UsdPlusStrategy
+    network: matic
+    source:
+      address: '0x32470D6b534e7343ECB05069d1D3336A8424beA0'
+      abi: UsdPlusStrategy
+      startBlock: 32256016
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: UsdPlusStrategy
+          file: ./abis/UsdPlusStrategy.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: ClaimReward(uint256)
+          handler: handleClaimReward
+      file: ./src/UsdPlusStrategy.ts
 
-  # - kind: ethereum/contract
-  #   name: GainsDaiStrategy
-  #   network: matic
-  #   source:
-  #     address: '0x397b681bd7d9e8e10a577574586e2ceeb475793c'
-  #     abi: GainsDaiStrategy
-  #     startBlock: 32300283
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: GainsDaiStrategy
-  #         file: ./abis/GainsDaiStrategy.json
-  #       - name: GainsDaiVault
-  #         file: ./abis/GainsDaiVault.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: ClaimReward(uint256)
-  #         handler: handleClaimReward
-  #     file: ./src/GainsDaiStrategy.ts
+  - kind: ethereum/contract
+    name: GainsDaiStrategy
+    network: matic
+    source:
+      address: '0x397b681bd7d9e8e10a577574586e2ceeb475793c'
+      abi: GainsDaiStrategy
+      startBlock: 32300283
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: GainsDaiStrategy
+          file: ./abis/GainsDaiStrategy.json
+        - name: GainsDaiVault
+          file: ./abis/GainsDaiVault.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: ClaimReward(uint256)
+          handler: handleClaimReward
+      file: ./src/GainsDaiStrategy.ts
 
   - kind: ethereum/contract
     name: KyberswapMaticStMaticHedgedLpStrategy
@@ -800,316 +800,316 @@ dataSources:
           handler: handlePayoutReward
       file: ./src/KyberswapMaticStMaticHedgedLpStrategy.ts
 
-  # - kind: ethereum/contract
-  #   name: PenroseHedgeLpStrategy
-  #   network: matic
-  #   source:
-  #     address: '0xc8a2CbD3dda4EA728546cEf1E7cADfE9755714E9'
-  #     abi: PenroseHedgeLpStrategy
-  #     startBlock: 32513909
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TreasuryRevenue
-  #       - ClaimReward
-  #     abis:
-  #       - name: PenroseHedgeLpStrategy
-  #         file: ./abis/PenroseHedgeLpStrategy.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: ClaimRewardToken(indexed address,uint256,uint256)
-  #         handler: handleClaimReward
-  #     file: ./src/PenroseHedgeLpStrategy.ts
+  - kind: ethereum/contract
+    name: PenroseHedgeLpStrategy
+    network: matic
+    source:
+      address: '0xc8a2CbD3dda4EA728546cEf1E7cADfE9755714E9'
+      abi: PenroseHedgeLpStrategy
+      startBlock: 32513909
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: PenroseHedgeLpStrategy
+          file: ./abis/PenroseHedgeLpStrategy.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: ClaimRewardToken(indexed address,uint256,uint256)
+          handler: handleClaimReward
+      file: ./src/PenroseHedgeLpStrategy.ts
 
-  # - kind: ethereum/contract
-  #   name: OtterRewardManager
-  #   network: matic
-  #   source:
-  #     address: '0x306a7c1347F38CAD360a3A31FE0308c33e92c087'
-  #     abi: OtterRewardManager
-  #     startBlock: 30712813
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - PearlBankMetric
-  #       - CumulativeValues
-  #       - StakedBalance
-  #       - AllStakedBalance
-  #       - ProtocolMetric
-  #     abis:
-  #       - name: OtterRewardManager
-  #         file: ./abis/OtterRewardManager.json
-  #       - name: ClamPlus
-  #         file: ./abis/ClamPlus.json
-  #       - name: PearlBank
-  #         file: ./abis/PearlBank.json
-  #       #=== protocolMetrics ===
-  #       - name: UniV3UsdcMaiStrategy
-  #         file: ./abis/UniV3UsdcMaiStrategy.json
-  #       - name: KyberswapMaticStMaticHedgedLpStrategy
-  #         file: ./abis/KyberswapMaticStMaticHedgedLpStrategy.json
-  #       - name: PenroseHedgeLpStrategy
-  #         file: ./abis/PenroseHedgeLpStrategy.json
-  #       - name: GainsDaiVault
-  #         file: ./abis/GainsDaiVault.json
-  #       - name: UsdPlus
-  #         file: ./abis/UsdPlus.json
-  #       - name: OtterClamERC20V2
-  #         file: ./abis/OtterClamERC20V2.json
-  #       - name: OtterStaking
-  #         file: ./abis/OtterStaking.json
-  #       - name: OtterStakingDistributor
-  #         file: './abis/OtterStakingDistributor.json'
-  #       - name: ClamCirculatingSupply
-  #         file: ./abis/ClamCirculatingSupply.json
-  #       - name: xTetuQi
-  #         file: ./abis/xTetuQi.json
-  #       - name: OtterQiDAOInvestment
-  #         file: ./abis/OtterQiDAOInvestment.json
-  #       - name: QiFarm
-  #         file: ./abis/QiFarm.json
-  #       - name: QiFarmV3
-  #         file: ./abis/QiFarmV3.json
-  #       - name: PearlNote
-  #         file: ./abis/PearlNote.json
-  #       - name: OtterPearlERC20
-  #         file: ./abis/OtterPearlERC20.json
-  #       - name: CurveMai3poolContract
-  #         file: ./abis/CurveMai3poolContract.json
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       - name: veDyst
-  #         file: ./abis/veDyst.json
-  #       - name: PenDystRewards
-  #         file: ./abis/PenDystRewards.json
-  #       - name: PenLockerV2
-  #         file: ./abis/PenLockerV2.json
-  #       - name: PenLens
-  #         file: ./abis/PenLens.json
-  #       - name: PenrosePartnerRewards
-  #         file: ./abis/PenrosePartnerRewards.json
-  #       - name: PenroseMultiRewards
-  #         file: ./abis/PenroseMultiRewards.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: Payout(uint256)
-  #         handler: handlePayout
-  #     file: ./src/OtterRewardManager.ts
+  - kind: ethereum/contract
+    name: OtterRewardManager
+    network: matic
+    source:
+      address: '0x306a7c1347F38CAD360a3A31FE0308c33e92c087'
+      abi: OtterRewardManager
+      startBlock: 30712813
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - PearlBankMetric
+        - CumulativeValues
+        - StakedBalance
+        - AllStakedBalance
+        - ProtocolMetric
+      abis:
+        - name: OtterRewardManager
+          file: ./abis/OtterRewardManager.json
+        - name: ClamPlus
+          file: ./abis/ClamPlus.json
+        - name: PearlBank
+          file: ./abis/PearlBank.json
+        #=== protocolMetrics ===
+        - name: UniV3UsdcMaiStrategy
+          file: ./abis/UniV3UsdcMaiStrategy.json
+        - name: KyberswapMaticStMaticHedgedLpStrategy
+          file: ./abis/KyberswapMaticStMaticHedgedLpStrategy.json
+        - name: PenroseHedgeLpStrategy
+          file: ./abis/PenroseHedgeLpStrategy.json
+        - name: GainsDaiVault
+          file: ./abis/GainsDaiVault.json
+        - name: UsdPlus
+          file: ./abis/UsdPlus.json
+        - name: OtterClamERC20V2
+          file: ./abis/OtterClamERC20V2.json
+        - name: OtterStaking
+          file: ./abis/OtterStaking.json
+        - name: OtterStakingDistributor
+          file: './abis/OtterStakingDistributor.json'
+        - name: ClamCirculatingSupply
+          file: ./abis/ClamCirculatingSupply.json
+        - name: xTetuQi
+          file: ./abis/xTetuQi.json
+        - name: OtterQiDAOInvestment
+          file: ./abis/OtterQiDAOInvestment.json
+        - name: QiFarm
+          file: ./abis/QiFarm.json
+        - name: QiFarmV3
+          file: ./abis/QiFarmV3.json
+        - name: PearlNote
+          file: ./abis/PearlNote.json
+        - name: OtterPearlERC20
+          file: ./abis/OtterPearlERC20.json
+        - name: CurveMai3poolContract
+          file: ./abis/CurveMai3poolContract.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        - name: veDyst
+          file: ./abis/veDyst.json
+        - name: PenDystRewards
+          file: ./abis/PenDystRewards.json
+        - name: PenLockerV2
+          file: ./abis/PenLockerV2.json
+        - name: PenLens
+          file: ./abis/PenLens.json
+        - name: PenrosePartnerRewards
+          file: ./abis/PenrosePartnerRewards.json
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: Payout(uint256)
+          handler: handlePayout
+      file: ./src/OtterRewardManager.ts
 
-  # - kind: ethereum/contract
-  #   name: PearlBank
-  #   network: matic
-  #   source:
-  #     address: '0x845eb7730a8d37e8d190fb8bb9c582038331b48a'
-  #     abi: PearlBank
-  #     startBlock: 30711580
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - PearlBankMetric
-  #       - StakedBalance
-  #       - AllStakedBalance
-  #     abis:
-  #       - name: PearlBank
-  #         file: ./abis/PearlBank.json
-  #       - name: ClamPlus
-  #         file: ./abis/ClamPlus.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: Stake(indexed address,uint256,uint256)
-  #         handler: handleStake
-  #       - event: Withdraw(indexed address,uint256,uint256)
-  #         handler: handleWithdraw
-  #     file: ./src/PearlBank.ts
+  - kind: ethereum/contract
+    name: PearlBank
+    network: matic
+    source:
+      address: '0x845eb7730a8d37e8d190fb8bb9c582038331b48a'
+      abi: PearlBank
+      startBlock: 30711580
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - PearlBankMetric
+        - StakedBalance
+        - AllStakedBalance
+      abis:
+        - name: PearlBank
+          file: ./abis/PearlBank.json
+        - name: ClamPlus
+          file: ./abis/ClamPlus.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: Stake(indexed address,uint256,uint256)
+          handler: handleStake
+        - event: Withdraw(indexed address,uint256,uint256)
+          handler: handleWithdraw
+      file: ./src/PearlBank.ts
 
-  # - kind: ethereum/contract
-  #   name: ClamPlus
-  #   network: matic
-  #   source:
-  #     address: '0xF2A8705D327534E334d09BC28e5C97b5c356Aa01'
-  #     abi: ClamPlus
-  #     startBlock: 30712813
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - PearlBankMetric
-  #       - StakedBalance
-  #       - AllStakedBalance
-  #     abis:
-  #       - name: PearlBank
-  #         file: ./abis/PearlBank.json
-  #       - name: ClamPlus
-  #         file: ./abis/ClamPlus.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: Deposit(address,uint256)
-  #         handler: handleDeposit
-  #       - event: Withdraw(address,uint256)
-  #         handler: handleWithdraw
-  #       - event: DepositPearl(address,uint256)
-  #         handler: handleDepositPearl
-  #       - event: WithdrawPearl(address,uint256)
-  #         handler: handleWithdrawPearl
-  #     file: ./src/ClamPlus.ts
+  - kind: ethereum/contract
+    name: ClamPlus
+    network: matic
+    source:
+      address: '0xF2A8705D327534E334d09BC28e5C97b5c356Aa01'
+      abi: ClamPlus
+      startBlock: 30712813
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - PearlBankMetric
+        - StakedBalance
+        - AllStakedBalance
+      abis:
+        - name: PearlBank
+          file: ./abis/PearlBank.json
+        - name: ClamPlus
+          file: ./abis/ClamPlus.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: Deposit(address,uint256)
+          handler: handleDeposit
+        - event: Withdraw(address,uint256)
+          handler: handleWithdraw
+        - event: DepositPearl(address,uint256)
+          handler: handleDepositPearl
+        - event: WithdrawPearl(address,uint256)
+          handler: handleWithdrawPearl
+      file: ./src/ClamPlus.ts
 
-  # - kind: ethereum/contract
-  #   name: OtterClamERC20V2
-  #   network: matic
-  #   source:
-  #     address: '0xc250e9987a032acac293d838726c511e6e1c029d'
-  #     abi: OtterClamERC20V2
-  #     startBlock: 31091825 #26991825 #First burn transfer
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     entities:
-  #       - Transaction
-  #       - Transfer
-  #       - TotalBurnedClam
-  #       - ProtocolMetric
-  #     abis:
-  #       - name: OtterClamERC20V2
-  #         file: ./abis/OtterClamERC20V2.json
-  #       #=== protocolMetrics ===
-  #       - name: UniV3UsdcMaiStrategy
-  #         file: ./abis/UniV3UsdcMaiStrategy.json
-  #       - name: KyberswapMaticStMaticHedgedLpStrategy
-  #         file: ./abis/KyberswapMaticStMaticHedgedLpStrategy.json
-  #       - name: PenroseHedgeLpStrategy
-  #         file: ./abis/PenroseHedgeLpStrategy.json
-  #       - name: GainsDaiVault
-  #         file: ./abis/GainsDaiVault.json
-  #       - name: UsdPlus
-  #         file: ./abis/UsdPlus.json
-  #       - name: OtterClamERC20V2
-  #         file: ./abis/OtterClamERC20V2.json
-  #       - name: OtterStaking
-  #         file: ./abis/OtterStaking.json
-  #       - name: OtterStakingDistributor
-  #         file: './abis/OtterStakingDistributor.json'
-  #       - name: ClamCirculatingSupply
-  #         file: ./abis/ClamCirculatingSupply.json
-  #       - name: xTetuQi
-  #         file: ./abis/xTetuQi.json
-  #       - name: OtterQiDAOInvestment
-  #         file: ./abis/OtterQiDAOInvestment.json
-  #       - name: QiFarm
-  #         file: ./abis/QiFarm.json
-  #       - name: QiFarmV3
-  #         file: ./abis/QiFarmV3.json
-  #       - name: PearlNote
-  #         file: ./abis/PearlNote.json
-  #       - name: OtterPearlERC20
-  #         file: ./abis/OtterPearlERC20.json
-  #       - name: CurveMai3poolContract
-  #         file: ./abis/CurveMai3poolContract.json
-  #       - name: Dyst
-  #         file: ./abis/Dyst.json
-  #       - name: veDyst
-  #         file: ./abis/veDyst.json
-  #       - name: PenDystRewards
-  #         file: ./abis/PenDystRewards.json
-  #       - name: PenLockerV2
-  #         file: ./abis/PenLockerV2.json
-  #       - name: PenLens
-  #         file: ./abis/PenLens.json
-  #       - name: PenrosePartnerRewards
-  #         file: ./abis/PenrosePartnerRewards.json
-  #       - name: PenroseMultiRewards
-  #         file: ./abis/PenroseMultiRewards.json
-  #       #====== getPrice() required contracts======
-  #       - name: ERC20
-  #         file: ./abis/ERC20.json
-  #       - name: UniswapV2Pair
-  #         file: ./abis/UniswapV2Pair.json
-  #       - name: AggregatorV3InterfaceABI
-  #         file: ./abis/AggregatorV3InterfaceABI.json
-  #       - name: DystPair
-  #         file: ./abis/DystPair.json
-  #       - name: DystPairFactory
-  #         file: ./abis/DystPairFactory.json
-  #       - name: DystRouter
-  #         file: ./abis/DystRouter.json
-  #       - name: UniswapV2Router02
-  #         file: ./abis/UniswapV2Router02.json
-  #       - name: ArrakisVault
-  #         file: ./abis/ArrakisVault.json
-  #     eventHandlers:
-  #       - event: Transfer(indexed address,indexed address,uint256)
-  #         handler: handleTransfer
-  #     file: ./src/OtterClamERC20V2.ts
+  - kind: ethereum/contract
+    name: OtterClamERC20V2
+    network: matic
+    source:
+      address: '0xc250e9987a032acac293d838726c511e6e1c029d'
+      abi: OtterClamERC20V2
+      startBlock: 31091825 #26991825 #First burn transfer
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TotalBurnedClam
+        - ProtocolMetric
+      abis:
+        - name: OtterClamERC20V2
+          file: ./abis/OtterClamERC20V2.json
+        #=== protocolMetrics ===
+        - name: UniV3UsdcMaiStrategy
+          file: ./abis/UniV3UsdcMaiStrategy.json
+        - name: KyberswapMaticStMaticHedgedLpStrategy
+          file: ./abis/KyberswapMaticStMaticHedgedLpStrategy.json
+        - name: PenroseHedgeLpStrategy
+          file: ./abis/PenroseHedgeLpStrategy.json
+        - name: GainsDaiVault
+          file: ./abis/GainsDaiVault.json
+        - name: UsdPlus
+          file: ./abis/UsdPlus.json
+        - name: OtterClamERC20V2
+          file: ./abis/OtterClamERC20V2.json
+        - name: OtterStaking
+          file: ./abis/OtterStaking.json
+        - name: OtterStakingDistributor
+          file: './abis/OtterStakingDistributor.json'
+        - name: ClamCirculatingSupply
+          file: ./abis/ClamCirculatingSupply.json
+        - name: xTetuQi
+          file: ./abis/xTetuQi.json
+        - name: OtterQiDAOInvestment
+          file: ./abis/OtterQiDAOInvestment.json
+        - name: QiFarm
+          file: ./abis/QiFarm.json
+        - name: QiFarmV3
+          file: ./abis/QiFarmV3.json
+        - name: PearlNote
+          file: ./abis/PearlNote.json
+        - name: OtterPearlERC20
+          file: ./abis/OtterPearlERC20.json
+        - name: CurveMai3poolContract
+          file: ./abis/CurveMai3poolContract.json
+        - name: Dyst
+          file: ./abis/Dyst.json
+        - name: veDyst
+          file: ./abis/veDyst.json
+        - name: PenDystRewards
+          file: ./abis/PenDystRewards.json
+        - name: PenLockerV2
+          file: ./abis/PenLockerV2.json
+        - name: PenLens
+          file: ./abis/PenLens.json
+        - name: PenrosePartnerRewards
+          file: ./abis/PenrosePartnerRewards.json
+        - name: PenroseMultiRewards
+          file: ./abis/PenroseMultiRewards.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/OtterClamERC20V2.ts

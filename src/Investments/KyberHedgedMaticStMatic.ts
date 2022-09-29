@@ -1,4 +1,4 @@
-import { Investment, ClaimReward, Transaction } from '../../generated/schema'
+import { Investment, ClaimReward, Transaction, PayoutReward } from '../../generated/schema'
 import { toDecimal } from '../utils/Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY } from '../utils/Constants'
@@ -53,5 +53,18 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
       this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
       this.investment.save()
     }
+  }
+  calculateNetProfit(payout: PayoutReward): void {
+    //aggregate per day
+    let dayTotal = this.investment.grossRevenue.plus(payout.revenue)
+    this.investment.netRevenue = dayTotal
+
+    let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))
+
+    // (payout*365 / stakedValue) * 100% = APR%
+    this.investment.netApr = rewardRate.times(BigDecimal.fromString('365'))
+
+    // this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
+    this.investment.save()
   }
 }

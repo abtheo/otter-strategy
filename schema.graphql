@@ -199,6 +199,9 @@ type Investment @entity {
   grossApr: BigDecimal!
 
   netRevenue: BigDecimal!
+  # no, NET POSITION CHANGE PER DAY
+  # but why? just do data[0] - data[-1]
+  # PnL = NAV1 - NAV2 + Gross Revenue (*30% ?)
   netApr: BigDecimal!
 
   rewardTokens: [ClaimReward!]!

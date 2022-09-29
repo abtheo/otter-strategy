@@ -5,6 +5,7 @@ import {
   PayoutReward as PayoutRewardEvent,
 } from '../generated/PenroseHedgeLpStrategy/PenroseHedgeLpStrategy'
 import { ClaimReward } from '../generated/schema'
+import { PenroseHedgedMaticUsdcInvestment } from './Investments/PenroseHedgedMaticUsdc'
 import { DYST_ERC20, PEN_ERC20, USDC_ERC20 } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
 import { loadOrCreateTransaction } from './utils/Transactions'
@@ -27,8 +28,8 @@ export function handleClaimReward(event: ClaimRewardTokenEvent): void {
     updateTreasuryRevenueDystRewardPaid(transaction, event.params.amount)
   }
 
-  // let investment = new PenroseHedgedMaticUsdcInvestment(transaction)
-  // investment.addRevenue(claim)
+  let investment = new PenroseHedgedMaticUsdcInvestment(transaction)
+  investment.addRevenue(claim)
 }
 
 // export function handlePayoutReward(event: PayoutRewardEvent): void {

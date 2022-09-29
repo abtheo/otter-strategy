@@ -4,7 +4,7 @@ import {
   ClaimRewardToken as ClaimRewardTokenEvent,
 } from '../generated/KyberswapMaticStMaticHedgedLpStrategy/KyberswapMaticStMaticHedgedLpStrategy'
 import { ERC20 } from '../generated/OtterClamERC20V2/ERC20'
-import { ClaimReward } from '../generated/schema'
+import { ClaimReward, PayoutReward } from '../generated/schema'
 import { KyberHedgedMaticStMaticInvestment } from './Investments/KyberHedgedMaticStMatic'
 import { KNC_ERC20, LDO_ERC20, USDC_ERC20 } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
@@ -27,18 +27,20 @@ export function handleClaimRewardToken(event: ClaimRewardTokenEvent): void {
   if (event.params.token == LDO_ERC20) {
     updateTreasuryRevenueClaimLdoReward(event.block.number, claim)
   }
+  let investment = new KyberHedgedMaticStMaticInvestment(transaction)
+  investment.addRevenue(claim)
 }
 
 export function handlePayoutReward(event: PayoutRewardEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let claim = new ClaimReward(`${transaction.id}_${event.address.toHexString()}`)
-  claim.transaction = transaction.id
-  claim.timestamp = transaction.timestamp
-  claim.amountUsd = toDecimal(event.params.revenue, 6) //Claim in USDC (6 decimals)
-  claim.amountToken = toDecimal(event.params.revenue, 6)
-  claim.token = USDC_ERC20
-  claim.save()
-
   let investment = new KyberHedgedMaticStMaticInvestment(transaction)
-  investment.addRevenue(claim)
+
+  let payout = new PayoutReward(`${investment.strategy}_${transaction.id}`)
+  payout.netAssetValue = toDecimal(event.params.nav, 6)
+  payout.revenue = toDecimal(event.params.revenue, 6)
+  payout.payout = toDecimal(event.params.payout, 6)
+  payout.transactionHash = transaction.id
+  payout.save()
+
+  investment.calculateNetProfit(payout)
 }

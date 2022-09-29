@@ -91,6 +91,8 @@ import {
   GOVERNANCE_START_BLOCK,
   UNIV3_USDC_MAI_START_BLOCK,
   UNIV3_USDC_MAI_STRATEGY,
+  UNIV3_HEDGED_MATIC_USDC_START_BLOCK,
+  UNIV3_HEDGED_MATIC_USDC_STRATEGY,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -115,6 +117,7 @@ import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/Penro
 import { PenroseHedgeLpStrategy } from '../../generated/OtterClamERC20V2/PenroseHedgeLpStrategy'
 import { KyberswapMaticStMaticHedgedLpStrategy } from '../../generated/OtterClamERC20V2/KyberswapMaticStMaticHedgedLpStrategy'
 import { UniV3UsdcMaiStrategy } from '../../generated/UniV3UsdcMaiStrategy/UniV3UsdcMaiStrategy'
+import { IStrategy } from '../../generated/UniV3MaticUsdcHedgedLpStrategy/IStrategy'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -523,8 +526,8 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   }
 
   let uniV3HedgedMaticUsdcValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(UNIV3_USDC_MAI_START_BLOCK)) {
-    let tryNAV = UniV3UsdcMaiStrategy.bind(UNIV3_USDC_MAI_STRATEGY).try_netAssetValue()
+  if (transaction.blockNumber.gt(UNIV3_HEDGED_MATIC_USDC_START_BLOCK)) {
+    let tryNAV = IStrategy.bind(UNIV3_HEDGED_MATIC_USDC_STRATEGY).try_netAssetValue()
     let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
 
     uniV3HedgedMaticUsdcValue = toDecimal(netAssetVal, 6)

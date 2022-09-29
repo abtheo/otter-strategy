@@ -56,7 +56,7 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
   }
   calculateNetProfit(payout: PayoutReward): void {
     //aggregate per day
-    let dayTotal = this.investment.grossRevenue.plus(payout.revenue)
+    let dayTotal = this.investment.netRevenue.plus(payout.revenue)
     this.investment.netRevenue = dayTotal
 
     let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))

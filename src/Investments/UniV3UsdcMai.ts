@@ -36,27 +36,26 @@ export class UniV3UsdcMaiInvestment implements InvestmentInterface {
     return BigDecimal.zero()
   }
 
-  // Uses the Gross Revenue for Farming APR
+  // Calculate the Gross Revenue from farmed tokens
   addRevenue(claim: ClaimReward): void {
     //aggregate per day
     let dayTotal = this.investment.grossRevenue.plus(claim.amountUsd)
     this.investment.grossRevenue = dayTotal
 
+    // (payout / stakedValue) * 365days * 100% = APR%
     let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))
-
-    // (payout*365 / stakedValue) * 100% = APR%
     this.investment.grossApr = rewardRate.times(BigDecimal.fromString('365'))
 
     this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
     this.investment.save()
   }
 
-  // Uses the Net Revenue for PnL (APR?)
+  // Calculate Net Revenue / APR
   // In this case we can use the PayoutReward of the Strategy
   // For others, construct PayoutReward manually
   calculateNetProfit(payout: PayoutReward): void {
     //aggregate per day
-    let dayTotal = this.investment.grossRevenue.plus(payout.revenue)
+    let dayTotal = this.investment.netRevenue.plus(payout.revenue)
     this.investment.netRevenue = dayTotal
 
     let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))

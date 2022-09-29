@@ -522,6 +522,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     uniV3UsdcMaiValue = toDecimal(netAssetVal, 6)
   }
 
+  let uniV3HedgedMaticUsdcValue = BigDecimal.zero()
+  if (transaction.blockNumber.gt(UNIV3_USDC_MAI_START_BLOCK)) {
+    let tryNAV = UniV3UsdcMaiStrategy.bind(UNIV3_USDC_MAI_STRATEGY).try_netAssetValue()
+    let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
+
+    uniV3HedgedMaticUsdcValue = toDecimal(netAssetVal, 6)
+  }
+
   let stableValueDecimal = maiBalance
     .plus(daiBalance)
     .plus(maiUsdcQiInvestmentValueDecimal)
@@ -540,6 +548,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     //ets
     .plus(penroseHedgedLpValue)
     .plus(kyberHedgedMaticStMaticValue)
+    .plus(uniV3HedgedMaticUsdcValue)
     //univ3
     .plus(uniV3UsdcMaiValue)
 
@@ -597,6 +606,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryPenroseHedgedMaticMarketValue = penroseHedgedLpValue
   protocolMetric.treasuryKyberswapMaticStMaticHedgedMarketValue = kyberHedgedMaticStMaticValue
   protocolMetric.treasuryUniV3UsdcMaiStrategyMarketValue = uniV3UsdcMaiValue
+  protocolMetric.treasuryUniV3HedgedMaticUsdcStrategyMarketValue = uniV3HedgedMaticUsdcValue
 
   return protocolMetric
 }

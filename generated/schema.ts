@@ -407,6 +407,10 @@ export class ProtocolMetric extends Entity {
       "treasuryUniV3UsdcMaiStrategyMarketValue",
       Value.fromBigDecimal(BigDecimal.zero())
     );
+    this.set(
+      "treasuryUniV3HedgedMaticUsdcStrategyMarketValue",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
     this.set("totalBurnedClam", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalBurnedClamMarketValue",
@@ -810,6 +814,18 @@ export class ProtocolMetric extends Entity {
     );
   }
 
+  get treasuryUniV3HedgedMaticUsdcStrategyMarketValue(): BigDecimal {
+    let value = this.get("treasuryUniV3HedgedMaticUsdcStrategyMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set treasuryUniV3HedgedMaticUsdcStrategyMarketValue(value: BigDecimal) {
+    this.set(
+      "treasuryUniV3HedgedMaticUsdcStrategyMarketValue",
+      Value.fromBigDecimal(value)
+    );
+  }
+
   get totalBurnedClam(): BigDecimal {
     let value = this.get("totalBurnedClam");
     return value!.toBigDecimal();
@@ -1068,6 +1084,8 @@ export class TreasuryRevenue extends Entity {
     this.set("usdcMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("maiClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("maiMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("maticClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("maticMarketValue", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("totalRevenueClamAmount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set(
       "totalRevenueMarketValue",
@@ -1306,6 +1324,24 @@ export class TreasuryRevenue extends Entity {
 
   set maiMarketValue(value: BigDecimal) {
     this.set("maiMarketValue", Value.fromBigDecimal(value));
+  }
+
+  get maticClamAmount(): BigDecimal {
+    let value = this.get("maticClamAmount");
+    return value!.toBigDecimal();
+  }
+
+  set maticClamAmount(value: BigDecimal) {
+    this.set("maticClamAmount", Value.fromBigDecimal(value));
+  }
+
+  get maticMarketValue(): BigDecimal {
+    let value = this.get("maticMarketValue");
+    return value!.toBigDecimal();
+  }
+
+  set maticMarketValue(value: BigDecimal) {
+    this.set("maticMarketValue", Value.fromBigDecimal(value));
   }
 
   get totalRevenueClamAmount(): BigDecimal {

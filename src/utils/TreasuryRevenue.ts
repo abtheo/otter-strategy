@@ -64,6 +64,25 @@ export function updateTreasuryRevenueHarvest(block: BigInt, harvest: Harvest): v
   treasuryRevenue.save()
 }
 
+export function updateTreasuryRevenueClaimMaticReward(block: BigInt, claim: ClaimReward): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(claim.timestamp)
+
+  let clamAmount = claim.amountUsd.div(getClamUsdRate(block))
+  log.debug('ClaimMaticReward event, txid: {}, maticMarketValue {}, clamAmount {}', [
+    claim.id,
+    claim.amountUsd.toString(),
+    clamAmount.toString(),
+  ])
+
+  //Aggregate over day with +=
+  treasuryRevenue.maticClamAmount = treasuryRevenue.maticClamAmount.plus(clamAmount)
+  treasuryRevenue.maticMarketValue = treasuryRevenue.maticMarketValue.plus(claim.amountUsd)
+
+  treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
+
+  treasuryRevenue.save()
+}
+
 export function updateTreasuryRevenueClaimQiReward(block: BigInt, claim: ClaimReward): void {
   let treasuryRevenue = loadOrCreateTreasuryRevenue(claim.timestamp)
 

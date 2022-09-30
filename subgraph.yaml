@@ -653,7 +653,7 @@ dataSources:
           file: ./abis/ArrakisVault.json
       eventHandlers:
         - event: ClaimRewardToken(indexed address,uint256,uint256)
-          handler: handleClaimReward
+          handler: handleClaimRewardToken
       file: ./src/UniV3MaticUsdcHedgedLpStrategy.ts
 
   - kind: ethereum/contract

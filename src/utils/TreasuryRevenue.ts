@@ -28,6 +28,7 @@ export function setTreasuryRevenueTotals(revenue: TreasuryRevenue): TreasuryReve
     .plus(revenue.kncClamAmount)
     .plus(revenue.usdcClamAmount)
     .plus(revenue.maiClamAmount)
+    .plus(revenue.maticClamAmount)
 
   revenue.totalRevenueMarketValue = revenue.qiMarketValue
     .plus(revenue.ottopiaMarketValue)
@@ -40,6 +41,7 @@ export function setTreasuryRevenueTotals(revenue: TreasuryRevenue): TreasuryReve
     .plus(revenue.kncMarketValue)
     .plus(revenue.usdcMarketValue)
     .plus(revenue.maiMarketValue)
+    .plus(revenue.maticMarketValue)
 
   return revenue
 }
@@ -58,6 +60,25 @@ export function updateTreasuryRevenueHarvest(block: BigInt, harvest: Harvest): v
   //Aggregate over day with +=
   treasuryRevenue.qiClamAmount = treasuryRevenue.qiClamAmount.plus(clamAmount)
   treasuryRevenue.qiMarketValue = treasuryRevenue.qiMarketValue.plus(qiMarketValue)
+
+  treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
+
+  treasuryRevenue.save()
+}
+
+export function updateTreasuryRevenueClaimMaticReward(block: BigInt, claim: ClaimReward): void {
+  let treasuryRevenue = loadOrCreateTreasuryRevenue(claim.timestamp)
+
+  let clamAmount = claim.amountUsd.div(getClamUsdRate(block))
+  log.debug('ClaimMaticReward event, txid: {}, maticMarketValue {}, clamAmount {}', [
+    claim.id,
+    claim.amountUsd.toString(),
+    clamAmount.toString(),
+  ])
+
+  //Aggregate over day with +=
+  treasuryRevenue.maticClamAmount = treasuryRevenue.maticClamAmount.plus(clamAmount)
+  treasuryRevenue.maticMarketValue = treasuryRevenue.maticMarketValue.plus(claim.amountUsd)
 
   treasuryRevenue = setTreasuryRevenueTotals(treasuryRevenue)
 

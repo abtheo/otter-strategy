@@ -633,6 +633,47 @@ dataSources:
       file: ./src/UniV3UsdcMaiStrategy.ts
 
   - kind: ethereum/contract
+    name: UniV3MaticUsdcHedgedLpStrategy
+    network: matic
+    source:
+      address: '0x1D8Ecd41997D43CfA8667d44288b1c433aBa6fCA'
+      abi: IStrategy
+      startBlock: 33703034
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+        - TreasuryRevenue
+        - ClaimReward
+      abis:
+        - name: IStrategy
+          file: ./abis/IStrategy.json
+        #====== getPrice() required contracts======
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: AggregatorV3InterfaceABI
+          file: ./abis/AggregatorV3InterfaceABI.json
+        - name: DystPair
+          file: ./abis/DystPair.json
+        - name: DystPairFactory
+          file: ./abis/DystPairFactory.json
+        - name: DystRouter
+          file: ./abis/DystRouter.json
+        - name: UniswapV2Router02
+          file: ./abis/UniswapV2Router02.json
+        - name: ArrakisVault
+          file: ./abis/ArrakisVault.json
+      eventHandlers:
+        - event: ClaimRewardToken(indexed address,uint256,uint256)
+          handler: handleClaimRewardToken
+      file: ./src/UniV3MaticUsdcHedgedLpStrategy.ts
+
+  - kind: ethereum/contract
     name: MaiStMaticStrategy
     network: matic
     source:
@@ -866,6 +907,8 @@ dataSources:
         - name: PearlBank
           file: ./abis/PearlBank.json
         #=== protocolMetrics ===
+        - name: IStrategy
+          file: ./abis/IStrategy.json
         - name: UniV3UsdcMaiStrategy
           file: ./abis/UniV3UsdcMaiStrategy.json
         - name: KyberswapMaticStMaticHedgedLpStrategy
@@ -1046,6 +1089,8 @@ dataSources:
         - name: OtterClamERC20V2
           file: ./abis/OtterClamERC20V2.json
         #=== protocolMetrics ===
+        - name: IStrategy
+          file: ./abis/IStrategy.json
         - name: UniV3UsdcMaiStrategy
           file: ./abis/UniV3UsdcMaiStrategy.json
         - name: KyberswapMaticStMaticHedgedLpStrategy

@@ -77,9 +77,9 @@ import {
   ARRAKIS_MAI_STMATIC_PAIR,
   USDPLUS_INVESTMENT_STRATEGY,
   GOVERNANCE_START_BLOCK,
-  UNIV3_USDC_MAI_START_BLOCK,
-  UNIV3_USDC_MAI_STRATEGY,
   DYSTOPIA_veDYST_MATIC_AIRDROP_ID,
+  UNIV3_HEDGED_MATIC_USDC_START_BLOCK,
+  UNIV3_HEDGED_MATIC_USDC_STRATEGY,
 } from './Constants'
 import { dayFromTimestamp } from './Dates'
 import { toDecimal } from './Decimals'
@@ -103,8 +103,8 @@ import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/Penro
 import { GainsDaiInvestment } from '../Investments/GainsDai'
 import { PenroseHedgedMaticUsdcInvestment } from '../Investments/PenroseHedgedMaticUsdc'
 import { KyberHedgedMaticStMaticInvestment } from '../Investments/KyberHedgedMaticStMatic'
-import { UniV3UsdcMaiStrategy } from '../../generated/UniV3UsdcMaiStrategy/UniV3UsdcMaiStrategy'
 import { UniV3UsdcMaiInvestment } from '../Investments/UniV3UsdcMai'
+import { IStrategy } from '../../generated/UniV3MaticUsdcHedgedLpStrategy/IStrategy'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -473,6 +473,14 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let uniV3UsdcMaiValue = new UniV3UsdcMaiInvestment(transaction).netAssetValue()
 
+  let uniV3HedgedMaticUsdcValue = BigDecimal.zero()
+  if (transaction.blockNumber.gt(UNIV3_HEDGED_MATIC_USDC_START_BLOCK)) {
+    let tryNAV = IStrategy.bind(UNIV3_HEDGED_MATIC_USDC_STRATEGY).try_netAssetValue()
+    let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
+
+    uniV3HedgedMaticUsdcValue = toDecimal(netAssetVal, 6)
+  }
+
   let stableValueDecimal = maiBalance
     .plus(daiBalance)
     .plus(maiUsdcQiInvestmentValueDecimal)
@@ -491,6 +499,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     //ets
     .plus(penroseHedgedLpValue)
     .plus(kyberHedgedMaticStMaticValue)
+    .plus(uniV3HedgedMaticUsdcValue)
     //univ3
     .plus(uniV3UsdcMaiValue)
 
@@ -547,6 +556,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryPenroseHedgedMaticMarketValue = penroseHedgedLpValue
   protocolMetric.treasuryKyberswapMaticStMaticHedgedMarketValue = kyberHedgedMaticStMaticValue
   protocolMetric.treasuryUniV3UsdcMaiStrategyMarketValue = uniV3UsdcMaiValue
+  protocolMetric.treasuryUniV3HedgedMaticUsdcStrategyMarketValue = uniV3HedgedMaticUsdcValue
 
   return protocolMetric
 }

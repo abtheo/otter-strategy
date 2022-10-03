@@ -105,6 +105,7 @@ import { PenroseHedgedMaticUsdcInvestment } from '../Investments/PenroseHedgedMa
 import { KyberHedgedMaticStMaticInvestment } from '../Investments/KyberHedgedMaticStMatic'
 import { UniV3UsdcMaiInvestment } from '../Investments/UniV3UsdcMai'
 import { IStrategy } from '../../generated/UniV3MaticUsdcHedgedLpStrategy/IStrategy'
+import { UniV3HedgedMaticUsdcInvestment } from '../Investments/UniV3HedgedMaticUsdc'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -473,13 +474,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let uniV3UsdcMaiValue = new UniV3UsdcMaiInvestment(transaction).netAssetValue()
 
-  let uniV3HedgedMaticUsdcValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(UNIV3_HEDGED_MATIC_USDC_START_BLOCK)) {
-    let tryNAV = IStrategy.bind(UNIV3_HEDGED_MATIC_USDC_STRATEGY).try_netAssetValue()
-    let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
-
-    uniV3HedgedMaticUsdcValue = toDecimal(netAssetVal, 6)
-  }
+  let uniV3HedgedMaticUsdcValue = new UniV3HedgedMaticUsdcInvestment(transaction).netAssetValue()
 
   let stableValueDecimal = maiBalance
     .plus(daiBalance)

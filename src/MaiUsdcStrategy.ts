@@ -10,7 +10,7 @@ import { updateTreasuryRevenueClaimQiReward } from './utils/TreasuryRevenue'
 
 export function handleClaimReward(event: ClaimRewardEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let claim = new ClaimReward(`${event.address}_${transaction.id}_${QI_ERC20.toHexString()}`)
+  let claim = new ClaimReward(`${event.address.toHexString()}_${transaction.id}_${QI_ERC20.toHexString()}`)
   claim.transaction = transaction.id
   claim.timestamp = transaction.timestamp
   claim.amountUsd = toDecimal(event.params.amount, 6) //Claim in USDC (6 decimals)

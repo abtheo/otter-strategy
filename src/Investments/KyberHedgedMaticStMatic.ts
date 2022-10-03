@@ -16,14 +16,16 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
   constructor(transaction: Transaction) {
     this.currentBlock = transaction.blockNumber
     if (transaction.blockNumber.ge(this.startBlock)) {
+      this.active = true
       let nav = this.netAssetValue()
       if (nav.gt(BigDecimal.fromString('10'))) {
-        this.active = true
         let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
         _investment.protocol = this.protocol
         _investment.netAssetValue = nav
         this.investment = _investment
         this.investment.save()
+      } else {
+        this.active = false
       }
     }
   }
@@ -56,16 +58,18 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
     }
   }
   calculateNetProfit(payout: PayoutReward): void {
-    //aggregate per day
-    let dayTotal = this.investment.netRevenue.plus(payout.revenue)
-    this.investment.netRevenue = dayTotal
+    if (this.active) {
+      //aggregate per day
+      let dayTotal = this.investment.netRevenue.plus(payout.revenue)
+      this.investment.netRevenue = dayTotal
 
-    let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))
+      let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))
 
-    // (payout*365 / stakedValue) * 100% = APR%
-    this.investment.netApr = rewardRate.times(BigDecimal.fromString('365'))
+      // (payout*365 / stakedValue) * 100% = APR%
+      this.investment.netApr = rewardRate.times(BigDecimal.fromString('365'))
 
-    // this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
-    this.investment.save()
+      // this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
+      this.investment.save()
+    }
   }
 }

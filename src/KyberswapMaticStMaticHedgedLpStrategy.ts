@@ -6,14 +6,14 @@ import {
 import { ERC20 } from '../generated/OtterClamERC20V2/ERC20'
 import { ClaimReward, PayoutReward } from '../generated/schema'
 import { KyberHedgedMaticStMaticInvestment } from './Investments/KyberHedgedMaticStMatic'
-import { KNC_ERC20, LDO_ERC20, USDC_ERC20 } from './utils/Constants'
+import { KNC_ERC20, LDO_ERC20 } from './utils/Constants'
 import { toDecimal } from './utils/Decimals'
 import { loadOrCreateTransaction } from './utils/Transactions'
 import { updateTreasuryRevenueClaimKncReward, updateTreasuryRevenueClaimLdoReward } from './utils/TreasuryRevenue'
 
 export function handleClaimRewardToken(event: ClaimRewardTokenEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let claim = new ClaimReward(`${event.address}_${transaction.id}_${event.params.token.toHexString()}`)
+  let claim = new ClaimReward(`${event.address.toHexString()}_${transaction.id}_${event.params.token.toHexString()}`)
   claim.transaction = transaction.id
   claim.timestamp = transaction.timestamp
   claim.amountUsd = toDecimal(event.params.usdcAmount, 6) //Claim in USDC (6 decimals)

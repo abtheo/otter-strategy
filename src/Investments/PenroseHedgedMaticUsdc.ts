@@ -16,14 +16,16 @@ export class PenroseHedgedMaticUsdcInvestment implements InvestmentInterface {
   constructor(transaction: Transaction) {
     this.currentBlock = transaction.blockNumber
     if (transaction.blockNumber.ge(this.startBlock)) {
+      this.active = true
       let nav = this.netAssetValue()
       if (nav.gt(BigDecimal.fromString('10'))) {
-        this.active = true
         let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
         _investment.protocol = this.protocol
         _investment.netAssetValue = nav
         this.investment = _investment
         this.investment.save()
+      } else {
+        this.active = false
       }
     }
   }

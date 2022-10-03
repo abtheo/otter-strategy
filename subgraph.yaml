@@ -671,6 +671,8 @@ dataSources:
       eventHandlers:
         - event: ClaimRewardToken(indexed address,uint256,uint256)
           handler: handleClaimRewardToken
+        - event: PayoutReward(uint256,int256,uint256)
+          handler: handlePayoutReward
       file: ./src/UniV3MaticUsdcHedgedLpStrategy.ts
 
   - kind: ethereum/contract

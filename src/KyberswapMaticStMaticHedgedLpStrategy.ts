@@ -13,7 +13,7 @@ import { updateTreasuryRevenueClaimKncReward, updateTreasuryRevenueClaimLdoRewar
 
 export function handleClaimRewardToken(event: ClaimRewardTokenEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let claim = new ClaimReward(`${transaction.id}_${event.params.token.toHexString()}`)
+  let claim = new ClaimReward(`${event.address}_${transaction.id}_${event.params.token.toHexString()}`)
   claim.transaction = transaction.id
   claim.timestamp = transaction.timestamp
   claim.amountUsd = toDecimal(event.params.usdcAmount, 6) //Claim in USDC (6 decimals)

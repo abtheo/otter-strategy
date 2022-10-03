@@ -1,15 +1,15 @@
 import { Investment, ClaimReward, PayoutReward, Transaction } from '../../generated/schema'
 import { toDecimal } from '../utils/Decimals'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { UNIV3_USDC_MAI_STRATEGY } from '../utils/Constants'
+import { UNIV3_HEDGED_MATIC_USDC_STRATEGY, UNIV3_USDC_MAI_STRATEGY } from '../utils/Constants'
 import { InvestmentInterface, loadOrCreateInvestment } from '.'
-import { UniV3UsdcMaiStrategy } from '../../generated/UniV3UsdcMaiStrategy/UniV3UsdcMaiStrategy'
+import { IStrategy } from '../../generated/UniV3MaticUsdcHedgedLpStrategy/IStrategy'
 
-export class UniV3UsdcMaiInvestment implements InvestmentInterface {
+export class UniV3HedgedMaticUsdcInvestment implements InvestmentInterface {
   public investment!: Investment
   public readonly strategy: string = 'Hedged MATIC/USDC'
   public readonly protocol: string = 'Uniswap V3'
-  public readonly startBlock: BigInt = BigInt.fromI32(33379248)
+  public readonly startBlock: BigInt = BigInt.fromI32(33703034)
   private currentBlock: BigInt = BigInt.zero()
   private active: boolean = false
 
@@ -30,7 +30,7 @@ export class UniV3UsdcMaiInvestment implements InvestmentInterface {
 
   netAssetValue(): BigDecimal {
     if (this.active) {
-      let tryNAV = UniV3UsdcMaiStrategy.bind(UNIV3_USDC_MAI_STRATEGY).try_netAssetValue()
+      let tryNAV = IStrategy.bind(UNIV3_HEDGED_MATIC_USDC_STRATEGY).try_netAssetValue()
       let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
 
       return toDecimal(netAssetVal, 6)

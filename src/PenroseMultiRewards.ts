@@ -46,7 +46,7 @@ export function handleRewardPaid(event: RewardPaid): void {
   }
 
   // Investments tracking
-  let claim = new ClaimReward(`${transaction.id}_${event.params.rewardsToken.toHexString()}`)
+  let claim = new ClaimReward(`${event.address}_${transaction.id}_${event.params.rewardsToken.toHexString()}`)
   claim.transaction = transaction.id
   claim.timestamp = transaction.timestamp
   claim.amountUsd = toDecimal(event.params.reward, 18).times(price)

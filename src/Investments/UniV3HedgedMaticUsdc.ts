@@ -7,7 +7,7 @@ import { UniV3UsdcMaiStrategy } from '../../generated/UniV3UsdcMaiStrategy/UniV3
 
 export class UniV3UsdcMaiInvestment implements InvestmentInterface {
   public investment!: Investment
-  public readonly strategy: string = 'USDC/MAI'
+  public readonly strategy: string = 'Hedged MATIC/USDC'
   public readonly protocol: string = 'Uniswap V3'
   public readonly startBlock: BigInt = BigInt.fromI32(33379248)
   private currentBlock: BigInt = BigInt.zero()

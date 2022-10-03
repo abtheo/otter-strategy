@@ -11,12 +11,14 @@ export class GainsDaiInvestment implements InvestmentInterface {
   public readonly protocol: string = 'Gains'
   public readonly startBlock: BigInt = BigInt.fromI32(32300283)
   private currentBlock: BigInt = BigInt.zero()
+  private active: boolean = false
 
   constructor(transaction: Transaction) {
     this.currentBlock = transaction.blockNumber
     if (transaction.blockNumber.ge(this.startBlock)) {
       let nav = this.netAssetValue()
       if (nav.gt(BigDecimal.fromString('10'))) {
+        this.active = true
         let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
         _investment.protocol = this.protocol
         _investment.netAssetValue = nav
@@ -27,7 +29,7 @@ export class GainsDaiInvestment implements InvestmentInterface {
   }
 
   netAssetValue(): BigDecimal {
-    if (this.currentBlock.ge(this.startBlock)) {
+    if (this.active) {
       let gainsDaiVault = GainsDaiVault.bind(GAINS_DAI_VAULT)
       // values: daiDeposited uint256, maxDaiDeposited uint256, withdrawBlock uint256, debtDai uint256, debtMatic uint256
       let gainsDaiBalance = toDecimal(gainsDaiVault.users(GAINS_DAI_INVESTMENT_STRATEGY).value0, 18)
@@ -38,16 +40,18 @@ export class GainsDaiInvestment implements InvestmentInterface {
   }
 
   addRevenue(claim: ClaimReward): void {
-    //aggregate per day
-    let dayTotal = this.investment.grossRevenue.plus(claim.amountUsd)
-    this.investment.grossRevenue = dayTotal
+    if (this.active) {
+      //aggregate per day
+      let dayTotal = this.investment.grossRevenue.plus(claim.amountUsd)
+      this.investment.grossRevenue = dayTotal
 
-    let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))
+      let rewardRate = dayTotal.div(this.netAssetValue()).times(BigDecimal.fromString('100'))
 
-    // (payout*365 / stakedValue) * 100% = APR%
-    this.investment.grossApr = rewardRate.times(BigDecimal.fromString('365'))
+      // (payout*365 / stakedValue) * 100% = APR%
+      this.investment.grossApr = rewardRate.times(BigDecimal.fromString('365'))
 
-    this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
-    this.investment.save()
+      this.investment.rewardTokens = this.investment.rewardTokens.concat([claim.id])
+      this.investment.save()
+    }
   }
 }

@@ -16,12 +16,14 @@ export class PenroseClamUsdPlusInvestment implements InvestmentInterface {
   public readonly protocol: string = 'Penrose'
   public readonly startBlock: BigInt = BigInt.fromI32(30393227) //29069971
   private currentBlock: BigInt = BigInt.zero()
+  private active: boolean = false
 
   constructor(transaction: Transaction) {
     this.currentBlock = transaction.blockNumber
     if (transaction.blockNumber.ge(this.startBlock)) {
       let nav = this.netAssetValue()
       if (nav.gt(BigDecimal.fromString('10'))) {
+        this.active = true
         let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
         _investment.protocol = this.protocol
         _investment.netAssetValue = nav
@@ -32,7 +34,7 @@ export class PenroseClamUsdPlusInvestment implements InvestmentInterface {
   }
 
   netAssetValue(): BigDecimal {
-    if (this.currentBlock.ge(this.startBlock)) {
+    if (this.active) {
       let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_CLAM).try_balanceOf(
         DAO_WALLET_PENROSE_USER_PROXY,
       )
@@ -43,7 +45,7 @@ export class PenroseClamUsdPlusInvestment implements InvestmentInterface {
   }
 
   addRevenue(claim: ClaimReward): void {
-    if (this.currentBlock.ge(this.startBlock)) {
+    if (this.active) {
       //aggregate per day
       let dayTotal = this.investment.grossRevenue.plus(claim.amountUsd)
       this.investment.grossRevenue = dayTotal

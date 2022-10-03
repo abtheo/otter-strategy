@@ -12,12 +12,14 @@ export class QiDaoUsdcMaiInvestment implements InvestmentInterface {
   public readonly protocol: string = 'QiDAO'
   public readonly startBlock: BigInt = BigInt.fromI32(31831179)
   private currentBlock: BigInt = BigInt.zero()
+  private active: boolean = false
 
   constructor(transaction: Transaction) {
     this.currentBlock = transaction.blockNumber
     if (transaction.blockNumber.ge(this.startBlock)) {
       let nav = this.netAssetValue()
       if (nav.gt(BigDecimal.fromString('10'))) {
+        this.active = true
         let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
         _investment.protocol = this.protocol
         _investment.netAssetValue = nav
@@ -28,7 +30,7 @@ export class QiDaoUsdcMaiInvestment implements InvestmentInterface {
   }
 
   netAssetValue(): BigDecimal {
-    if (this.currentBlock.gt(this.startBlock)) {
+    if (this.active) {
       let farm = QiFarmV3.bind(QI_FARM_V3)
       //pid 0 == mai/usdc
       let deposited = farm.deposited(BigInt.zero(), MAI_USDC_INVESTMENT_STRATEGY)
@@ -38,7 +40,7 @@ export class QiDaoUsdcMaiInvestment implements InvestmentInterface {
   }
 
   addRevenue(claim: ClaimReward): void {
-    if (this.currentBlock.gt(this.startBlock)) {
+    if (this.active) {
       //aggregate per day
       let dayTotal = this.investment.grossRevenue.plus(claim.amountUsd)
       this.investment.grossRevenue = dayTotal

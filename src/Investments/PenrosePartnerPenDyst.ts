@@ -20,12 +20,14 @@ export class PenrosePartnerPenDystInvestment implements InvestmentInterface {
   public readonly protocol: string = 'Penrose'
   public readonly startBlock: BigInt = BigInt.fromI32(29069971) //29069971
   private currentBlock: BigInt = BigInt.zero()
+  private active: boolean = false
 
   constructor(transaction: Transaction) {
     this.currentBlock = transaction.blockNumber
     if (transaction.blockNumber.ge(this.startBlock)) {
       let nav = this.netAssetValue()
       if (nav.gt(BigDecimal.fromString('10'))) {
+        this.active = true
         let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
         _investment.protocol = this.protocol
         _investment.netAssetValue = nav
@@ -36,7 +38,7 @@ export class PenrosePartnerPenDystInvestment implements InvestmentInterface {
   }
 
   netAssetValue(): BigDecimal {
-    if (this.currentBlock.ge(this.startBlock)) {
+    if (this.active) {
       let penDyst = ERC20.bind(PENDYST_ERC20)
       let penDystStaking = PenDystRewards.bind(PEN_DYST_REWARD_PROXY)
       let penDystStaking2 = PenrosePartnerRewards.bind(PEN_DYST_PARTNER_REWARDS)
@@ -56,7 +58,7 @@ export class PenrosePartnerPenDystInvestment implements InvestmentInterface {
   }
 
   addRevenue(claim: ClaimReward): void {
-    if (this.currentBlock.ge(this.startBlock)) {
+    if (this.active) {
       //aggregate per day
       let dayTotal = this.investment.grossRevenue.plus(claim.amountUsd)
       this.investment.grossRevenue = dayTotal

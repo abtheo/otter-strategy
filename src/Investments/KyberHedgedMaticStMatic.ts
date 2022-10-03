@@ -11,12 +11,14 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
   public readonly protocol: string = 'Kyberswap'
   public readonly startBlock: BigInt = BigInt.fromI32(33348683) //actual: 33084754
   private currentBlock: BigInt = BigInt.zero()
+  private active: boolean = false
 
   constructor(transaction: Transaction) {
     this.currentBlock = transaction.blockNumber
     if (transaction.blockNumber.ge(this.startBlock)) {
       let nav = this.netAssetValue()
       if (nav.gt(BigDecimal.fromString('10'))) {
+        this.active = true
         let _investment = loadOrCreateInvestment(this.strategy, transaction.timestamp)
         _investment.protocol = this.protocol
         _investment.netAssetValue = nav
@@ -25,9 +27,8 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
       }
     }
   }
-
   netAssetValue(): BigDecimal {
-    if (this.currentBlock.ge(this.startBlock)) {
+    if (this.active) {
       let tryNAV = KyberswapMaticStMaticHedgedLpStrategy.bind(
         KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY,
       ).try_netAssetValue()
@@ -40,7 +41,7 @@ export class KyberHedgedMaticStMaticInvestment implements InvestmentInterface {
 
   // Uses the Gross Revenue for Farming APR
   addRevenue(claim: ClaimReward): void {
-    if (this.currentBlock.ge(this.startBlock)) {
+    if (this.active) {
       //aggregate per day
       let dayTotal = this.investment.grossRevenue.plus(claim.amountUsd)
       this.investment.grossRevenue = dayTotal

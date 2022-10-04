@@ -178,6 +178,32 @@ export class NetAssetValueUpdated__Params {
   }
 }
 
+export class PayoutReward extends ethereum.Event {
+  get params(): PayoutReward__Params {
+    return new PayoutReward__Params(this);
+  }
+}
+
+export class PayoutReward__Params {
+  _event: PayoutReward;
+
+  constructor(event: PayoutReward) {
+    this._event = event;
+  }
+
+  get nav(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get revenue(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get payout(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
 export class PortfolioManagerUpdated extends ethereum.Event {
   get params(): PortfolioManagerUpdated__Params {
     return new PortfolioManagerUpdated__Params(this);
@@ -193,6 +219,36 @@ export class PortfolioManagerUpdated__Params {
 
   get value(): Address {
     return this._event.parameters[0].value.toAddress();
+  }
+}
+
+export class Rebalance extends ethereum.Event {
+  get params(): Rebalance__Params {
+    return new Rebalance__Params(this);
+  }
+}
+
+export class Rebalance__Params {
+  _event: Rebalance;
+
+  constructor(event: Rebalance) {
+    this._event = event;
+  }
+
+  get oldTickLower(): i32 {
+    return this._event.parameters[0].value.toI32();
+  }
+
+  get oldTickUpper(): i32 {
+    return this._event.parameters[1].value.toI32();
+  }
+
+  get newTickLower(): i32 {
+    return this._event.parameters[2].value.toI32();
+  }
+
+  get newTickUpper(): i32 {
+    return this._event.parameters[3].value.toI32();
   }
 }
 
@@ -310,6 +366,24 @@ export class RoleRevoked__Params {
   }
 }
 
+export class TargetHealthFactorUpdated extends ethereum.Event {
+  get params(): TargetHealthFactorUpdated__Params {
+    return new TargetHealthFactorUpdated__Params(this);
+  }
+}
+
+export class TargetHealthFactorUpdated__Params {
+  _event: TargetHealthFactorUpdated;
+
+  constructor(event: TargetHealthFactorUpdated) {
+    this._event = event;
+  }
+
+  get targetHealthFactor(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
 export class Upgraded extends ethereum.Event {
   get params(): Upgraded__Params {
     return new Upgraded__Params(this);
@@ -347,6 +421,23 @@ export class Withdraw__Params {
 
   get amount(): BigInt {
     return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class KyberswapMaticStMaticHedgedLpStrategy__feesResult {
+  value0: BigInt;
+  value1: BigInt;
+
+  constructor(value0: BigInt, value1: BigInt) {
+    this.value0 = value0;
+    this.value1 = value1;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
+    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
+    return map;
   }
 }
 
@@ -468,40 +559,44 @@ export class KyberswapMaticStMaticHedgedLpStrategy__underlyingAssetsResultAssets
     return this[3].toBigInt();
   }
 
-  get aaveCollateralUsdc(): BigInt {
+  get stMaticBalanceUsdc(): BigInt {
     return this[4].toBigInt();
   }
 
-  get wmaticDebt(): BigInt {
+  get aaveCollateralUsdc(): BigInt {
     return this[5].toBigInt();
   }
 
-  get wmaticDebtUsdc(): BigInt {
+  get wmaticDebt(): BigInt {
     return this[6].toBigInt();
   }
 
-  get stMaticInLp(): BigInt {
+  get wmaticDebtUsdc(): BigInt {
     return this[7].toBigInt();
   }
 
-  get stMaticInLpUsdc(): BigInt {
+  get stMaticInLp(): BigInt {
     return this[8].toBigInt();
   }
 
-  get maticInLp(): BigInt {
+  get stMaticInLpUsdc(): BigInt {
     return this[9].toBigInt();
   }
 
-  get maticInLpUsdc(): BigInt {
+  get maticInLp(): BigInt {
     return this[10].toBigInt();
   }
 
-  get wmaticFeeUsdc(): BigInt {
+  get maticInLpUsdc(): BigInt {
     return this[11].toBigInt();
   }
 
-  get stMaticFeeUsdc(): BigInt {
+  get wmaticFeeUsdc(): BigInt {
     return this[12].toBigInt();
+  }
+
+  get stMaticFeeUsdc(): BigInt {
+    return this[13].toBigInt();
   }
 }
 
@@ -574,21 +669,6 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
-  aUsdc(): Address {
-    let result = super.call("aUsdc", "aUsdc():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_aUsdc(): ethereum.CallResult<Address> {
-    let result = super.tryCall("aUsdc", "aUsdc():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   aaveHealthFactor(): BigInt {
     let result = super.call(
       "aaveHealthFactor",
@@ -610,44 +690,6 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  aavePool(): Address {
-    let result = super.call("aavePool", "aavePool():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_aavePool(): ethereum.CallResult<Address> {
-    let result = super.tryCall("aavePool", "aavePool():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  aavePoolAddressesProvider(): Address {
-    let result = super.call(
-      "aavePoolAddressesProvider",
-      "aavePoolAddressesProvider():(address)",
-      []
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_aavePoolAddressesProvider(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "aavePoolAddressesProvider",
-      "aavePoolAddressesProvider():(address)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   claimAndReinvest(to_: Address): BigInt {
@@ -688,6 +730,31 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
+  fees(): KyberswapMaticStMaticHedgedLpStrategy__feesResult {
+    let result = super.call("fees", "fees():(uint256,uint256)", []);
+
+    return new KyberswapMaticStMaticHedgedLpStrategy__feesResult(
+      result[0].toBigInt(),
+      result[1].toBigInt()
+    );
+  }
+
+  try_fees(): ethereum.CallResult<
+    KyberswapMaticStMaticHedgedLpStrategy__feesResult
+  > {
+    let result = super.tryCall("fees", "fees():(uint256,uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      new KyberswapMaticStMaticHedgedLpStrategy__feesResult(
+        value[0].toBigInt(),
+        value[1].toBigInt()
+      )
+    );
+  }
+
   getAssetsPrices(): KyberswapMaticStMaticHedgedLpStrategy__getAssetsPricesResult {
     let result = super.call(
       "getAssetsPrices",
@@ -721,13 +788,11 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     );
   }
 
-  getDelta(
-    reserveUsdcAmount_: BigInt
-  ): KyberswapMaticStMaticHedgedLpStrategy__getDeltaResultDeltaStruct {
+  getDelta(): KyberswapMaticStMaticHedgedLpStrategy__getDeltaResultDeltaStruct {
     let result = super.call(
       "getDelta",
-      "getDelta(uint256):((uint256,uint256,uint256,uint256,int24,uint160,int24,uint160,int24,uint160,bool,bool))",
-      [ethereum.Value.fromUnsignedBigInt(reserveUsdcAmount_)]
+      "getDelta():((uint256,uint256,uint256,uint256,int24,uint160,int24,uint160,int24,uint160,bool,bool))",
+      []
     );
 
     return changetype<
@@ -735,15 +800,13 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     >(result[0].toTuple());
   }
 
-  try_getDelta(
-    reserveUsdcAmount_: BigInt
-  ): ethereum.CallResult<
+  try_getDelta(): ethereum.CallResult<
     KyberswapMaticStMaticHedgedLpStrategy__getDeltaResultDeltaStruct
   > {
     let result = super.tryCall(
       "getDelta",
-      "getDelta(uint256):((uint256,uint256,uint256,uint256,int24,uint160,int24,uint160,int24,uint160,bool,bool))",
-      [ethereum.Value.fromUnsignedBigInt(reserveUsdcAmount_)]
+      "getDelta():((uint256,uint256,uint256,uint256,int24,uint160,int24,uint160,int24,uint160,bool,bool))",
+      []
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -819,67 +882,6 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  knc(): Address {
-    let result = super.call("knc", "knc():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_knc(): ethereum.CallResult<Address> {
-    let result = super.tryCall("knc", "knc():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  kyberSwapRouter(): Address {
-    let result = super.call(
-      "kyberSwapRouter",
-      "kyberSwapRouter():(address)",
-      []
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_kyberSwapRouter(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "kyberSwapRouter",
-      "kyberSwapRouter():(address)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  kyberTicksFeesReader(): Address {
-    let result = super.call(
-      "kyberTicksFeesReader",
-      "kyberTicksFeesReader():(address)",
-      []
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_kyberTicksFeesReader(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "kyberTicksFeesReader",
-      "kyberTicksFeesReader():(address)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   lastNetAssetValue(): BigInt {
     let result = super.call(
       "lastNetAssetValue",
@@ -922,21 +924,6 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  ldo(): Address {
-    let result = super.call("ldo", "ldo():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_ldo(): ethereum.CallResult<Address> {
-    let result = super.tryCall("ldo", "ldo():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   liquidationThreshold(): BigInt {
     let result = super.call(
       "liquidationThreshold",
@@ -958,21 +945,6 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  lm(): Address {
-    let result = super.call("lm", "lm():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_lm(): ethereum.CallResult<Address> {
-    let result = super.tryCall("lm", "lm():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   lmPid(): BigInt {
@@ -1055,21 +1027,6 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  pool(): Address {
-    let result = super.call("pool", "pool():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_pool(): ethereum.CallResult<Address> {
-    let result = super.tryCall("pool", "pool():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   portfolioManager(): Address {
     let result = super.call(
       "portfolioManager",
@@ -1084,29 +1041,6 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     let result = super.tryCall(
       "portfolioManager",
       "portfolioManager():(address)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  positionManager(): Address {
-    let result = super.call(
-      "positionManager",
-      "positionManager():(address)",
-      []
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_positionManager(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "positionManager",
-      "positionManager():(address)",
       []
     );
     if (result.reverted) {
@@ -1135,29 +1069,6 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
-  quickSwapRouter(): Address {
-    let result = super.call(
-      "quickSwapRouter",
-      "quickSwapRouter():(address)",
-      []
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_quickSwapRouter(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "quickSwapRouter",
-      "quickSwapRouter():(address)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   reinvestRate(): BigInt {
     let result = super.call("reinvestRate", "reinvestRate():(uint256)", []);
 
@@ -1171,21 +1082,6 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  stMatic(): Address {
-    let result = super.call("stMatic", "stMatic():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_stMatic(): ethereum.CallResult<Address> {
-    let result = super.tryCall("stMatic", "stMatic():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   supportsInterface(interfaceId: Bytes): boolean {
@@ -1234,33 +1130,10 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  unIUniSwapV3Router(): Address {
-    let result = super.call(
-      "unIUniSwapV3Router",
-      "unIUniSwapV3Router():(address)",
-      []
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_unIUniSwapV3Router(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "unIUniSwapV3Router",
-      "unIUniSwapV3Router():(address)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   underlyingAssets(): KyberswapMaticStMaticHedgedLpStrategy__underlyingAssetsResultAssetsStruct {
     let result = super.call(
       "underlyingAssets",
-      "underlyingAssets():((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+      "underlyingAssets():((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
       []
     );
 
@@ -1274,7 +1147,7 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
   > {
     let result = super.tryCall(
       "underlyingAssets",
-      "underlyingAssets():((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+      "underlyingAssets():((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
       []
     );
     if (result.reverted) {
@@ -1296,21 +1169,6 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
 
   try_usdc(): ethereum.CallResult<Address> {
     let result = super.tryCall("usdc", "usdc():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  vWmatic(): Address {
-    let result = super.call("vWmatic", "vWmatic():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_vWmatic(): ethereum.CallResult<Address> {
-    let result = super.tryCall("vWmatic", "vWmatic():(address)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1341,21 +1199,6 @@ export class KyberswapMaticStMaticHedgedLpStrategy extends ethereum.SmartContrac
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  wmatic(): Address {
-    let result = super.call("wmatic", "wmatic():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_wmatic(): ethereum.CallResult<Address> {
-    let result = super.tryCall("wmatic", "wmatic():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 }
 
@@ -1393,6 +1236,32 @@ export class ClaimAndReinvestCall__Outputs {
   }
 }
 
+export class FixNftsCall extends ethereum.Call {
+  get inputs(): FixNftsCall__Inputs {
+    return new FixNftsCall__Inputs(this);
+  }
+
+  get outputs(): FixNftsCall__Outputs {
+    return new FixNftsCall__Outputs(this);
+  }
+}
+
+export class FixNftsCall__Inputs {
+  _call: FixNftsCall;
+
+  constructor(call: FixNftsCall) {
+    this._call = call;
+  }
+}
+
+export class FixNftsCall__Outputs {
+  _call: FixNftsCall;
+
+  constructor(call: FixNftsCall) {
+    this._call = call;
+  }
+}
+
 export class GrantRoleCall extends ethereum.Call {
   get inputs(): GrantRoleCall__Inputs {
     return new GrantRoleCall__Inputs(this);
@@ -1427,36 +1296,32 @@ export class GrantRoleCall__Outputs {
   }
 }
 
-export class InitializeCall extends ethereum.Call {
-  get inputs(): InitializeCall__Inputs {
-    return new InitializeCall__Inputs(this);
+export class InitializeFarmCall extends ethereum.Call {
+  get inputs(): InitializeFarmCall__Inputs {
+    return new InitializeFarmCall__Inputs(this);
   }
 
-  get outputs(): InitializeCall__Outputs {
-    return new InitializeCall__Outputs(this);
+  get outputs(): InitializeFarmCall__Outputs {
+    return new InitializeFarmCall__Outputs(this);
   }
 }
 
-export class InitializeCall__Inputs {
-  _call: InitializeCall;
+export class InitializeFarmCall__Inputs {
+  _call: InitializeFarmCall;
 
-  constructor(call: InitializeCall) {
+  constructor(call: InitializeFarmCall) {
     this._call = call;
   }
 
-  get targetHealthFactor_(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get lmPid_(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
+  get farm_(): Address {
+    return this._call.inputValues[0].value.toAddress();
   }
 }
 
-export class InitializeCall__Outputs {
-  _call: InitializeCall;
+export class InitializeFarmCall__Outputs {
+  _call: InitializeFarmCall;
 
-  constructor(call: InitializeCall) {
+  constructor(call: InitializeFarmCall) {
     this._call = call;
   }
 }
@@ -1559,6 +1424,32 @@ export class RenounceRoleCall__Outputs {
   }
 }
 
+export class ResetCall extends ethereum.Call {
+  get inputs(): ResetCall__Inputs {
+    return new ResetCall__Inputs(this);
+  }
+
+  get outputs(): ResetCall__Outputs {
+    return new ResetCall__Outputs(this);
+  }
+}
+
+export class ResetCall__Inputs {
+  _call: ResetCall;
+
+  constructor(call: ResetCall) {
+    this._call = call;
+  }
+}
+
+export class ResetCall__Outputs {
+  _call: ResetCall;
+
+  constructor(call: ResetCall) {
+    this._call = call;
+  }
+}
+
 export class RevokeRoleCall extends ethereum.Call {
   get inputs(): RevokeRoleCall__Inputs {
     return new RevokeRoleCall__Inputs(this);
@@ -1649,6 +1540,36 @@ export class SetReinvestRateCall__Outputs {
   _call: SetReinvestRateCall;
 
   constructor(call: SetReinvestRateCall) {
+    this._call = call;
+  }
+}
+
+export class SetTargetHealthFactorCall extends ethereum.Call {
+  get inputs(): SetTargetHealthFactorCall__Inputs {
+    return new SetTargetHealthFactorCall__Inputs(this);
+  }
+
+  get outputs(): SetTargetHealthFactorCall__Outputs {
+    return new SetTargetHealthFactorCall__Outputs(this);
+  }
+}
+
+export class SetTargetHealthFactorCall__Inputs {
+  _call: SetTargetHealthFactorCall;
+
+  constructor(call: SetTargetHealthFactorCall) {
+    this._call = call;
+  }
+
+  get targetHealthFactor_(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class SetTargetHealthFactorCall__Outputs {
+  _call: SetTargetHealthFactorCall;
+
+  constructor(call: SetTargetHealthFactorCall) {
     this._call = call;
   }
 }

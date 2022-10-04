@@ -3,7 +3,7 @@ import { UniswapV2Router02 } from '../../../generated/OtterClamERC20V2/UniswapV2
 import { Exchange } from './exchange'
 
 export class UniExchange implements Exchange {
-  private readonly router: UniswapV2Router02
+  public readonly router: UniswapV2Router02
 
   constructor(routerAddress: Address) {
     this.router = UniswapV2Router02.bind(routerAddress)

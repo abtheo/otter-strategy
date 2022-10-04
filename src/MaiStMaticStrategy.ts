@@ -8,7 +8,7 @@ import { updateTreasuryRevenueClaimLdoReward } from './utils/TreasuryRevenue'
 
 export function handleClaimReward(event: ClaimRewardEvent): void {
   let transaction = loadOrCreateTransaction(event.transaction, event.block)
-  let claim = new ClaimReward(transaction.id)
+  let claim = new ClaimReward(`${event.address.toHexString()}_${transaction.id}_${LDO_ERC20.toHexString()}`)
   claim.transaction = transaction.id
   claim.timestamp = transaction.timestamp
   claim.amountUsd = toDecimal(event.params.amount, 6) //Claim in USDC (6 decimals)

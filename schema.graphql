@@ -18,15 +18,6 @@ type Transfer @entity {
   value: BigInt! # uint256
 }
 
-type Buyback @entity {
-  id: ID!
-  transaction: Transaction!
-  timestamp: BigInt!
-  token: Bytes! # address
-  tokenAmount: BigInt! # uint256
-  clamAmount: BigInt! # uint256
-}
-
 type ProtocolMetric @entity {
   id: ID!
   timestamp: BigInt!
@@ -49,7 +40,6 @@ type ProtocolMetric @entity {
   treasuryOtterClamQiMarketValue: BigDecimal!
   treasuryQiWmaticMarketValue: BigDecimal!
   treasuryQiWmaticQiInvestmentMarketValue: BigDecimal!
-  treasuryClamMaiPOL: BigDecimal!
   treasuryDystopiaPairQiTetuQiMarketValue: BigDecimal!
   treasuryDystopiaPairwMaticDystMarketValue: BigDecimal!
   treasuryDystopiaPairMaiClamMarketValue: BigDecimal!
@@ -84,6 +74,7 @@ type Harvest @entity {
   timestamp: BigInt!
   amount: BigInt!
 }
+
 type ClaimReward @entity {
   id: ID!
   transaction: Transaction!
@@ -91,6 +82,7 @@ type ClaimReward @entity {
   amountUsd: BigDecimal!
   amountToken: BigDecimal!
   token: Bytes!
+  lastBlock: BigInt!
 }
 
 type TreasuryRevenue @entity {
@@ -197,4 +189,31 @@ type StakedBalance @entity {
 type AllStakedBalance @entity {
   id: ID!
   balances: [StakedBalance!]!
+}
+
+type Investment @entity {
+  id: ID!
+  timestamp: BigInt!
+  netAssetValue: BigDecimal!
+  protocol: String!
+  strategy: String!
+
+  grossRevenue: BigDecimal!
+  grossApr: BigDecimal!
+
+  netRevenue: BigDecimal!
+  # no, NET POSITION CHANGE PER DAY
+  # but why? just do data[0] - data[-1]
+  # PnL = NAV1 - NAV2 + Gross Revenue (*30% ?)
+  netApr: BigDecimal!
+
+  rewardTokens: [ClaimReward!]!
+}
+
+type PayoutReward @entity {
+  id: ID!
+  transactionHash: Transaction!
+  netAssetValue: BigDecimal!
+  revenue: BigDecimal!
+  payout: BigDecimal!
 }

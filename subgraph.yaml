@@ -152,6 +152,7 @@ dataSources:
         - Transaction
         - Transfer
         - TreasuryRevenue
+        - ClaimReward
       abis:
         - name: PenroseMultiRewards
           file: ./abis/PenroseMultiRewards.json
@@ -196,6 +197,7 @@ dataSources:
         - Transaction
         - Transfer
         - TreasuryRevenue
+        - ClaimReward
       abis:
         - name: PenroseMultiRewards
           file: ./abis/PenroseMultiRewards.json
@@ -240,6 +242,7 @@ dataSources:
         - Transaction
         - Transfer
         - TreasuryRevenue
+        - ClaimReward
       abis:
         - name: PenroseMultiRewards
           file: ./abis/PenroseMultiRewards.json
@@ -275,7 +278,7 @@ dataSources:
     source:
       address: '0x582331EB734D2d81e29Eb54A9890AEED1627e2C2'
       abi: PenroseMultiRewards
-      startBlock: 29069971
+      startBlock: 31069971
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -284,6 +287,7 @@ dataSources:
         - Transaction
         - Transfer
         - TreasuryRevenue
+        - ClaimReward
       abis:
         - name: PenroseMultiRewards
           file: ./abis/PenroseMultiRewards.json
@@ -328,6 +332,7 @@ dataSources:
         - Transaction
         - Transfer
         - TreasuryRevenue
+        - ClaimReward
       abis:
         - name: PenroseMultiRewards
           file: ./abis/PenroseMultiRewards.json
@@ -372,6 +377,7 @@ dataSources:
         - Transaction
         - Transfer
         - TreasuryRevenue
+        - ClaimReward
       abis:
         - name: PenroseMultiRewards
           file: ./abis/PenroseMultiRewards.json
@@ -416,6 +422,7 @@ dataSources:
         - Transaction
         - Transfer
         - TreasuryRevenue
+        - ClaimReward
       abis:
         - name: PenroseMultiRewards
           file: ./abis/PenroseMultiRewards.json
@@ -460,6 +467,7 @@ dataSources:
         - Transaction
         - Transfer
         - TreasuryRevenue
+        - ClaimReward
       abis:
         - name: PenroseMultiRewards
           file: ./abis/PenroseMultiRewards.json
@@ -495,7 +503,7 @@ dataSources:
     source:
       address: '0x5DD340DD4142D093c1926282CD56B0D4690dEB11'
       abi: PenroseMultiRewards
-      startBlock: 29069971
+      startBlock: 29569971
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -504,9 +512,14 @@ dataSources:
         - Transaction
         - Transfer
         - TreasuryRevenue
+        - ClaimReward
       abis:
         - name: PenroseMultiRewards
           file: ./abis/PenroseMultiRewards.json
+        - name: PenrosePartnerRewards
+          file: ./abis/PenrosePartnerRewards.json
+        - name: PenDystRewards
+          file: ./abis/PenDystRewards.json
         - name: Pen
           file: ./abis/Pen.json
         - name: Dyst
@@ -552,6 +565,8 @@ dataSources:
       abis:
         - name: MaiUsdcStrategy
           file: ./abis/MaiUsdcStrategy.json
+        - name: QiFarmV3
+          file: ./abis/QiFarmV3.json
         #====== getPrice() required contracts======
         - name: ERC20
           file: ./abis/ERC20.json
@@ -613,6 +628,8 @@ dataSources:
       eventHandlers:
         - event: ClaimRewardToken(indexed address,uint256,uint256)
           handler: handleClaimReward
+        - event: PayoutReward(uint256,int256,uint256)
+          handler: handlePayoutReward
       file: ./src/UniV3UsdcMaiStrategy.ts
 
   - kind: ethereum/contract
@@ -654,6 +671,8 @@ dataSources:
       eventHandlers:
         - event: ClaimRewardToken(indexed address,uint256,uint256)
           handler: handleClaimRewardToken
+        - event: PayoutReward(uint256,int256,uint256)
+          handler: handlePayoutReward
       file: ./src/UniV3MaticUsdcHedgedLpStrategy.ts
 
   - kind: ethereum/contract
@@ -757,6 +776,8 @@ dataSources:
       abis:
         - name: GainsDaiStrategy
           file: ./abis/GainsDaiStrategy.json
+        - name: GainsDaiVault
+          file: ./abis/GainsDaiVault.json
         #====== getPrice() required contracts======
         - name: ERC20
           file: ./abis/ERC20.json
@@ -818,6 +839,8 @@ dataSources:
       eventHandlers:
         - event: ClaimRewardToken(indexed address,uint256,uint256)
           handler: handleClaimRewardToken
+        - event: PayoutReward(uint256,int256,uint256)
+          handler: handlePayoutReward
       file: ./src/KyberswapMaticStMaticHedgedLpStrategy.ts
 
   - kind: ethereum/contract
@@ -1054,7 +1077,7 @@ dataSources:
     source:
       address: '0xc250e9987a032acac293d838726c511e6e1c029d'
       abi: OtterClamERC20V2
-      startBlock: 26991825 #First burn transfer
+      startBlock: 31091825 #26991825 #First burn transfer
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

@@ -1,6 +1,5 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { ClamCirculatingSupply } from '../../generated/OtterClamERC20V2/ClamCirculatingSupply'
-import { GainsDaiVault } from '../../generated/OtterClamERC20V2/GainsDaiVault'
 import { QiFarmV3 } from '../../generated/OtterClamERC20V2/QiFarmV3'
 import { xTetuQi } from '../../generated/OtterClamERC20V2/xTetuQi'
 import { ERC20 } from '../../generated/OtterClamERC20V2/ERC20'
@@ -13,7 +12,6 @@ import { UniswapV2Pair } from '../../generated/OtterClamERC20V2/UniswapV2Pair'
 import { PenDystRewards } from '../../generated/OtterClamERC20V2/PenDystRewards'
 import { PenrosePartnerRewards } from '../../generated/OtterClamERC20V2/PenrosePartnerRewards'
 import { PenLockerV2 } from '../../generated/OtterClamERC20V2/PenLockerV2'
-import { UsdPlus } from '../../generated/OtterClamERC20V2/UsdPlus'
 import { ProtocolMetric, Transaction, VotePosition, Vote, GovernanceMetric } from '../../generated/schema'
 import {
   CIRCULATING_SUPPLY_CONTRACT,
@@ -44,7 +42,6 @@ import {
   DYSTOPIA_PAIR_MAI_CLAM,
   DYSTOPIA_veDYST,
   DYSTOPIA_veDYST_ERC721_ID,
-  DYSTOPIA_TRACKED_PAIRS,
   DYSTOPIA_PAIR_USDPLUS_CLAM,
   PEN_ERC20,
   PENDYST_ERC20,
@@ -65,7 +62,6 @@ import {
   UNI_MAI_USDC_PAIR,
   DYSTOPIA_PAIR_USDC_TUSD,
   PENROSE_REWARD_USDC_TUSD,
-  DYST_POOL_TRANSITION_BLOCK,
   USDPLUS_ERC20,
   DYSTOPIA_PAIR_USDPLUS_USDC,
   PENROSE_REWARD_USDPLUS_USDC,
@@ -75,22 +71,13 @@ import {
   QI_MATIC_INVESTMENT_STRATEGY,
   DYSTOPIA_PAIR_USDPLUS_STMATIC,
   PENROSE_REWARD_USDPLUS_STMATIC,
-  USDPLUS_STMATIC_PENROSE_USER_PROXY,
   MAI_STMATIC_BLOCK,
   MAI_STMATIC_QIDAO_FARM,
   MAI_STMATIC_INVESTMENT_STRATEGY,
   ARRAKIS_MAI_STMATIC_PAIR,
   USDPLUS_INVESTMENT_STRATEGY,
-  GAINS_DAI_START_BLOCK,
-  GAINS_DAI_INVESTMENT_STRATEGY,
-  GAINS_DAI_VAULT,
-  PENROSE_HEDGED_MATIC_STRATEGY,
-  PENROSE_HEDGE_START_BLOCK,
-  KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY,
-  KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK,
   GOVERNANCE_START_BLOCK,
-  UNIV3_USDC_MAI_START_BLOCK,
-  UNIV3_USDC_MAI_STRATEGY,
+  DYSTOPIA_veDYST_MATIC_AIRDROP_ID,
   UNIV3_HEDGED_MATIC_USDC_START_BLOCK,
   UNIV3_HEDGED_MATIC_USDC_STRATEGY,
 } from './Constants'
@@ -112,12 +99,13 @@ import {
   getArrakisPairUSD,
 } from './Price'
 import { loadOrCreateTotalBurnedClamSingleton } from '../utils/Burned'
-import { DystPair } from '../../generated/OtterClamERC20V2/DystPair'
 import { PenroseMultiRewards } from '../../generated/PenrosePartnerRewards/PenroseMultiRewards'
-import { PenroseHedgeLpStrategy } from '../../generated/OtterClamERC20V2/PenroseHedgeLpStrategy'
-import { KyberswapMaticStMaticHedgedLpStrategy } from '../../generated/OtterClamERC20V2/KyberswapMaticStMaticHedgedLpStrategy'
-import { UniV3UsdcMaiStrategy } from '../../generated/UniV3UsdcMaiStrategy/UniV3UsdcMaiStrategy'
+import { GainsDaiInvestment } from '../Investments/GainsDai'
+import { PenroseHedgedMaticUsdcInvestment } from '../Investments/PenroseHedgedMaticUsdc'
+import { KyberHedgedMaticStMaticInvestment } from '../Investments/KyberHedgedMaticStMatic'
+import { UniV3UsdcMaiInvestment } from '../Investments/UniV3UsdcMai'
 import { IStrategy } from '../../generated/UniV3MaticUsdcHedgedLpStrategy/IStrategy'
+import { UniV3HedgedMaticUsdcInvestment } from '../Investments/UniV3HedgedMaticUsdc'
 
 export function loadOrCreateProtocolMetric(timestamp: BigInt): ProtocolMetric {
   let dayTimestamp = dayFromTimestamp(timestamp)
@@ -254,6 +242,13 @@ export function getTreasuryTokenValue(blockNumber: BigInt, address: Address): Bi
   return marketValue
 }
 
+function getPenroseRewardBalance(block: BigInt, multiRewards: Address, pair: Address): BigDecimal {
+  let penroseRewards = PenroseMultiRewards.bind(multiRewards).try_balanceOf(DAO_WALLET_PENROSE_USER_PROXY)
+  if (penroseRewards.reverted) return BigDecimal.zero()
+  let penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
+  return getDystPairUSD(block, penroseRewardBalance, pair)
+}
+
 /* Mutates the provided ProtocolMetric by setting the relevant properties*/
 function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: ProtocolMetric): ProtocolMetric {
   let maiERC20 = ERC20.bind(MAI_ERC20)
@@ -268,12 +263,10 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
 
   let maiBalance = toDecimal(maiERC20.balanceOf(TREASURY_ADDRESS), 18)
   let daiBalance = toDecimal(daiERC20.balanceOf(TREASURY_ADDRESS), 18)
-  if (transaction.blockNumber.gt(GAINS_DAI_START_BLOCK)) {
-    let gainsDaiVault = GainsDaiVault.bind(GAINS_DAI_VAULT)
-    // values: daiDeposited uint256, maxDaiDeposited uint256, withdrawBlock uint256, debtDai uint256, debtMatic uint256
-    let gainsDaiBalance = toDecimal(gainsDaiVault.users(GAINS_DAI_INVESTMENT_STRATEGY).value0, 18)
-    daiBalance = daiBalance.plus(gainsDaiBalance)
-  }
+
+  // Gains DAI
+  let gainsDai = new GainsDaiInvestment(transaction)
+  daiBalance = daiBalance.plus(gainsDai.netAssetValue())
 
   let wmaticBalance = maticERC20.balanceOf(TREASURY_ADDRESS)
   let wmaticValue = toDecimal(wmaticBalance, 18).times(getwMaticUsdRate())
@@ -344,12 +337,7 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   }
 
   let clamUsdPlusRebases = BigDecimal.zero()
-  if (transaction.blockNumber.gt(DYST_POOL_TRANSITION_BLOCK)) {
-    let usdPlus = UsdPlus.bind(USDPLUS_ERC20)
-    clamUsdPlusRebases = toDecimal(usdPlus.balanceOf(DYSTOPIA_PAIR_USDPLUS_CLAM), 6).minus(
-      toDecimal(usdPlus.scaledBalanceOf(DYSTOPIA_PAIR_USDPLUS_CLAM), 15),
-    )
-  }
+
   //DYSTOPIA & PENROSE
   let qiTetuQiValue = BigDecimal.zero()
   let usdcTusdValue = BigDecimal.zero()
@@ -369,83 +357,59 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   if (transaction.blockNumber.gt(DYST_START_BLOCK)) {
     dystMarketValue = getTreasuryTokenValue(transaction.blockNumber, DYST_ERC20)
 
-    for (let i = 0; i < DYSTOPIA_TRACKED_PAIRS.length; i++) {
-      let pair_address = DYSTOPIA_TRACKED_PAIRS[i]
-      //first check if the DAO wallet holds LP tokens directly
-      let dystopiaPair = DystPair.bind(pair_address)
-      let pairDystBalance = dystopiaPair.try_balanceOf(DAO_WALLET)
-      if (pairDystBalance.reverted) continue
-      let pairValue = getDystPairUSD(transaction.blockNumber, pairDystBalance.value, pair_address)
-      //then add the Gauge staked LP balance from Penrose
+    wMaticDystValue = getPenroseRewardBalance(
+      transaction.blockNumber,
+      PENROSE_REWARD_WMATIC_DYST,
+      DYSTOPIA_PAIR_WMATIC_DYST,
+    )
 
-      let penroseRewardBalance = BigInt.zero()
+    //clam-mai
+    let clamMaiRewards = PenroseMultiRewards.bind(PENROSE_REWARD_MAI_CLAM).try_balanceOf(DAO_WALLET_PENROSE_USER_PROXY)
+    clamMaiDystLpOwned = clamMaiRewards.reverted ? BigInt.zero() : clamMaiRewards.value
 
-      //finally, associate with relevant property
-      if (pair_address == DYSTOPIA_PAIR_WMATIC_DYST) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_WMATIC_DYST).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-        wMaticDystValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
-      }
-      if (pair_address == DYSTOPIA_PAIR_MAI_CLAM) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_MAI_CLAM).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-        clamMaiDystValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
-        clamMaiDystLpOwned = pairDystBalance.value.plus(penroseRewardBalance)
-      }
-      if (pair_address == DYSTOPIA_PAIR_USDPLUS_CLAM) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_CLAM).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-        clamUsdplusDystValue = pairValue.plus(
-          getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address),
-        )
-        clamUsdPlusDystLpOwned = pairDystBalance.value.plus(penroseRewardBalance)
-      }
-      if (pair_address == DYSTOPIA_PAIR_QI_TETUQI) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_QI_TETUQI).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
+    clamMaiDystValue = getPenroseRewardBalance(transaction.blockNumber, PENROSE_REWARD_MAI_CLAM, DYSTOPIA_PAIR_MAI_CLAM)
 
-        qiTetuQiValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
-      }
-      if (pair_address == DYSTOPIA_PAIR_USDC_TUSD) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDC_TUSD).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-
-        usdcTusdValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
-      }
-      if (pair_address == DYSTOPIA_PAIR_USDPLUS_USDC) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_USDC).try_balanceOf(
-          DAO_WALLET_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-
-        usdplusUsdcValue = pairValue.plus(getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address))
-      }
-
-      if (pair_address == DYSTOPIA_PAIR_USDPLUS_STMATIC) {
-        let penroseRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_STMATIC).try_balanceOf(
-          USDPLUS_STMATIC_PENROSE_USER_PROXY,
-        )
-        penroseRewardBalance = penroseRewards.reverted ? BigInt.zero() : penroseRewards.value
-
-        usdplusStMaticValue = pairValue.plus(
-          getDystPairUSD(transaction.blockNumber, penroseRewardBalance, pair_address),
-        )
-      }
+    //clam-usd+
+    let clamUsdplusRewards = PenroseMultiRewards.bind(PENROSE_REWARD_USDPLUS_CLAM).try_balanceOf(
+      DAO_WALLET_PENROSE_USER_PROXY,
+    )
+    if (!clamUsdplusRewards.reverted) {
+      clamUsdPlusDystLpOwned = clamUsdplusRewards.value
     }
+
+    clamUsdplusDystValue = getPenroseRewardBalance(
+      transaction.blockNumber,
+      PENROSE_REWARD_USDPLUS_CLAM,
+      DYSTOPIA_PAIR_USDPLUS_CLAM,
+    )
+
+    //qi-tetuqi
+    qiTetuQiValue = getPenroseRewardBalance(transaction.blockNumber, PENROSE_REWARD_QI_TETUQI, DYSTOPIA_PAIR_QI_TETUQI)
+
+    //tusd
+    usdcTusdValue = getPenroseRewardBalance(transaction.blockNumber, PENROSE_REWARD_USDC_TUSD, DYSTOPIA_PAIR_USDC_TUSD)
+
+    //usdc-usd+
+    usdplusUsdcValue = getPenroseRewardBalance(
+      transaction.blockNumber,
+      PENROSE_REWARD_USDPLUS_USDC,
+      DYSTOPIA_PAIR_USDPLUS_USDC,
+    )
+
+    //usd+/stMatic
+    usdplusStMaticValue = getPenroseRewardBalance(
+      transaction.blockNumber,
+      PENROSE_REWARD_USDPLUS_STMATIC,
+      DYSTOPIA_PAIR_USDPLUS_STMATIC,
+    )
 
     //plus the locked veDyst inside NFT
     let veDystContract = veDyst.bind(DYSTOPIA_veDYST)
     veDystMarketValue = toDecimal(veDystContract.balanceOfNFT(DYSTOPIA_veDYST_ERC721_ID), 18).times(getDystUsdRate())
+    //and add newest veDYST for airdrop
+    veDystMarketValue = veDystMarketValue.plus(
+      toDecimal(veDystContract.balanceOfNFT(DYSTOPIA_veDYST_MATIC_AIRDROP_ID), 18).times(getDystUsdRate()),
+    )
   }
 
   //add stablecoin-only half of Dystopia CLAM-X LPs
@@ -504,34 +468,13 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
     usdPlusMarketValue = toDecimal(ERC20.bind(USDPLUS_ERC20).balanceOf(USDPLUS_INVESTMENT_STRATEGY), 6)
   }
 
-  let penroseHedgedLpValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(PENROSE_HEDGE_START_BLOCK)) {
-    penroseHedgedLpValue = toDecimal(PenroseHedgeLpStrategy.bind(PENROSE_HEDGED_MATIC_STRATEGY).netAssetValue(), 6)
-  }
+  let penroseHedgedLpValue = new PenroseHedgedMaticUsdcInvestment(transaction).netAssetValue()
 
-  let kyberHedgedMaticStMaticValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(KYBERSWAP_HEDGED_MATIC_STMATIC_START_BLOCK)) {
-    let tryNAV = KyberswapMaticStMaticHedgedLpStrategy.bind(KYBERSWAP_HEDGED_MATIC_STMATIC_STRATEGY).try_netAssetValue()
-    let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
+  let kyberHedgedMaticStMaticValue = new KyberHedgedMaticStMaticInvestment(transaction).netAssetValue()
 
-    kyberHedgedMaticStMaticValue = toDecimal(netAssetVal, 6)
-  }
+  let uniV3UsdcMaiValue = new UniV3UsdcMaiInvestment(transaction).netAssetValue()
 
-  let uniV3UsdcMaiValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(UNIV3_USDC_MAI_START_BLOCK)) {
-    let tryNAV = UniV3UsdcMaiStrategy.bind(UNIV3_USDC_MAI_STRATEGY).try_netAssetValue()
-    let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
-
-    uniV3UsdcMaiValue = toDecimal(netAssetVal, 6)
-  }
-
-  let uniV3HedgedMaticUsdcValue = BigDecimal.zero()
-  if (transaction.blockNumber.gt(UNIV3_HEDGED_MATIC_USDC_START_BLOCK)) {
-    let tryNAV = IStrategy.bind(UNIV3_HEDGED_MATIC_USDC_STRATEGY).try_netAssetValue()
-    let netAssetVal = tryNAV.reverted ? BigInt.zero() : tryNAV.value
-
-    uniV3HedgedMaticUsdcValue = toDecimal(netAssetVal, 6)
-  }
+  let uniV3HedgedMaticUsdcValue = new UniV3HedgedMaticUsdcInvestment(transaction).netAssetValue()
 
   let stableValueDecimal = maiBalance
     .plus(daiBalance)
@@ -590,7 +533,6 @@ function setTreasuryAssetMarketValues(transaction: Transaction, protocolMetric: 
   protocolMetric.treasuryQiWmaticQiInvestmentMarketValue = qiWmaticQiInvestmentMarketValue
   protocolMetric.treasuryOtterClamQiMarketValue = ocQiMarketValue
   protocolMetric.treasuryTetuQiMarketValue = tetuQiMarketValue
-  protocolMetric.treasuryClamMaiPOL = clamMaiPOL
   protocolMetric.treasuryDystopiaPairQiTetuQiMarketValue = qiTetuQiValue
   protocolMetric.treasuryDystopiaPairwMaticDystMarketValue = wMaticDystValue
   protocolMetric.treasuryDystopiaPairMaiClamMarketValue = clamMaiDystValue

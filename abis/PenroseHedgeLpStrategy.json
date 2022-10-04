@@ -125,6 +125,50 @@
         "inputs": [
             {
                 "indexed": false,
+                "internalType": "uint256",
+                "name": "from",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "to",
+                "type": "uint256"
+            }
+        ],
+        "name": "NetAssetValueUpdated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "nav",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "int256",
+                "name": "revenue",
+                "type": "int256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "payout",
+                "type": "uint256"
+            }
+        ],
+        "name": "PayoutReward",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
                 "internalType": "address",
                 "name": "value",
                 "type": "address"
@@ -434,13 +478,7 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "withdrawAmount_",
-                "type": "uint256"
-            }
-        ],
+        "inputs": [],
         "name": "getDelta",
         "outputs": [
             {
@@ -463,6 +501,16 @@
                     {
                         "internalType": "uint256",
                         "name": "aaveRepayMaticNeeded",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "wmaticPrice",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "usdcPrice",
                         "type": "uint256"
                     }
                 ],
@@ -554,6 +602,13 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "initializeNav",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "address",
@@ -575,6 +630,19 @@
             }
         ],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "lastNetAssetValue",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -666,6 +734,13 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "rebalance",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
